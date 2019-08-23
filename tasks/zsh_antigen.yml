@@ -1,0 +1,15 @@
+---
+- name: Ensure packages are installed.
+  become: true
+  apt:
+    name: ['git', 'zsh' , 'curl']
+
+- name: Ensure antigen dir exists.
+  file:
+    path: ~/.antigen
+    state: directory
+
+- name: Download current version of antigen
+  get_url:
+    url: https://git.io/antigen
+    dest: ~/.antigen/antigen.zsh

@@ -1,0 +1,13 @@
+---
+- hosts: localhost
+
+  pre_tasks:
+    - include_vars: vars/packages.yml
+
+  tasks:
+    - include_tasks: tasks/common_packages.yml
+    - include_tasks: tasks/zsh_antigen.yml
+
+  post_tasks:
+    - name: (re-) install dotfiles using dotbot.
+      command: 'sh install_dotfiles.sh'

@@ -1,0 +1,13 @@
+- defaults:
+    link:
+      relink: true
+
+- clean: ['~']
+
+- link:
+    ~/.dotfiles: ''
+    ~/.zshrc: bash/zshrc
+    ~/.p10k.zsh: bash/p10k.zsh
+
+- shell:
+  - [git submodule update --init --recursive, Installing submodules]

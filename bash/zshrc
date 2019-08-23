@@ -1,0 +1,16 @@
+source ~/.antigen/antigen.zsh
+
+antigen use oh-my-zsh
+
+# Bundles
+antigen bundle git
+antigen bundle pip
+antigen bundle command-not-found
+antigen bundle zsh-users/zsh-syntax-highlighting
+
+# Themes
+antigen theme romkatv/powerlevel10k
+
+antigen apply
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
