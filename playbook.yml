@@ -7,6 +7,7 @@
   tasks:
     - include_tasks: tasks/common_packages.yml
     - include_tasks: tasks/zsh_antigen.yml
+    - include_tasks: tasks/gcloud_sdk.yml
 
   post_tasks:
     - name: (re-) install dotfiles using dotbot.

@@ -1,0 +1,19 @@
+---
+- name: Ensure Google Cloud Packages Keyring is imported.
+  become: true
+  apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    keyring: /usr/share/keyrings/cloud.google.gpg
+
+- name: Ensure Google Cloud repository is added.
+  become: true
+  apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main"
+    state: present
+
+- name: Ensure GCP SDK is installed.
+  become: true
+  apt:
+    name: google-cloud-sdk
+    update_cache: true
+    state: present
