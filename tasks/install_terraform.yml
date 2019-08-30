@@ -1,0 +1,17 @@
+---
+- name: Create temporary download directory
+  tempfile:
+    state: directory
+    suffix: temp
+  register: download_dir
+
+- name: Download current release of HashiCorps Terraform.
+  get_url:
+    url: https://releases.hashicorp.com/terraform/0.12.7/terraform_0.12.7_linux_amd64.zip
+    dest: "{{ download_dir.path }}"
+
+- name: Extract Terraform to /usr/local/bin.
+  become: true
+  unarchive:
+    src: "{{ download_dir.path }}/terraform_0.12.7_linux_amd64.zip"
+    dest: /usr/local/bin

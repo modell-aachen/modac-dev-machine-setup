@@ -8,3 +8,5 @@ sudo apt-add-repository --yes --update ppa:ansible/ansible
 sudo apt install --yes ansible
 
 echo ">> Done."
+echo ">> Install Ansible Roles using ansible-galaxy"
+ansible-galaxy install -p ./roles -r requirements.yml

@@ -3,11 +3,23 @@
 
   pre_tasks:
     - include_vars: vars/packages.yml
+    - include_tasks: tasks/common_packages.yml
+
+  roles:
+    - role: geerlingguy.docker
+      become: true
+      vars:
+        docker_users:
+          - marco
+      when: install_docker
 
   tasks:
-    - include_tasks: tasks/common_packages.yml
-    - include_tasks: tasks/zsh_antigen.yml
-    - include_tasks: tasks/gcloud_sdk.yml
+    - include_tasks: tasks/install_zsh-w-antigen.yml
+      when: install_zsh
+    - include_tasks: tasks/install_gcloud-sdk.yml
+      when: install_gcloud_sdk
+    - include_tasks: tasks/install_terraform.yml
+      when: install_terraform
 
   post_tasks:
     - name: (re-) install dotfiles using dotbot.
