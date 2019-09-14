@@ -7,6 +7,11 @@ packages:
   - wget
   - net-tools
   - ruby
+  - openvpn
+  - easy-rsa
+  - network-manager-openvpn
+  - network-manager-openvpn-gnome
+
 
 antigen_install_dir: ~/.antigen
 antigen_install_path: "{{ antigen_install_dir }}/antigen.zsh"
