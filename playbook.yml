@@ -10,7 +10,7 @@
       become: true
       vars:
         docker_users:
-          - marco
+          - "{{ ansible_user_id }}"
       when: install_docker
 
   tasks:
@@ -20,6 +20,8 @@
       when: install_gcloud_sdk
     - include_tasks: tasks/install_terraform.yml
       when: install_terraform
+    - include_tasks: tasks/install_golang.yml
+      when: install_golang
 
   post_tasks:
     - name: (re-) install dotfiles using dotbot.
