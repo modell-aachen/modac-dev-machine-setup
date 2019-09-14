@@ -6,6 +6,7 @@ packages:
   - curl
   - wget
   - net-tools
+  - ruby
 
 antigen_install_dir: ~/.antigen
 antigen_install_path: "{{ antigen_install_dir }}/antigen.zsh"
