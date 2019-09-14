@@ -26,3 +26,6 @@
   post_tasks:
     - name: (re-) install dotfiles using dotbot.
       command: 'sh install_dotfiles.sh'
+
+    # - name: Clear antigen cache to install newly added bundles.
+    #   shell: sudo -iu {{ansible_user_id}} antigen reset

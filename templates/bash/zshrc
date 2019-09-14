@@ -1,4 +1,4 @@
-source ~/.antigen/antigen.zsh
+source {{ antigen_install_path }}
 
 antigen use oh-my-zsh
 

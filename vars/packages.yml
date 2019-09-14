@@ -7,6 +7,9 @@ packages:
   - wget
   - net-tools
 
+antigen_install_dir: ~/.antigen
+antigen_install_path: "{{ antigen_install_dir }}/antigen.zsh"
+
 install_zsh: true
 install_docker: true
 install_gcloud_sdk: true

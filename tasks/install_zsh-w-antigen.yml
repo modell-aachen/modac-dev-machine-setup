@@ -6,10 +6,15 @@
 
 - name: Ensure antigen dir exists.
   file:
-    path: ~/.antigen
+    path: "{{ antigen_install_dir }}"
     state: directory
 
 - name: Download current version of antigen
   get_url:
     url: https://git.io/antigen
-    dest: ~/.antigen/antigen.zsh
+    dest: "{{ antigen_install_path }}"
+
+- name: Create .zshrc file
+  template:
+    src: templates/bash/zshrc
+    dest: bash/zshrc
