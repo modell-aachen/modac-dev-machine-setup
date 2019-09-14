@@ -15,4 +15,5 @@ install_zsh: true
 install_docker: true
 install_gcloud_sdk: true
 install_terraform: true
+install_packer: true
 install_golang: true

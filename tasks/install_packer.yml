@@ -1,0 +1,25 @@
+---
+- name: Check if packer is already installed.
+  stat:
+    path: /usr/local/bin/packer
+  register: packer
+
+- name: Install packer
+  block:
+    - name: Create temporary download directory
+      tempfile:
+        state: directory
+        suffix: temp
+      register: download_dir
+
+    - name: Download current release of HashiCorps packer.
+      get_url:
+        url: https://releases.hashicorp.com/packer/1.4.3/packer_1.4.3_linux_amd64.zip
+        dest: "{{ download_dir.path }}"
+
+    - name: Extract packer to /usr/local/bin.
+      become: true
+      unarchive:
+        src: "{{ download_dir.path }}/packer_1.4.3_linux_amd64.zip"
+        dest: /usr/local/bin
+  when: not packer.stat.exists | bool

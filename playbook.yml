@@ -16,10 +16,16 @@
   tasks:
     - include_tasks: tasks/install_zsh-w-antigen.yml
       when: install_zsh
+
     - include_tasks: tasks/install_gcloud-sdk.yml
       when: install_gcloud_sdk
+
     - include_tasks: tasks/install_terraform.yml
       when: install_terraform
+
+    - include_tasks: tasks/install_packer.yml
+      when: install_packer
+
     - include_tasks: tasks/install_golang.yml
       when: install_golang
 
