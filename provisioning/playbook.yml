@@ -19,7 +19,7 @@
         - name: (re-) render dotfiles.
           include_tasks: tasks/render_dotfiles.yml
         - name: (re-) install dotfiles using dotbot.
-          command: 'sh install_dotfiles.sh'
+          command: 'sh ../dotbot_scripts/install_dotfiles.sh'
       tags:
         - install
         - install_packages

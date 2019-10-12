@@ -1,0 +1,15 @@
+- defaults:
+    link:
+      relink: true
+
+- clean: ['~']
+
+- link:
+    ~/.dotfiles: ''
+    ~/.autocompletion: ../.generated_bash_scripts/autocompletion.zsh
+    ~/.exports: ../.generated_bash_scripts/exports.zsh
+    ~/.p10k.zsh: ../.generated_bash_scripts/p10k.zsh
+    ~/.zshrc: ../.generated_bash_scripts/zshrc.zsh
+
+- shell:
+  - [git submodule update --init --recursive, Installing submodules]

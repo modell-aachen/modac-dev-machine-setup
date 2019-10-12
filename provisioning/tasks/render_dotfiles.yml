@@ -1,26 +1,25 @@
 ---
 - name: Ensure dotfiles folder exists
   file:
-    path: bash
+    path: ../.generated_bash_scripts
     state: directory
 
 - name: Ensure zshrc.zsh file is rendered.
   template:
     src: templates/bash/zshrc.zsh.tmpl
-    dest: bash/zshrc.zsh
-
+    dest: ../.generated_bash_scripts/zshrc.zsh
 
 - name: Ensure p10k.zsh file is rendered.
   copy:
     src: templates/bash/p10k.zsh
-    dest: bash/p10k.zsh
+    dest: ../.generated_bash_scripts/p10k.zsh
 
 - name: Ensure exports.zsh file is rendered.
   template:
     src: templates/bash/exports.zsh.tmpl
-    dest: bash/exports.zsh
+    dest: ../.generated_bash_scripts/exports.zsh
 
 - name: Ensure autocompletion.zsh file is rendered.
   template:
     src: templates/bash/autocompletion.zsh.tmpl
-    dest: bash/autocompletion.zsh
+    dest: ../.generated_bash_scripts/autocompletion.zsh

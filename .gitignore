@@ -1,3 +1,4 @@
 roles
 bash/
+.generated_bash_scripts
 !templates/bash/

@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+
+usage() {
+  printf -v text "%s" \
+      "Shorthand scsript to start the ansible provisioning playbook with different tags.\n" \
+      "By default it will run the full provisioning suite.\n\n" \
+      "dev-provision [LIMITATION] \n" \
+      "   -h, --help         shows this help message\n\n" \
+      "   LIMITATIONs:\n" \
+      "     dotfiles         only provision dotfiles\n" \
+      "     packages         only provision system packages\n" \
+      "     tooling          only provision tooling\n"
+  printf "$text"
+}
+
+setup() {
+  echo ">> Checking if required setup is already done..."
+  if [ ! -x "$(command -v ansible)" ]; then
+    # Setup minimal requirements for provisioning
+    echo ">> Installing latest version of ansible"
+    sudo apt update
+    sudo apt install --yes software-properties-common
+    sudo apt-add-repository --yes --update ppa:ansible/ansible
+    sudo apt install --yes ansible
+    echo ">> Done."
+  fi
+
+  if [ ! -d "provisioning/roles" ]; then
+    echo ">> Install Ansible Roles using ansible-galaxy"
+    ansible-galaxy install -p ./provisioning/roles -r ./provisioning/requirements.yml
+    echo ">> Done."
+  fi
+  echo ">> Finished."
+}
+
+provision_full() {
+  setup
+  echo ">> Starting full system provisioning ..."
+  ansible-playbook -K provisioning/playbook.yml
+  echo ">> Finished."
+}
+
+provision_dotfiles() {
+  setup
+  echo ">> Starting dotfiles provisioning only ..."
+  ansible-playbook -K --tags dotfiles provisioning/playbook.yml
+  echo ">> Finished."
+}
+
+provision_packages() {
+  setup
+  echo ">> Starting system packages provisioning only ..."
+  ansible-playbook -K --tags install_packages provisioning/playbook.yml
+  echo ">> Finished."
+}
+
+provision_tooling() {
+  setup
+  echo ">> Starting tooling provisioning only ..."
+  ansible-playbook -K --tags install_tooling provisioning/playbook.yml
+  echo ">> Finished."
+}
+
+while true; do
+    case "$1" in
+      dotfiles )
+        provision_dotfiles
+        exit
+        ;;
+      tooling )
+        provision_tooling
+        exit
+        ;;
+      packages )
+        provision_packages
+        ;;
+      -h | --help )
+        usage
+        exit
+        ;;
+      * )
+        provision_full
+        exit
+        ;;
+    esac
+done
