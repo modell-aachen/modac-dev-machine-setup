@@ -1,0 +1,10 @@
+---
+- block:
+    - name: Ensure docker is installed.
+      include_role:
+        name: geerlingguy.docker
+      vars:
+        docker_users:
+          - "{{ ansible_user_id }}"
+  become: true
+  when: install.docker

@@ -16,9 +16,11 @@ packages:
 antigen_install_dir: ~/.antigen
 antigen_install_path: "{{ antigen_install_dir }}/antigen.zsh"
 
-install_zsh: true
-install_docker: true
-install_gcloud_sdk: true
-install_terraform: true
-install_packer: true
-install_golang: true
+install:
+  docker: true
+  gcloud_sdk: true
+  golang: true
+  packer: true
+  terraform: true
+  vault: true
+  zsh: true

@@ -1,0 +1,26 @@
+---
+- name: Ensure dotfiles folder exists
+  file:
+    path: bash
+    state: directory
+
+- name: Ensure zshrc.zsh file is rendered.
+  template:
+    src: templates/bash/zshrc.zsh.tmpl
+    dest: bash/zshrc.zsh
+
+
+- name: Ensure p10k.zsh file is rendered.
+  copy:
+    src: templates/bash/p10k.zsh
+    dest: bash/p10k.zsh
+
+- name: Ensure exports.zsh file is rendered.
+  template:
+    src: templates/bash/exports.zsh.tmpl
+    dest: bash/exports.zsh
+
+- name: Ensure autocompletion.zsh file is rendered.
+  template:
+    src: templates/bash/autocompletion.zsh.tmpl
+    dest: bash/autocompletion.zsh

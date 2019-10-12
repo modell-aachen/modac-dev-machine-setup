@@ -1,0 +1,35 @@
+source ~/.exports
+source ~/.autocompletion
+
+#------------------------------------------------------------------------------------------------------------------
+# START antigen
+#
+# All other customization needs to be done before.
+# Keep in mind changing any antigen module one needs to run `antigen reset` to reload
+# bundles and settings
+#------------------------------------------------------------------------------------------------------------------
+
+source {{ antigen_install_path }}
+antigen use oh-my-zsh
+
+# Bundles
+antigen bundle git
+antigen bundle pip
+antigen bundle command-not-found
+antigen bundle zsh-users/zsh-syntax-highlighting
+antigen bundle zsh-users/zsh-autosuggestions
+antigen bundle zsh-users/zsh-completions
+antigen bundle peterhurford/git-it-on.zsh
+
+# Themes
+antigen theme romkatv/powerlevel10k
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
+
+#------------------------------------------------------------------------------------------------------------------
+# APPLY antigend
+#
+# Needs to be done after all ..
+#------------------------------------------------------------------------------------------------------------------
+antigen apply

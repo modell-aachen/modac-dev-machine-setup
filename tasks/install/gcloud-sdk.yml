@@ -17,7 +17,3 @@
     name: google-cloud-sdk
     update_cache: true
     state: present
-
-# - name: Ensure GCP SDK autocompletion will be sourced.
-#   lineinfile:
-#     path:

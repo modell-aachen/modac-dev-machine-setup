@@ -13,8 +13,3 @@
   get_url:
     url: https://git.io/antigen
     dest: "{{ antigen_install_path }}"
-
-- name: Create .zshrc file
-  template:
-    src: templates/bash/zshrc
-    dest: bash/zshrc

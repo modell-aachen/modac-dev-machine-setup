@@ -6,7 +6,9 @@
 
 - link:
     ~/.dotfiles: ''
-    ~/.zshrc: bash/zshrc
+    ~/.exports: bash/autocompletion.zsh
+    ~/.exports: bash/exports.zsh
+    ~/.zshrc: bash/zshrc.zsh
     ~/.p10k.zsh: bash/p10k.zsh
 
 - shell:

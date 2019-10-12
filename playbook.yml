@@ -1,37 +1,30 @@
 ---
 - hosts: localhost
-
-  pre_tasks:
-    - include_vars: vars/packages.yml
-    - include_tasks: tasks/common_packages.yml
-
-  roles:
-    - role: geerlingguy.docker
-      become: true
-      vars:
-        docker_users:
-          - "{{ ansible_user_id }}"
-      when: install_docker
+  vars_files:
+    - vars/main.yml
 
   tasks:
-    - include_tasks: tasks/install_zsh-w-antigen.yml
-      when: install_zsh
+    - include_tasks: tasks/install_packages.yml
+      tags:
+        - install
+        - install_packages
 
-    - include_tasks: tasks/install_gcloud-sdk.yml
-      when: install_gcloud_sdk
-
-    - include_tasks: tasks/install_terraform.yml
-      when: install_terraform
-
-    - include_tasks: tasks/install_packer.yml
-      when: install_packer
-
-    - include_tasks: tasks/install_golang.yml
-      when: install_golang
+    - include_tasks: tasks/install_tooling.yml
+      tags:
+        - install
+        - install_tooling
 
   post_tasks:
-    - name: (re-) install dotfiles using dotbot.
-      command: 'sh install_dotfiles.sh'
+    - block:
+        - name: (re-) render dotfiles.
+          include_tasks: tasks/render_dotfiles.yml
+        - name: (re-) install dotfiles using dotbot.
+          command: 'sh install_dotfiles.sh'
+      tags:
+        - install
+        - install_packages
+        - install_tooling
+        - dotfiles
 
     # - name: Clear antigen cache to install newly added bundles.
     #   shell: sudo -iu {{ansible_user_id}} antigen reset
