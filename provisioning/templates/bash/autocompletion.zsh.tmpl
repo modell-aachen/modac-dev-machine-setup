@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+autoload -U +X bashcompinit && bashcompinit
+
+{% if install.gcloud_sdk %}
+# gcloud sdk zsh autocompletion
+[[ -f /usr/share/google-cloud-sdk/completion.zsh.inc ]] && source /usr/share/google-cloud-sdk/completion.zsh.inc
+{% endif %}
+
+{% if install.vault %}
+# vault zsh autocompletion
+complete -o nospace -C /usr/local/bin/vault vault
+{% endif %}
