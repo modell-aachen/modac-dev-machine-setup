@@ -19,6 +19,9 @@ packages:
   - gir1.2-networkmanager-1.0
   - gir1.2-clutter-1.0
 
+remove_packages:
+  - gnome-shell-extension-ubuntu-dock
+
 antigen_install_dir: ~/.antigen
 antigen_install_path: "{{ antigen_install_dir }}/antigen.zsh"
 

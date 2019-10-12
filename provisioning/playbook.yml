@@ -14,6 +14,15 @@
         - install_packages
 
     - include_tasks:
+        file: tasks/remove_packages.yml
+        apply:
+          tags:
+            - always
+      tags:
+        - install
+        - install_packages
+
+    - include_tasks:
         file: tasks/install_tooling.yml
         apply:
           tags:
