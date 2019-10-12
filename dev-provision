@@ -50,7 +50,7 @@ provision_dotfiles() {
 provision_packages() {
   setup
   echo ">> Starting system packages provisioning only ..."
-  ansible-playbook -K --tags install_packages provisioning/playbook.yml
+  ansible-playbook -K --tags "install_packages" provisioning/playbook.yml
   echo ">> Finished."
 }
 
@@ -73,6 +73,7 @@ while true; do
         ;;
       packages )
         provision_packages
+        exit
         ;;
       -h | --help )
         usage

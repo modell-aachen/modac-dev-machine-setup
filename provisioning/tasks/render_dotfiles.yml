@@ -23,3 +23,8 @@
   template:
     src: templates/bash/autocompletion.zsh.tmpl
     dest: ../.generated_bash_scripts/autocompletion.zsh
+
+- name: Ensure aliases.zsh file is rendered.
+  template:
+    src: templates/bash/aliases.zsh.tmpl
+    dest: ../.generated_bash_scripts/aliases.zsh

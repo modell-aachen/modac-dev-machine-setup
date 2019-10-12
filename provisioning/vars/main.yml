@@ -5,12 +5,17 @@ packages:
   - meld
   - curl
   - wget
+  - htop
   - net-tools
   - ruby
   - openvpn
   - easy-rsa
   - network-manager-openvpn
   - network-manager-openvpn-gnome
+  - gnome-tweak-tool
+  - gnome-shell-extensions
+  - chrome-gnome-shell
+
 
 
 antigen_install_dir: ~/.antigen
