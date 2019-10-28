@@ -1,6 +1,7 @@
 # dotfiles
 
 # Fonts
+**Fonts should be installed before running** `p10k configure`
 Installed recommended p10k fonts
 https://github.com/romkatv/powerlevel10k
 
@@ -19,3 +20,7 @@ Used one:
 - Solarized Dark Higher Contrast
 - Solarized Dark
 - Solarized Light
+
+# TMUX
+Sweet configuration working without any configuration
+https://github.com/gpakosz/.tmux
