@@ -16,6 +16,7 @@ packages:
   - gnome-shell-extensions
   - chrome-gnome-shell
   - resolvconf
+  - tmux
 
 remove_packages:
   - gnome-shell-extension-ubuntu-dock
