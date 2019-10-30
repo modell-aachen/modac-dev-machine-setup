@@ -15,6 +15,7 @@ packages:
   - gnome-tweak-tool
   - gnome-shell-extensions
   - chrome-gnome-shell
+  - resolvconf
 
 remove_packages:
   - gnome-shell-extension-ubuntu-dock
