@@ -15,9 +15,6 @@ packages:
   - gnome-tweak-tool
   - gnome-shell-extensions
   - chrome-gnome-shell
-  - gir1.2-gtop-2.0
-  - gir1.2-networkmanager-1.0
-  - gir1.2-clutter-1.0
 
 remove_packages:
   - gnome-shell-extension-ubuntu-dock
@@ -26,7 +23,7 @@ antigen_install_dir: ~/.antigen
 antigen_install_path: "{{ antigen_install_dir }}/antigen.zsh"
 
 install:
-  docker: true
+  docker: false
   gcloud_sdk: true
   golang: true
   packer: true
