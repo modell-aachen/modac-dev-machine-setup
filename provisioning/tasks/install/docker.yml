@@ -1,10 +1,17 @@
 ---
-- block:
-    - name: Ensure docker is installed.
-      include_role:
-        name: geerlingguy.docker
-      vars:
-        docker_users:
-          - "{{ ansible_user_id }}"
+- name: Installs and configures Docker
   become: true
-  when: install.docker
+  block:
+    - name: Ensure docker is installed.
+      snap:
+        name: docker
+
+    - name: Ensure group "docker" exists
+      group:
+        name: docker
+
+    - name: Ensure docker users are added to the docker group.
+      user:
+        name: "{{ ansible_user_id }}"
+        groups: docker
+        append: true

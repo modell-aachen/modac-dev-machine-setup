@@ -1,0 +1,66 @@
+---
+- name: Ensure lxd is installed.
+  snap:
+    name: lxd
+  become: true
+
+- name: init lxd
+  become: true
+  command: lxd init --auto --network-address=127.0.0.1 --network-port=8443
+
+- name: Ensure group "docker" exists
+  group:
+    name: docker
+  become: true
+
+- name: Ensure docker users are added to the docker group.
+  user:
+    name: "{{ ansible_user_id }}"
+    groups: docker
+    append: true
+  become: true
+
+- name: Ensure certificates for lxd exist
+  block:
+    - name: Ensure directory exists
+      file:
+        path: "{{ cert_dir }}"
+        state: directory
+
+    - name: Ensure private key exists
+      openssl_privatekey:
+        path: "{{ cert_dir }}/client.key"
+        size: 2048
+
+    - name: csr
+      openssl_csr:
+        path: "{{ cert_dir }}/client.csr"
+        privatekey_path: "{{ cert_dir }}/client.key"
+
+    - name: Ensure certificate exists
+      openssl_certificate:
+        path: "{{ cert_dir }}/client.crt"
+        csr_path: "{{ cert_dir }}/client.csr"
+        privatekey_path: "{{ cert_dir }}/client.key"
+        provider: selfsigned
+
+    - name: Ensure certificate is added to lxd
+      command: "lxc config trust add {{ cert_dir }}/client.crt"
+      register: out
+      failed_when: "out.stderr and 'Error: Certificate already in trust store' not in out.stderr"
+      changed_when: "'Error: Certificate already in trust store' not in out.stderr"
+
+  vars:
+    cert_dir: "{{ ansible_env.HOME}}/.config/lxc"
+
+- name: Ensure uid is set
+  become: true
+  lineinfile:
+    path: /etc/subuid
+    line: "root:{{ lookup('pipe', 'id ' + ansible_user_id + ' -u') }}:1"
+
+- name: Ensure gid is set
+  become: true
+  lineinfile:
+    path: /etc/subgid
+    line: "root:{{ lookup('pipe', 'id ' + ansible_user_id + ' -g') }}:1"

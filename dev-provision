@@ -2,14 +2,18 @@
 
 usage() {
   printf -v text "%s" \
-      "Shorthand scsript to start the ansible provisioning playbook with different tags.\n" \
+      "Shorthand script to start the ansible provisioning playbook with different tags.\n" \
       "By default it will run the full provisioning suite.\n\n" \
-      "dev-provision [LIMITATION] \n" \
-      "   -h, --help         shows this help message\n\n" \
+      "dev-provision [LIMITATION] [OPTIONS]\n" \
+      "   -h, --help         shows this help message\n" \
+      "   -i, --inventory    path to an inventory file\n\n" \
       "   LIMITATIONs:\n" \
       "     dotfiles         only provision dotfiles\n" \
       "     packages         only provision system packages\n" \
-      "     tooling          only provision tooling\n"
+      "     tooling          only provision tooling\n\n" \
+      "   example usage:\n" \
+      "     ./dev-provision -i provisioning/inventory_custom_example.yml\n"
+
   printf "$text"
 }
 
@@ -33,55 +37,55 @@ setup() {
   echo ">> Finished."
 }
 
-provision_full() {
-  setup
-  echo ">> Starting full system provisioning ..."
-  ansible-playbook -K provisioning/playbook.yml
-  echo ">> Finished."
+provision() {
+    local tags=$1
+
+    tags=${tags:-all}
+    local message=${tags:-full system}
+    setup
+    echo ">> Starting $message provisioning ..."
+    ansible-playbook \
+        --connection=local \
+        -i localhost, \
+        -i ./provisioning/inventory.yml \
+        $inventory \
+        -K --tags "$tags" provisioning/playbook.yml
+    echo ">> Finished."
 }
 
-provision_dotfiles() {
-  setup
-  echo ">> Starting dotfiles provisioning only ..."
-  ansible-playbook -K --tags dotfiles provisioning/playbook.yml
-  echo ">> Finished."
-}
+OPTS=`getopt -o hi: --long inventory:,help -- "$@"`
+if [ $? != 0 ] ; then echo "Failed parsing options." >&2 ; exit 1 ; fi
 
-provision_packages() {
-  setup
-  echo ">> Starting system packages provisioning only ..."
-  ansible-playbook -K --tags "install_packages" provisioning/playbook.yml
-  echo ">> Finished."
-}
-
-provision_tooling() {
-  setup
-  echo ">> Starting tooling provisioning only ..."
-  ansible-playbook -K --tags install_tooling provisioning/playbook.yml
-  echo ">> Finished."
-}
+eval set -- "$OPTS"
 
 while true; do
     case "$1" in
-      dotfiles )
-        provision_dotfiles
-        exit
-        ;;
-      tooling )
-        provision_tooling
-        exit
-        ;;
-      packages )
-        provision_packages
-        exit
-        ;;
-      -h | --help )
-        usage
-        exit
-        ;;
-      * )
-        provision_full
-        exit
-        ;;
+        -i | --inventory )
+            inventory="-i $2"
+            shift 2 ;;
+        -h | --help )
+            usage
+            exit
+            shift ;;
+        -- )
+            shift
+            break ;;
+        * )
+            break ;;
     esac
 done
+
+case "$1" in
+    dotfiles )
+        provision dotfiles
+        ;;
+    tooling )
+        provision tooling
+        ;;
+    packages )
+        provision packages
+        ;;
+    * )
+        provision
+        ;;
+esac

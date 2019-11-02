@@ -1,0 +1,9 @@
+---
+all:
+  vars:
+    packages: []
+    install_modules: []
+    snaps: []
+    remove_packages: []
+    dotfiles_path: ""
+    env: {}

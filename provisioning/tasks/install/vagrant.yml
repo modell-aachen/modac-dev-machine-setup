@@ -1,7 +1,7 @@
 ---
-- name: Install terraform
+- name: Install vagrant
   import_tasks:
     file: tasks/install/hashicorp_product.yml
   vars:
-    name: terraform
-    version: 0.12.7
+    name: vagrant
+    version: 2.2.6

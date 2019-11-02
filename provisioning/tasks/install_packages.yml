@@ -1,10 +1,8 @@
 ---
 - name: Ensure python-apt is installed.
-  become: true
   apt:
     name: "python-apt"
 
 - name: Ensure common packages are installed.
-  become: true
   apt:
-    name: "{{ packages }}"
+    name: "{{ all_packages }}"

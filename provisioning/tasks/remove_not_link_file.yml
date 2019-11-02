@@ -1,0 +1,11 @@
+---
+- name: "Get stats for {{ file }}"
+  stat:
+    path: "{{ file }}"
+  register: dotfile
+
+- name: "Remove {{ file }} if it is not a link"
+  file:
+    path: "{{ file }}"
+    state: absent
+  when: dotfile.stat is defined and not dotfile.stat.islnk

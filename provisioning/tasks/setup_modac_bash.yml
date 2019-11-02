@@ -1,0 +1,23 @@
+---
+
+- name: Clone modac-bash
+  git:
+    repo: "git@github.com:modell-aachen/modac-bash"
+    dest: "{{ ansible_env.HOME }}/.modac-bash"
+    update: false
+
+- name: Ensure modac-bash is sourced
+  lineinfile:
+    path: "{{ ansible_env.HOME }}/.bashrc"
+    line: "{{ item }}"
+  loop:
+    - "[ -f $HOME/.modac-bash/bashrc.sh ] && source $HOME/.modac-bash/bashrc.sh"
+    - "[ -f .env ] && source $HOME/.env"
+
+- name: Create Q.wiki repo
+  file:
+    path: "{{ lookup('env', item) }}"
+    state: directory
+  loop:
+    - REPOS_DIRECTORY
+    - PROVISIONER_DIRECTORY

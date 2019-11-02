@@ -1,0 +1,21 @@
+---
+all:
+  vars:
+    packages:
+      - nextcloud-desktop
+      - silversearcher-ag
+      - fzf
+      - texlive-full
+      - pandoc
+      - vim-gtk
+    install_modules:
+      - yubikey
+      - caps_to_esc
+      - yubikey_ssh
+    snaps:
+      - name: teams-for-linux
+      - name: telegram-desktop
+      - name: jabref
+        channel: beta
+      - name: keepassxc
+    dotfiles_path: ""

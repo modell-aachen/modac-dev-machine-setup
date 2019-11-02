@@ -1,0 +1,8 @@
+---
+- name: "Install hashicorp product {{ name }}"
+  become: true
+  unarchive:
+    src: "https://releases.hashicorp.com/{{ name }}/{{ version }}/{{ name }}_{{ version }}_linux_amd64.zip"
+    dest: /usr/local/bin
+    remote_src: yes
+    creates: "/usr/local/bin/{{ name }}"

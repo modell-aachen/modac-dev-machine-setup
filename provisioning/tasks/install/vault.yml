@@ -1,25 +1,7 @@
 ---
-- name: Check if vault is already installed.
-  stat:
-    path: /usr/local/bin/vault
-  register: vault
-
 - name: Install vault
-  block:
-    - name: Create temporary download directory
-      tempfile:
-        state: directory
-        suffix: temp
-      register: download_dir
-
-    - name: Download current release of HashiCorps vault.
-      get_url:
-        url: https://releases.hashicorp.com/vault/1.2.3/vault_1.2.3_linux_amd64.zip
-        dest: "{{ download_dir.path }}"
-
-    - name: Extract vault to /usr/local/bin.
-      become: true
-      unarchive:
-        src: "{{ download_dir.path }}/vault_1.2.3_linux_amd64.zip"
-        dest: /usr/local/bin
-  when: not vault.stat.exists | bool
+  import_tasks:
+    file: tasks/install/hashicorp_product.yml
+  vars:
+    name: vault
+    version: 1.2.3

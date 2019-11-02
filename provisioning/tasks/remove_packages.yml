@@ -1,6 +1,5 @@
 ---
 - name: Ensure unwanted packages are removed.
-  become: true
   apt:
-    name: "{{ remove_packages }}"
+    name: "{{ all_remove_packages }}"
     state: absent

@@ -1,0 +1,7 @@
+---
+- name: Ensure common snaps are installed
+  snap:
+    name: "{{ item.name }}"
+    classic: "{{ item.is_classic | default(false) }}"
+    channel: "{{ item.channel | default('stable') }}"
+  loop: "{{ all_snaps }}"
