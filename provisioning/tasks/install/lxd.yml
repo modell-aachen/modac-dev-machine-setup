@@ -64,3 +64,39 @@
   lineinfile:
     path: /etc/subgid
     line: "root:{{ lookup('pipe', 'id ' + ansible_user_id + ' -g') }}:1"
+
+- include_tasks:
+    file: tasks/lxd/set_network.yml
+  vars:
+    key: "{{ item.key }}"
+    value: "{{ item.value }}"
+  loop:
+    - key: dns.domain
+      value: qwiki
+    - key: dns.mode
+      value: managed
+    - key: raw.dnsmasq
+      value: "auth-zone=qwiki\ndns-loop-detect"
+
+- name: Install lxd-host-dns service
+  become: true
+  block:
+    - name: Install lxdhostdns scripts
+      template:
+        src: "templates/lxd/{{ item }}.sh.j2"
+        dest: "/usr/local/bin/{{ item }}.sh"
+        mode: '0744'
+      loop:
+        - lxdhostdns_start
+        - lxdhostdns_stop
+
+    - name: Install lxd-host-dns service
+      template:
+        src: templates/lxd/lxd-host-dns.service.j2
+        dest: /lib/systemd/system/lxd-host-dns.service
+
+    - name: Enable and (re)start lxd-host-dns service
+      service:
+        name: lxd-host-dns
+        enabled: true
+        state: restarted

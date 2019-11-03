@@ -1,0 +1,13 @@
+[Unit]
+Description=LXD host DNS service
+After=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/lxdhostdns_start.sh
+RemainAfterExit=true
+ExecStop=/usr/local/bin/lxdhostdns_stop.sh
+StandardOutput=journal
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,29 @@
+---
+- assert:
+    that:
+      - gpg_key_file is defined
+
+- name: Import gpg key
+  gpg:
+    key_file: "{{ gpg_key_file }}"
+
+- name: Get gpg key info
+  command: "gpg --keyid-format LONG {{ gpg_key_file }}"
+  changed_when: false
+  register: gpg_key
+
+- name: Set
+  set_fact:
+    signing_key: '{{ gpg_key.stdout | regex_search("\/\w+\s+\d{4}-\d{2}-\d{2}\s\[\w*S\w*\]$", multiline=True) | regex_search("\w+") }}'
+
+- name: Set signing key in git
+  git_config:
+    scope: global
+    name: user.signingKey
+    value: "{{ signing_key }}"
+
+- name: Enable gpg auto signing in git
+  git_config:
+    scope: global
+    name: commit.gpgSign
+    value: "true"

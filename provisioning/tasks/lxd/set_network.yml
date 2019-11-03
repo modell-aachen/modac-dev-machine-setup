@@ -1,0 +1,10 @@
+---
+- name: "Get lxd network setting {{ key }}"
+  command: "lxc network get lxdbr0 {{ key }}"
+  changed_when: false
+  register: lxd_network_prop
+
+- name: "Set lxd network setting {{ key }}"
+  script: 'files/lxd_network_set.sh "{{ key }}" "{{ value }}"'
+  when: value not in lxd_network_prop.stdout
+
