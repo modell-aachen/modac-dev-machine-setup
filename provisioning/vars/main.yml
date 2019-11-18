@@ -2,6 +2,7 @@
 dev:
   packages:
     - python-psutil
+    - jq
     - vim
     - git
     - gitk
@@ -23,7 +24,6 @@ dev:
     - packer
     - terraform
     - vault
-    - vagrant
     - lxd
   snaps:
     - name: code

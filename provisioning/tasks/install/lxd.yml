@@ -75,6 +75,8 @@
       value: qwiki
     - key: dns.mode
       value: managed
+    - key: ipv4.address
+      value: 10.0.206.1/24
     - key: raw.dnsmasq
       value: "auth-zone=qwiki\ndns-loop-detect"
 
