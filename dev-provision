@@ -1,26 +1,30 @@
 #!/usr/bin/env bash
 
 usage() {
-  printf -v text "%s" \
-      "Shorthand script to start the ansible provisioning playbook with different tags.\n" \
-      "By default it will run the full provisioning suite.\n\n" \
-      "dev-provision [LIMITATION] [OPTIONS]\n" \
-      "   -h, --help         shows this help message\n" \
-      "   -i, --inventory    path to an inventory file\n\n" \
-      "   LIMITATIONs:\n" \
-      "     dotfiles         only provision dotfiles\n" \
-      "     packages         only provision system packages\n" \
-      "     tooling          only provision tooling\n\n" \
-      "   example usage:\n" \
-      "     ./dev-provision -i provisioning/inventory_custom_example.yml\n"
+    cat << USAGE
+Description:
+  Shorthand script to start the ansible provisioning playbook with different
+  tags. By default it will run the full provisioning suite.
+  example usage:
+    ./dev-provision -i provisioning/inventory_custom_example.yml
 
-  printf "$text"
+Usage:
+  dev-provision [configuration]
+
+Available configurations
+  dotfiles   only provision dotfiles
+  packages   only provision system packages
+  tooling    only provision tooling
+
+Flags:
+  -h, --help         shows this help message
+  -i, --inventory    path to an inventory file
+USAGE
 }
 
 setup() {
   echo ">> Checking if required setup is already done..."
   if [ ! -x "$(command -v ansible)" ]; then
-    # Setup minimal requirements for provisioning
     echo ">> Installing latest version of ansible"
     sudo apt update
     sudo apt install --yes software-properties-common
