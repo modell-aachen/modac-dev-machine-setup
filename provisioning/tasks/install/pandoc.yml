@@ -1,0 +1,5 @@
+---
+- name: Install pandoc from remote source
+  become: true
+  apt:
+    deb: https://github.com/jgm/pandoc/releases/download/2.7.3/pandoc-2.7.3-1-amd64.deb

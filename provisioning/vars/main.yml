@@ -1,30 +1,31 @@
 ---
 dev:
   packages:
-    - python-psutil
-    - jq
-    - vim
+    - curl
+    - easy-rsa
     - git
     - gitk
-    - curl
-    - wget
+    - gnome-tweak-tool
     - htop
+    - inotify-tools
+    - jq
     - net-tools
-    - ruby
-    - openvpn
-    - easy-rsa
     - network-manager-openvpn
     - network-manager-openvpn-gnome
-    - gnome-tweak-tool
+    - openvpn
+    - python-psutil
     - resolvconf
+    - ruby
     - tmux
-    - inotify-tools
+    - vim
+    - wget
   install_modules:
     - docker
+    - lxd
     - packer
+    - teamviewer
     - terraform
     - vault
-    - lxd
   snaps:
     - name: code
       is_classic: true
@@ -37,8 +38,8 @@ dev:
       is_classic: true
   remove_packages: []
   env:
-    GITHUB_ORGANIZATION: modell-aachen
     GITHUB_AUTH_TOKEN: ''
+    GITHUB_ORGANIZATION: modell-aachen
     RMS_AUTH_TOKEN: ''
     VAGRANT_CLOUD_AUTH_TOKEN: ''
 
