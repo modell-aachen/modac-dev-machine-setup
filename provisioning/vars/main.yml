@@ -41,7 +41,6 @@ dev:
     GITHUB_AUTH_TOKEN: ''
     GITHUB_ORGANIZATION: modell-aachen
     RMS_AUTH_TOKEN: ''
-    VAGRANT_CLOUD_AUTH_TOKEN: ''
 
 antigen_install_dir: ~/.antigen
 antigen_install_path: "{{ antigen_install_dir }}/antigen.zsh"
