@@ -1,0 +1,5 @@
+---
+- name: Install Microsoft teams from remote source
+  become: true
+  apt:
+    deb: https://teams.microsoft.com/downloads/desktopurl?env=production&plat=linux&arch=x64&download=true&linuxArchiveType=deb

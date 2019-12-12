@@ -26,6 +26,7 @@ dev:
     - teamviewer
     - terraform
     - vault
+    - teams
   snaps:
     - name: code
       is_classic: true
