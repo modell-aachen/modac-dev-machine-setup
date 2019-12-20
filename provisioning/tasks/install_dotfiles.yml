@@ -1,26 +1,29 @@
 ---
-- name: Clone dotfiles
-  git:
-    repo: "{{ dotfiles_path }}"
-    dest: "{{ ansible_env.HOME }}/dotfiles"
-    update: false
-  register: dotfiles_repo
+- block:
+    - name: Clone dotfiles
+      git:
+        repo: "{{ dotfiles_path }}"
+        dest: "{{ ansible_env.HOME }}/dotfiles"
+        update: false
+      register: dotfiles_repo
 
-- name: Ensure .local/bin exists
-  file:
-    name: "{{ ansible_env.HOME }}/.local/bin"
-    state: directory
+    - name: Ensure .local/bin exists
+      file:
+        name: "{{ ansible_env.HOME }}/.local/bin"
+        state: directory
 
-- name: Remove files which are not links
-  include_tasks: tasks/remove_not_link_file.yml
-  vars:
-    file: "{{ item }}"
-  loop:
-    - "{{ ansible_env.HOME }}/.profile"
-    - "{{ ansible_env.HOME }}/.bashrc"
+    - name: Remove files which are not links
+      include_tasks: tasks/remove_not_link_file.yml
+      vars:
+        file: "{{ item }}"
+      loop:
+        - "{{ ansible_env.HOME }}/.profile"
+        - "{{ ansible_env.HOME }}/.bashrc"
 
-- name: Install dotfiles
-  command:
-    argv: "./install"
-    chdir: "{{ ansible_env.HOME }}/dotfiles"
-  when: dotfiles_repo.changed
+    - name: Install dotfiles
+      command:
+        argv: "./install"
+        chdir: "{{ ansible_env.HOME }}/dotfiles"
+      when: dotfiles_repo.changed
+  when: dotfiles_path != ""
+    

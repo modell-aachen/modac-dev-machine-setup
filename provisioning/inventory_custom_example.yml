@@ -19,3 +19,6 @@ all:
         channel: beta
       - name: keepassxc
     dotfiles_path: ""
+    env:
+      REPOS_DIRECTORY: ""
+      PROVISIONER_DIRECTORY: ""
