@@ -1,0 +1,7 @@
+---
+- name: Install nomad
+  import_tasks:
+    file: tasks/install/hashicorp_product.yml
+  vars:
+    name: nomad
+    version: 0.10.2
