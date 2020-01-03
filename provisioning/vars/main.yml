@@ -19,6 +19,14 @@ dev:
     - tmux
     - vim
     - wget
+    # Packages needed to build CKE locally
+    - build-essential
+    - libcairo2-dev
+    - libgif-dev
+    - libjpeg-dev
+    - libpango1.0-dev
+    - librsvg2-dev
+
   install_modules:
     - docker
     - lxd
