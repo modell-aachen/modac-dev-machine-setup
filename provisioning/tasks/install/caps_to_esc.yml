@@ -1,5 +1,0 @@
----
-- name: Ensure caps is switched to escape
-  dconf:
-    key: /org/gnome/desktop/input-sources/xkb-options
-    value: "['caps:escape']"
