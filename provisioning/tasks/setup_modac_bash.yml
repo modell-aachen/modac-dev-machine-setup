@@ -12,7 +12,7 @@
     line: "{{ item }}"
   loop:
     - "[ -f $HOME/.modac-bash/bashrc.sh ] && source $HOME/.modac-bash/bashrc.sh"
-    - "[ -f .env ] && source $HOME/.env"
+    - "[ -f $HOME/.env ] && source $HOME/.env"
 
 - name: Create Q.wiki repo
   file:
