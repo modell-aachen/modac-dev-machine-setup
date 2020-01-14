@@ -1,26 +1,67 @@
-# dotfiles
+# Usage
 
-# Fonts
-**Fonts should be installed before running** `p10k configure`
-Installed recommended p10k fonts
-https://github.com/romkatv/powerlevel10k
+## Preparations
+```BASH
+sudo apt install git
+cd ~
+git clone https://github.com/modell-aachen/modac-dev-machine-setup.git
+cp $HOME/modac-dev-machine-setup/provisioning/inventory_custom_example.yml $HOME/.inventory_local.yml
+```
+## Local adjustments
+```BASH
+vim $HOME/.inventory_local.yml
+```
+- remove unused packages and snaps, insert your keys, e.g.
+  * FONTAWESOME_NPM_AUTH_TOKEN: https://password.int.modac.eu/WebClient/Main?itemId=717a1db1-9bd2-457f-9dc3-6b4f25670524
 
-Download these four ttf files:
-- [MesloLGS NF Regular.ttf](https://github.com/romkatv/dotfiles-public/raw/master/.local/share/fonts/NerdFonts/MesloLGS%20NF%20Regular.ttf)
-- [MesloLGS NF Bold.ttf](https://github.com/romkatv/dotfiles-public/raw/master/.local/share/fonts/NerdFonts/MesloLGS%20NF%20Bold.ttf)
-- [MesloLGS NF Italic.ttf](https://github.com/romkatv/dotfiles-public/raw/master/.local/share/fonts/NerdFonts/MesloLGS%20NF%20Italic.ttf)
-- [MesloLGS NF Bold Italic.ttf](https://github.com/romkatv/dotfiles-public/raw/master/.local/share/fonts/NerdFonts/MesloLGS%20NF%20Bold%20Italic.ttf)
+## Initial setup
+```BASH
+cd $HOME/modac-dev-machine-setup/
+./dev-provision -h
+machine provision -i ~/.inventory_local.yml packages
+machine provision -i ~/.inventory_local.yml tooling
+```
 
+## Updates
+Update your `$HOME/.inventory_local.yml`:
+```BASH
+machine edit-config
+```
 
-# Color Scheme
-https://mayccoll.github.io/Gogh
+Apply updates:
+```BASH
+machine provision -i ~/.inventory_local.yml packages
+machine provision -i ~/.inventory_local.yml tooling
+```
 
-Used one:
-- Solarized Darcula
-- Solarized Dark Higher Contrast
-- Solarized Dark
-- Solarized Light
+## Local Q.wikis
+E.g. dev, master, etc.
+### Setup
+```BASH
+qontainer init
+```
 
-# TMUX
-Sweet configuration working without any configuration
-https://github.com/gpakosz/.tmux
+### Build
+E.g. dev (accessible in browser as `dev.qwiki`)
+```BASH
+qontainer create dev
+```
+
+### Connect
+E.g. dev
+```BASH
+qontainer login dev
+```
+
+# FAQ
+## DNS resolver
+Local Q.wiki (e.g. dev.modac) can't be resolved:
+```BASH
+sudo systemctl restart lxd-host-dns.service
+```
+## ZSH
+If you use zsh, source `.env` and `bashrc.sh` in your `.zshrc`
+```BASH
+[ -f $HOME/.env ] && source $HOME/.env
+[ -f $HOME/.modac-bash/bashrc.sh ] && source $HOME/.modac-bash/bashrc.sh
+```

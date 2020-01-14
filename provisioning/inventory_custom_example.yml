@@ -9,16 +9,17 @@ all:
       - pandoc
       - vim-gtk
     install_modules:
-      - yubikey
-      - caps_to_esc
-      - yubikey_ssh
+      - caps_remap
     snaps:
-      - name: teams-for-linux
       - name: telegram-desktop
       - name: jabref
         channel: beta
       - name: keepassxc
     dotfiles_path: ""
+    caps_remap_behavior: "escape" # e.g. escape or none; more options: man xkeyboard-config
     env:
       REPOS_DIRECTORY: ""
       PROVISIONER_DIRECTORY: ""
+      GITHUB_AUTH_TOKEN: ""
+      FONTAWESOME_NPM_AUTH_TOKEN: ""
+      RMS_AUTH_TOKEN: ""
