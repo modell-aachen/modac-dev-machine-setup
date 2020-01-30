@@ -12,9 +12,10 @@
 - name: "Install HashiCorp product {{ name }}"
   become: true
   unarchive:
+    # yamllint disable-line rule:line-length
     src: "https://releases.hashicorp.com/{{ name }}/{{ version }}/{{ name }}_{{ version }}_linux_amd64.zip"
     dest: "{{ install_folder }}"
-    remote_src: yes
+    remote_src: true
     creates: "{{ install_folder }}/{{ name }}"
 
 - name: "Unset existing installation for {{ name }} in /usr/local/bin"

@@ -1,0 +1,6 @@
+---
+extends: default
+
+ignore: |
+  provisioning/roles/**
+  dotbot_scripts/install.conf.yaml

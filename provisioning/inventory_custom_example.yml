@@ -8,6 +8,8 @@ all:
       - texlive-full
       - pandoc
       - vim-gtk
+    python_libraries:
+      - argcomplete
     install_modules:
       - caps_remap
     snaps:
@@ -16,7 +18,9 @@ all:
         channel: beta
       - name: keepassxc
     dotfiles_path: ""
-    caps_remap_behavior: "escape" # e.g. escape or none; more options: man xkeyboard-config
+    # caps_remap_behavior - values:
+    # escape or none; more options: man xkeyboard-config
+    caps_remap_behavior: "escape"
     env:
       REPOS_DIRECTORY: ""
       PROVISIONER_DIRECTORY: ""

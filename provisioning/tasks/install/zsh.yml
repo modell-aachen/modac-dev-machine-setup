@@ -2,7 +2,7 @@
 - name: Ensure packages are installed.
   become: true
   apt:
-    name: ['git', 'zsh' , 'curl']
+    name: ['git', 'zsh', 'curl']
 
 - name: Ensure antigen dir exists.
   file:

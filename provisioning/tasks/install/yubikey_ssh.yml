@@ -10,11 +10,13 @@
 - name: Configure gpg.conf
   blockinfile:
     path: "{{ ansible_env.HOME }}/.gnupg/gpg.conf"
+    # yamllint disable rule:line-length
     block: |
       personal-digest-preferences SHA256
       cert-digest-algo SHA256
       default-preference-list SHA512 SHA384 SHA256 SHA224 AES256 AES192 AES CAST5 ZLIB BZIP2 ZIP Uncompressed
       use-agent
+    # yamllint enable rule:line-length
     create: true
 
 - name: Configure gpg-agent
@@ -28,7 +30,7 @@
     src: /etc/xdg/autostart/gnome-keyring-ssh.desktop
     dest: "{{ ansible_env.HOME }}/.config/autostart/gnome-keyring-ssh.desktop"
     remote_src: true
-    force: no
+    force: false
 
 - name: Disable gnome-keyring-ssh
   lineinfile:

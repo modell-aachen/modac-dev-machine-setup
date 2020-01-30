@@ -26,4 +26,3 @@
         chdir: "{{ ansible_env.HOME }}/dotfiles"
       when: dotfiles_repo.changed
   when: dotfiles_path != ""
-    

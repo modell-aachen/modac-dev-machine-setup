@@ -2,4 +2,5 @@
 - name: Install Microsoft teams from remote source
   become: true
   apt:
+    # yamllint disable-line rule:line-length
     deb: https://teams.microsoft.com/downloads/desktopurl?env=production&plat=linux&arch=x64&download=true&linuxArchiveType=deb

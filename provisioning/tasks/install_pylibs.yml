@@ -1,0 +1,5 @@
+---
+- name: Ensure all python packages are installed.
+  pip:
+    name: "{{ all_python_libs }}"
+    executable: /usr/bin/pip3
