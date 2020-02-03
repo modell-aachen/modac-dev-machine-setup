@@ -47,6 +47,7 @@ dev:
       is_classic: true
   remove_packages: []
   env:
+    VAULT_ADDR: https://vault.modac.cloud
     GITHUB_AUTH_TOKEN: ''
     GITHUB_ORGANIZATION: modell-aachen
     RMS_AUTH_TOKEN: ''
