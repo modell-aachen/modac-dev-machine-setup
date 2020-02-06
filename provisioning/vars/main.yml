@@ -33,6 +33,7 @@ dev:
     - packer
     - teamviewer
     - terraform
+    - terragrunt
     - vault
     - teams
   snaps:
