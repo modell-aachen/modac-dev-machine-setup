@@ -8,8 +8,6 @@ all:
       - texlive-full
       - pandoc
       - vim-gtk
-    python_libraries:
-      - argcomplete
     install_modules:
       - caps_remap
     snaps:

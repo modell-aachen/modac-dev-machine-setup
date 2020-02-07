@@ -19,7 +19,7 @@ dev:
     - tmux
     - vim
     - wget
-    - python3-pip
+    - python3-argcomplete
     # Packages needed to build CKE locally
     - build-essential
     - libcairo2-dev
@@ -27,10 +27,6 @@ dev:
     - libjpeg-dev
     - libpango1.0-dev
     - librsvg2-dev
-
-  python_libraries:
-    - argcomplete
-
   install_modules:
     - docker
     - lxd
