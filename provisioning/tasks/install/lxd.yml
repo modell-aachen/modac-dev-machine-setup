@@ -47,8 +47,8 @@
     - name: Ensure certificate is added to lxd
       command: "lxc config trust add {{ cert_dir }}/client.crt"
       register: out
-      failed_when: "out.stderr and 'Error: Certificate already in trust store' not in out.stderr"
-      changed_when: "'Error: Certificate already in trust store' not in out.stderr"
+      failed_when: "out.stderr and 'Error: Certificate already in trust store' not in out.stderr"     # yamllint disable-line rule:line-length
+      changed_when: "'Error: Certificate already in trust store' not in out.stderr"    # yamllint disable-line rule:line-length
 
   vars:
     cert_dir: "{{ ansible_env.HOME}}/.config/lxc"

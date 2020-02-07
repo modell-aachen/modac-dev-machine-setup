@@ -7,4 +7,3 @@
 - name: "Set lxd network setting {{ key }}"
   script: 'files/lxd_network_set.sh "{{ key }}" "{{ value }}"'
   when: value not in lxd_network_prop.stdout
-
