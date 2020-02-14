@@ -20,6 +20,8 @@ dev:
     - vim
     - wget
     - python3-argcomplete
+    - python3-paramiko
+    - python3-scp
     # Packages needed to build CKE locally
     - build-essential
     - libcairo2-dev
