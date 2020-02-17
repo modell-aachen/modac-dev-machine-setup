@@ -102,3 +102,9 @@
         name: lxd-host-dns
         enabled: true
         state: restarted
+
+    - name: Install lxd-host-dns NetworkManager dispatcher script
+      template:
+        src: templates/lxd/lxdhostdns_restart.j2
+        dest: /etc/NetworkManager/dispatcher.d/lxdhostdns_restart
+        mode: '0744'
