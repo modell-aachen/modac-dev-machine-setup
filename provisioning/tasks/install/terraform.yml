@@ -4,4 +4,4 @@
     file: tasks/install/hashicorp_product.yml
   vars:
     name: terraform
-    version: 0.12.21
+    version: 0.12.26

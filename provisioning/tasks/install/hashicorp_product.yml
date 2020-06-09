@@ -1,5 +1,5 @@
 ---
-- name: Define HasihCorp product destination.
+- name: Define HashiCorp product destination.
   set_fact:
     install_folder: "/opt/hashicorp/{{ name }}/{{ version }}"
 
