@@ -4,7 +4,7 @@
       git:
         repo: "{{ dotfiles_path }}"
         dest: "{{ ansible_env.HOME }}/dotfiles"
-        update: false
+        update: "{{ dotfiles_autoupdate }}"
       register: dotfiles_repo
 
     - name: Ensure .local/bin exists
@@ -19,6 +19,7 @@
       loop:
         - "{{ ansible_env.HOME }}/.profile"
         - "{{ ansible_env.HOME }}/.bashrc"
+        - "{{ ansible_env.HOME }}/.zshrc"
 
     - name: Install dotfiles
       command:

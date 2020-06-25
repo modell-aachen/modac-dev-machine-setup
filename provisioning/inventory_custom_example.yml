@@ -16,6 +16,7 @@ all:
         channel: beta
       - name: keepassxc
     dotfiles_path: ""
+    dotfiles_autoupdate: false
     # caps_remap_behavior - values:
     # escape or none; more options: man xkeyboard-config
     caps_remap_behavior: "escape"
