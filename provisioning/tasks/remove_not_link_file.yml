@@ -8,4 +8,4 @@
   file:
     path: "{{ file }}"
     state: absent
-  when: dotfile.stat is defined and not dotfile.stat.islnk
+  when: dotfile.stat is defined and dotfile.stat.islnk is defined and not dotfile.stat.islnk

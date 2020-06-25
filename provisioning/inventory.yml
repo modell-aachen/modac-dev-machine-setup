@@ -6,4 +6,5 @@ all:
     snaps: []
     remove_packages: []
     dotfiles_path: ""
+    dotfiles_autoupdate: false
     env: {}
