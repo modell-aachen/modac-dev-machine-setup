@@ -9,5 +9,5 @@
     - name: Ensure yubico products are installed
       apt:
         name:
-          - yubikey-manager-qt
+          - yubikey-manager
           - libpam-yubico
