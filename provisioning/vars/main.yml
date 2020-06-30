@@ -29,6 +29,7 @@ dev:
     - libjpeg-dev
     - libpango1.0-dev
     - librsvg2-dev
+    - sshpass
   install_modules:
     - docker
     - lxd
