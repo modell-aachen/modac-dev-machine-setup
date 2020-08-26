@@ -3,30 +3,38 @@
   set_fact:
     install_folder: "/opt/hashicorp/{{ name }}/{{ version }}"
 
-- name: "Ensure install destination for HashiCorp prodcut {{ name }} exists"
-  become: true
-  file:
-    dest: "{{ install_folder }}"
-    state: directory
+- name: Check if Hashicorp product destination exists.  
+  stat:
+    path: "{{ install_folder }}"
+  register: install_folder_stat
 
-- name: "Install HashiCorp product {{ name }}"
-  become: true
-  unarchive:
-    # yamllint disable-line rule:line-length
-    src: "https://releases.hashicorp.com/{{ name }}/{{ version }}/{{ name }}_{{ version }}_linux_amd64.zip"
-    dest: "{{ install_folder }}"
-    remote_src: true
-    creates: "{{ install_folder }}/{{ name }}"
+- name: Install {{ name }} if not yet present.  
+  block:
+    - name: "Ensure install destination for HashiCorp prodcut {{ name }} exists"
+      become: true
+      file:
+        dest: "{{ install_folder }}"
+        state: directory
 
-- name: "Unset existing installation for {{ name }} in /usr/local/bin"
-  become: true
-  file:
-    path: "/usr/local/bin/{{ name }}"
-    state: absent
+    - name: "Install HashiCorp product {{ name }}"
+      become: true
+      unarchive:
+        # yamllint disable-line rule:line-length
+        src: "https://releases.hashicorp.com/{{ name }}/{{ version }}/{{ name }}_{{ version }}_linux_amd64.zip"
+        dest: "{{ install_folder }}"
+        remote_src: true
+        creates: "{{ install_folder }}/{{ name }}"
 
-- name: "Create symlink for {{ name }} in /usr/local/bin"
-  become: true
-  file:
-    src: "{{ install_folder }}/{{ name }}"
-    path: "/usr/local/bin/{{ name }}"
-    state: link
+    - name: "Unset existing installation for {{ name }} in /usr/local/bin"
+      become: true
+      file:
+        path: "/usr/local/bin/{{ name }}"
+        state: absent
+
+    - name: "Create symlink for {{ name }} in /usr/local/bin"
+      become: true
+      file:
+        src: "{{ install_folder }}/{{ name }}"
+        path: "/usr/local/bin/{{ name }}"
+        state: link
+  when: not install_folder_stat.stat.exists

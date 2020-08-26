@@ -1,0 +1,24 @@
+---
+- name: Check if mavpn configuration file exists.
+  stat:
+    path: "{{ mavpn_configuration_file }}"
+  register: vpn_config
+
+- name: Append route-fix if vpn configuration is given.
+  block:
+    - name: Install VPN route fix
+      become: true
+      template:
+        src: files/vpn-fix-routes.sh
+        dest: /etc/openvpn/fix-routes.sh
+        mode: 0644
+
+    - name: Add script to vpn configurations.
+      lineinfile:
+        path: "{{ mavpn_configuration_file }}"
+        line: "{{ item }}"
+      with_items:
+        - "script-security 2"
+        - "route-up  /etc/openvpn/fix-routes.sh"
+
+  when: vpn_config.stat.exists

@@ -31,6 +31,7 @@ dev:
     - librsvg2-dev
     - sshpass
     - rdesktop  # patchday process
+    - nfs-common
   install_modules:
     - docker
     - lxd
@@ -40,6 +41,8 @@ dev:
     - terragrunt
     - vault
     - teams
+    - kind
+    - mavpn-fix-routes
   snaps:
     - name: code
       is_classic: true
@@ -50,12 +53,21 @@ dev:
       is_classic: true
     - name: google-cloud-sdk
       is_classic: true
+    - name: kubectl
+      is_classic: true
+    - name: helm
+      is_classic: true
+    - name: microk8s
+      is_classic: true
+      channel: 1.18/stable
   remove_packages: []
   env:
     VAULT_ADDR: https://vault.modac.cloud
     GITHUB_AUTH_TOKEN: ''
     GITHUB_ORGANIZATION: modell-aachen
     RMS_AUTH_TOKEN: ''
+  groups:
+    - "microk8s"
 
 antigen_install_dir: ~/.antigen
 antigen_install_path: "{{ antigen_install_dir }}/antigen.zsh"

@@ -1,0 +1,27 @@
+---
+- name: Set kind version
+  set_fact:
+    kind_version: v0.8.1
+    kind_root_dir: /opt/kind
+
+- name: Create directory for kind version
+  become: true
+  file:
+    path: "{{ kind_root_dir }}/{{ kind_version }}"
+    state: directory
+
+- name: Fetch kind resource
+  become: true
+  get_url:
+    url: https://kind.sigs.k8s.io/dl/{{ kind_version }}/kind-linux-amd64
+    dest: "{{ kind_root_dir }}/{{ kind_version }}/kind"
+    mode: 0655
+
+- name: Link exectuable
+  become: true
+  file:
+    src: "{{ kind_root_dir }}/{{ kind_version }}/kind"
+    path: "/usr/bin/kind"
+    state: link
+
+

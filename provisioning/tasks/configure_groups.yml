@@ -1,0 +1,7 @@
+---
+- name: "Adding existing user to group"
+  become: true
+  user:
+    name: '{{ ansible_user }}'
+    groups: '{{ group }}'
+    append: yes
