@@ -26,3 +26,4 @@ all:
       GITHUB_AUTH_TOKEN: ""
       FONTAWESOME_NPM_AUTH_TOKEN: ""
       RMS_AUTH_TOKEN: ""
+  mavpn_configuration_file: "/path/to/yout/openvpn/maac/config"

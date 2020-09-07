@@ -15,6 +15,12 @@
       {{ dev.install_modules | union(install_modules) }}
 
   tasks:
+    - name: Gather package facts
+      package_facts:
+        manager: apt
+      tags:
+        - always
+
     - name: Install and Remove packages
       become: true
       block:
@@ -45,6 +51,20 @@
           loop: "{{ all_env | dict2items }}"
       tags:
         - tooling
+
+    - name: Configure environment
+      block:
+        - name: Configure user groups.
+          include_tasks:
+            file: "tasks/configure_groups.yml"
+          vars:
+            group: "{{ group }}"
+          loop: "{{ dev.groups }}"
+          loop_control:
+            loop_var: group
+      tags:
+        - tooling
+        - packages
 
     - include_tasks:
         file: tasks/install_dotfiles.yml

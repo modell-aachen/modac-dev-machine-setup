@@ -8,3 +8,4 @@ all:
     dotfiles_path: ""
     dotfiles_autoupdate: false
     env: {}
+    mavpn_configuration_file: ""
