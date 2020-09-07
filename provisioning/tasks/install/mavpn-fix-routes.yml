@@ -11,7 +11,7 @@
       template:
         src: files/vpn-fix-routes.sh
         dest: /etc/openvpn/fix-routes.sh
-        mode: 0644
+        mode: 0744
 
     - name: Add script to vpn configurations.
       lineinfile:

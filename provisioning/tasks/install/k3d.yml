@@ -1,0 +1,27 @@
+---
+- name: Set k3d version
+  set_fact:
+    k3d_version: v3.0.1
+    k3d_root_dir: /opt/k3d
+
+- name: Create directory for k3d version
+  become: true
+  file:
+    path: "{{ k3d_root_dir }}/{{ k3d_version }}"
+    state: directory
+
+- name: Fetch k3d resource
+  become: true
+  get_url:
+    url: https://github.com/rancher/k3d/releases/download/{{ k3d_version }}/k3d-linux-amd64
+    dest: "{{ k3d_root_dir }}/{{ k3d_version }}/k3d"
+    mode: 0755
+
+- name: Link exectuable
+  become: true
+  file:
+    src: "{{ k3d_root_dir }}/{{ k3d_version }}/k3d"
+    path: "/usr/bin/k3d"
+    state: link
+
+

@@ -43,6 +43,7 @@ dev:
     - teams
     - kind
     - mavpn-fix-routes
+    - k3d
   snaps:
     - name: code
       is_classic: true

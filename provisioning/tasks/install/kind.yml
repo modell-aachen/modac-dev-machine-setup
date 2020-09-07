@@ -15,7 +15,7 @@
   get_url:
     url: https://kind.sigs.k8s.io/dl/{{ kind_version }}/kind-linux-amd64
     dest: "{{ kind_root_dir }}/{{ kind_version }}/kind"
-    mode: 0655
+    mode: 0755
 
 - name: Link exectuable
   become: true
