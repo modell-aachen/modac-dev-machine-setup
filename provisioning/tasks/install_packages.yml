@@ -6,3 +6,6 @@
 - name: Ensure common packages are installed.
   apt:
     name: "{{ all_packages }}"
+
+- name: Update restic
+  command: restic self-update
