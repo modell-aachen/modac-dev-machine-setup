@@ -32,6 +32,7 @@ dev:
     - sshpass
   install_modules:
     - docker
+    - ghcli
     - lxd
     - packer
     - teamviewer
