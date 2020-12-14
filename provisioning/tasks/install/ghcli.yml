@@ -1,0 +1,16 @@
+---
+- name: Install github cli
+  become: true
+  block:
+    - name: add trusted key
+      apt_key:
+        keyserver: keyserver.ubuntu.com
+        id: C99B11DEB97541F0
+
+    - name: Ensure cli repository is enabled
+      apt_repository:
+        repo: deb https://cli.github.com/packages focal main
+
+    - name: Ensure gh cli is installed
+      apt:
+        name: gh

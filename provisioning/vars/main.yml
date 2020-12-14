@@ -34,6 +34,7 @@ dev:
     - rdesktop  # patchday process
   install_modules:
     - docker
+    - ghcli
     - lxd
     - packer
     - teamviewer
