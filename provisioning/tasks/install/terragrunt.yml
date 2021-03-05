@@ -6,4 +6,4 @@
     dest: /usr/local/bin/terragrunt
     mode: '0555'
   vars:
-    version: v0.22.5
+    version: v0.28.7
