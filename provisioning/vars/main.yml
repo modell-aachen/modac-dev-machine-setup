@@ -52,6 +52,9 @@ dev:
       is_classic: true
     - name: google-cloud-sdk
       is_classic: true
+    - name: 1password
+      is_classic: false
+      channel: edge
   remove_packages: []
   env:
     VAULT_ADDR: https://vault.modac.cloud
