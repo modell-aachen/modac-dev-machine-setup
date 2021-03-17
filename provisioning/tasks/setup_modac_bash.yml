@@ -22,8 +22,8 @@
 
 - name: Create Q.wiki repo
   file:
-    path: "{{ lookup('env', item) }}"
+    path: "item"
     state: directory
   loop:
-    - REPOS_DIRECTORY
-    - PROVISIONER_DIRECTORY
+    - "{{ all_env['REPOS_DIRECTORY'] }}"
+    - "{{ all_env['PROVISIONER_DIRECTORY'] }}"
