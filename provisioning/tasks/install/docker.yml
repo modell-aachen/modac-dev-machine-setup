@@ -12,11 +12,11 @@
       snap:
         name: docker
         state: absent
-        
+
     - name: Install docker from package registry
       include_role:
         name: geerlingguy.docker
       vars:
         docker_compose_version: "1.29.1"
         docker_users: 
-          - "{{ username_on_the_host }}"
+          - "{{ username_on_the_host.stdout }}"
