@@ -32,6 +32,9 @@ dev:
     - librsvg2-dev
     - sshpass
     - rdesktop  # patchday process
+    - apt-transport-https
+    - ca-certificates
+    - gnupg
   install_modules:
     - docker
     - ghcli

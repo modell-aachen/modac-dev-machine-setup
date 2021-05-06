@@ -12,14 +12,24 @@ Usage:
   dev-provision [configuration]
 
 Available configurations
-  dotfiles   only provision dotfiles
-  packages   only provision system packages
-  tooling    only provision tooling
+  dotfiles              only provision dotfiles
+  packages              only provision system packages
+  tooling               only provision tooling
+  upgrade-provisioner   will upgrade the dev machine provisioner, 
+                        i.e. checkout newest version and install requirements
 
 Flags:
   -h, --help         shows this help message
   -i, --inventory    path to an inventory file
 USAGE
+}
+
+upgrade() {
+  echo ">> Upgrading dev machine provisioner ..."
+  git pull
+
+  setup()
+  echo ">> Upgrade finished."
 }
 
 setup() {
@@ -31,12 +41,11 @@ setup() {
     echo ">> Done."
   fi
 
-  if [ ! -d "provisioning/roles" ]; then
-    echo ">> Install Ansible Roles using ansible-galaxy"
-    ansible-galaxy install -p ./provisioning/roles -r ./provisioning/requirements.yml
-    echo ">> Done."
-  fi
-  echo ">> Finished."
+
+  echo ">> Install/Updating Ansible Roles using ansible-galaxy"
+  ansible-galaxy install -p ./provisioning/roles -r ./provisioning/requirements.yml
+  echo ">> Done."
+
 }
 
 provision() {
@@ -78,6 +87,9 @@ while true; do
 done
 
 case "$1" in
+    upgrade-provisioner )
+        upgrade-provisioner 
+        ;;
     dotfiles )
         provision dotfiles
         ;;
