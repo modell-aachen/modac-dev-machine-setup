@@ -28,7 +28,7 @@ upgrade() {
   echo ">> Upgrading dev machine provisioner ..."
   git pull
 
-  setup()
+  setup
   echo ">> Upgrade finished."
 }
 
@@ -43,7 +43,7 @@ setup() {
 
 
   echo ">> Install/Updating Ansible Roles using ansible-galaxy"
-  ansible-galaxy install -p ./provisioning/roles -r ./provisioning/requirements.yml
+  ansible-galaxy install --force -p ./provisioning/roles -r ./provisioning/requirements.yml
   echo ">> Done."
 
 }
@@ -88,7 +88,7 @@ done
 
 case "$1" in
     upgrade-provisioner )
-        upgrade-provisioner 
+        upgrade 
         ;;
     dotfiles )
         provision dotfiles

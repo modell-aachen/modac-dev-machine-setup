@@ -1,56 +1,22 @@
 ---
+
+- name: Lookup the username running the provisioning
+  become: false
+  local_action: command whoami
+  register: username_on_the_host
+
 - name: Installs and configures Docker
   become: true
   block:
-    - name: Ensure old versions of Docker are not installed via snap.
+    - name: Remove docker from snap
       snap:
         name: docker
         state: absent
-
-    - name: Ensure old versions of Docker are not installed via package manager.
-      package:
-        name:
-          - docker
-          - docker-engine
-        state: absent
-
-    - name: Ensure dependencies are installed.
-      apt:
-        name:
-
-        state: present
-
-    - name: Add Docker apt key.
-      apt_key:
-        url: "{{ docker_apt_gpg_key }}"
-        id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
-        state: present
-      register: add_repository_key
-      ignore_errors: "{{ docker_apt_ignore_key_error }}"
-
-    - name: Ensure curl is present (on older systems without SNI).
-      package: name=curl state=present
-      when: add_repository_key is failed
-
-    - name: Add Docker apt key (alternative for older systems without SNI).
-      shell: >
-        curl -sSL {{ docker_apt_gpg_key }} | sudo apt-key add -
-      args:
-        warn: false
-      when: add_repository_key is failed
-
-    - name: Add Docker repository.
-      apt_repository:
-        repo: "{{ docker_apt_repository }}"
-        state: present
-        update_cache: true
-
-    - name: Ensure group "docker" exists
-      group:
-        name: docker
-
-    - name: Ensure docker users are added to the docker group.
-      user:
-        name: "{{ ansible_user_id }}"
-        groups: docker
-        append: true
+        
+    - name: Install docker from package registry
+      include_role:
+        name: geerlingguy.docker
+      vars:
+        docker_compose_version: "1.29.1"
+        docker_users: 
+          - "{{ username_on_the_host }}"
