@@ -1,0 +1,40 @@
+---
+- name: Define KinD.io version.
+  set_fact:
+    version: "v0.10.0"
+
+- name: Define KinD.io destination.
+  set_fact:
+    install_folder: "/opt/kind/{{ version }}"
+
+- name: "Ensure install destination for KinD.io exists"
+  become: true
+  file:
+    dest: "{{ install_folder }}"
+    state: directory
+
+- name: "Install KinD.io"
+  become: true
+  get_url:
+    # yamllint disable-line rule:line-length
+    url: "https://kind.sigs.k8s.io/dl/{{ version }}/kind-linux-amd64"
+    dest: "{{ install_folder }}/kind"
+
+- name: "Set correct permissions for KinD.io"
+  become: true
+  file:
+    dest: "{{ install_folder }}/kind"
+    mode: a+x
+
+- name: "Unset existing installation for KinD.io in /usr/local/bin"
+  become: true
+  file:
+    path: "/usr/local/bin/kind"
+    state: absent
+
+- name: "Create symlink for KinD.io in /usr/local/bin"
+  become: true
+  file:
+    src: "{{ install_folder }}/kind"
+    path: "/usr/local/bin/kind"
+    state: link
