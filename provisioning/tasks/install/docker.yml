@@ -1,17 +1,22 @@
 ---
+
+- name: Lookup the username running the provisioning
+  become: false
+  local_action: command whoami
+  register: username_on_the_host
+
 - name: Installs and configures Docker
   become: true
   block:
-    - name: Ensure docker is installed.
+    - name: Remove docker from snap
       snap:
         name: docker
+        state: absent
 
-    - name: Ensure group "docker" exists
-      group:
-        name: docker
-
-    - name: Ensure docker users are added to the docker group.
-      user:
-        name: "{{ ansible_user_id }}"
-        groups: docker
-        append: true
+    - name: Install docker from package registry
+      include_role:
+        name: geerlingguy.docker
+      vars:
+        docker_compose_version: "1.29.1"
+        docker_users: 
+          - "{{ username_on_the_host.stdout }}"
