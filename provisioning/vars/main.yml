@@ -59,7 +59,11 @@ dev:
       is_classic: false
       channel: edge
   remove_packages: []
+  remove_snaps:
+    - docker
   env:
+    REPOS_DIRECTORY: "{{ lookup('env', 'REPOS_DIRECTORY') }}"
+    PROVISIONER_DIRECTORY: "{{ lookup('env', 'REPOS_DIRECTORY') }}"
     VAULT_ADDR: https://vault.modac.cloud
     GITHUB_AUTH_TOKEN: ''
     GITHUB_ORGANIZATION: modell-aachen

@@ -4,6 +4,7 @@ all:
     packages: []
     install_modules: []
     snaps: []
+    remove_snaps: []
     remove_packages: []
     dotfiles_path: ""
     dotfiles_autoupdate: false

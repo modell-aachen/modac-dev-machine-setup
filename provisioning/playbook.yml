@@ -7,6 +7,8 @@
       {{ dev.env | combine(env) }}
     all_snaps: |
       {{ dev.snaps | union(snaps) }}
+    all_remove_snaps: |
+      {{ dev.remove_snaps | union(remove_snaps) }}
     all_packages: |
       {{ dev.packages | union(packages) }}
     all_remove_packages: |
@@ -24,6 +26,8 @@
             file: tasks/remove_packages.yml
         - include_tasks:
             file: tasks/install_snaps.yml
+        - include_tasks:
+            file: tasks/remove_snaps.yml
       tags:
         - packages
 
