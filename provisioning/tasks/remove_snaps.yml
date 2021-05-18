@@ -1,0 +1,6 @@
+---
+- name: Ensure unwanted snaps are removed
+  snap:
+    name: "{{ item }}"
+    state: absent
+  loop: "{{ all_remove_snaps }}"
