@@ -1,7 +1,7 @@
 ---
 - name: Ensure python-apt is installed.
   apt:
-    name: "python-apt"
+    name: "python3-apt"
 
 - name: Ensure common packages are installed.
   apt:
