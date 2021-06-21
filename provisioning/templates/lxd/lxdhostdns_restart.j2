@@ -1,7 +1,0 @@
-#!/bin/bash
-
-status=$2
-
-if [ "$status" == 'up' ]; then
-    systemctl restart lxd-host-dns.service
-fi
