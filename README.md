@@ -56,7 +56,8 @@ qontainer login dev
 
 # FAQ
 ## DNS resolver
-Local Q.wiki (e.g. dev.modac) can't be resolved:
+Local Q.wiki (e.g. dev.modac) can't be resolved  ( < Ubuntu 21.04 only):
+
 ```BASH
 sudo systemctl restart lxd-host-dns.service
 ```
