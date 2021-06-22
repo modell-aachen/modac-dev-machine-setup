@@ -78,33 +78,37 @@
     - key: ipv4.address
       value: 10.0.206.1/24
     - key: raw.dnsmasq
-      value: "auth-zone=qwiki\ndns-loop-detect"
+      value: ""
 
-- name: Install lxd-host-dns service
+- name: Remove lxd-host-dns service
   become: true
   block:
-    - name: Install lxdhostdns scripts
-      template:
-        src: "templates/lxd/{{ item }}.sh.j2"
-        dest: "/usr/local/bin/{{ item }}.sh"
-        mode: '0744'
+    - name: Remove obsolete lxd files
+      file:
+        path: "/usr/local/bin/{{ item }}.sh"
+        state: absent
       loop:
-        - lxdhostdns_start
-        - lxdhostdns_stop
+        - /usr/local/bin/lxdhostdns_start.sh
+        - /usr/local/bin/lxdhostdns_stop.sh
+        - /lib/systemd/system/lxd-host-dns.service
+        - /etc/NetworkManager/dispatcher.d/lxdhostdns_restart
 
-    - name: Install lxd-host-dns service
+    - name: Disable lxd-host-dns service
+      service:
+        name: lxd-host-dns
+        enabled: false
+        state: stopped
+
+- name: Install lxd-dns-lxdbr0 service
+  become: true
+  block:
+    - name: Install lxd-dns-lxdbr0 service
       template:
-        src: templates/lxd/lxd-host-dns.service.j2
-        dest: /lib/systemd/system/lxd-host-dns.service
+        src: templates/lxd/lxd-dns-lxdbr0.service.j2
+        dest: /lib/systemd/system/lxd-dns-lxdbr0.service
 
     - name: Enable and (re)start lxd-host-dns service
       service:
-        name: lxd-host-dns
+        name: lxd-dns-lxdbr0
         enabled: true
         state: restarted
-
-    - name: Install lxd-host-dns NetworkManager dispatcher script
-      template:
-        src: templates/lxd/lxdhostdns_restart.j2
-        dest: /etc/NetworkManager/dispatcher.d/lxdhostdns_restart
-        mode: '0744'
