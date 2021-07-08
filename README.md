@@ -13,6 +13,7 @@ vim $HOME/.inventory_local.yml
 ```
 - remove unused packages and snaps, insert your keys, e.g.
   * FONTAWESOME_NPM_AUTH_TOKEN: https://password.int.modac.eu/WebClient/Main?itemId=717a1db1-9bd2-457f-9dc3-6b4f25670524
+- create a local ssh key
 
 ## Initial setup
 ```BASH
