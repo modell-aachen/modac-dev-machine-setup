@@ -45,7 +45,6 @@ dev:
     - terragrunt
     - vault
     - teams
-    - garden-io
     - k8s-kind
   snaps:
     - name: code

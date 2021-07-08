@@ -2,6 +2,7 @@
 - hosts: all
   vars_files:
     - vars/main.yml
+    - vars/tooling_version.yml
   vars:
     all_env: |
       {{ dev.env | combine(env) }}

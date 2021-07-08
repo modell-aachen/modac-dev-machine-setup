@@ -1,0 +1,48 @@
+---
+- name: Check versioned binary of '{{ name }}' exists
+  stat:
+    path: "/opt/{{ name }}/{{ version }}/{{ name }}"
+  register: stat_result
+
+- name: Install versioned binary of '{{ name }}' if not yet existing
+  when: not stat_result.stat.exists
+  become: true
+  block:
+  - name: Set destination.
+    set_fact:
+      install_folder: "/opt/{{ name }}/{{ version }}/"
+
+  - name: "Ensure install destination exists"
+    file:
+      dest: "{{ install_folder }}"
+      state: directory
+
+  - name: "Download and install"
+    get_url:
+      url: "{{ url }}"
+      dest: "{{ install_folder }}/{{ name }}"
+    when: not unzip
+
+  - name: "Download, unzip and install"
+    unarchive:
+      src: "{{ url }}"
+      dest: "{{ install_folder }}"
+      remote_src: true
+      creates: "{{ install_folder }}/{{ name }}"
+    when: unzip
+
+  - name: "Set correct permissions"
+    file:
+      dest: "{{ install_folder }}/{{ name }}"
+      mode: a+x
+
+  - name: "Unset existing installation link in /usr/local/bin"
+    file:
+      path: "/usr/local/bin/{{ name }}"
+      state: absent
+
+  - name: "Create symlink in /usr/local/bin"
+    file:
+      src: "{{ install_folder }}/{{ name }}"
+      path: "/usr/local/bin/{{ name }}"
+      state: link

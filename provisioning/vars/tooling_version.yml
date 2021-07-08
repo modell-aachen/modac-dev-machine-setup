@@ -1,0 +1,9 @@
+tooling:
+  version:
+    terraform:
+    vault:
+    packer:
+    nomad:
+    terragrunt: v0.28.7
+    skaffold: v1.27.0
+    kind: v0.11.1
