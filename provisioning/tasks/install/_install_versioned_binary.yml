@@ -10,38 +10,38 @@
   block:
   - name: Set destination.
     set_fact:
-      install_folder: "/opt/{{ name }}/{{ version }}/"
+      install_folder: "/opt/{{ name }}/{{ version }}"
 
-  - name: "Ensure install destination exists"
+  - name: "Ensure install destination for '{{ name }}' exists"
     file:
-      dest: "{{ install_folder }}"
+      dest: "{{ install_folder }}/"
       state: directory
 
-  - name: "Download and install"
+  - name: "Download and install '{{ name }}'"
     get_url:
       url: "{{ url }}"
       dest: "{{ install_folder }}/{{ name }}"
     when: not unzip
 
-  - name: "Download, unzip and install"
+  - name: "Download, unzip and install '{{ name }}'"
     unarchive:
       src: "{{ url }}"
-      dest: "{{ install_folder }}"
+      dest: "{{ install_folder }}/"
       remote_src: true
       creates: "{{ install_folder }}/{{ name }}"
     when: unzip
 
-  - name: "Set correct permissions"
+  - name: "Set correct permissions for '{{ name }}'"
     file:
       dest: "{{ install_folder }}/{{ name }}"
       mode: a+x
 
-  - name: "Unset existing installation link in /usr/local/bin"
+  - name: "Unset existing installation link for '{{ name }}' in /usr/local/bin"
     file:
       path: "/usr/local/bin/{{ name }}"
       state: absent
 
-  - name: "Create symlink in /usr/local/bin"
+  - name: "Create symlink for '{{ name }}' in /usr/local/bin"
     file:
       src: "{{ install_folder }}/{{ name }}"
       path: "/usr/local/bin/{{ name }}"

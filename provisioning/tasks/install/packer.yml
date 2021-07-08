@@ -1,7 +1,9 @@
 ---
-- name: Install packer
+- name: Install packer (by hashicorp)
   import_tasks:
-    file: tasks/install/hashicorp_product.yml
+    file: tasks/install/_install_versioned_binary.yml
   vars:
     name: packer
-    version: 1.5.0
+    url: "https://releases.hashicorp.com/packer/{{ tooling.version.packer }}/packer_{{ tooling.version.packer }}_linux_amd64.zip"
+    version: "{{ tooling.version.packer }}"
+    unzip: true

@@ -1,7 +1,9 @@
 ---
-- name: Install vault
+- name: Install vault (by hashicorp)
   import_tasks:
-    file: tasks/install/hashicorp_product.yml
+    file: tasks/install/_install_versioned_binary.yml
   vars:
     name: vault
-    version: 1.3.0
+    url: "https://releases.hashicorp.com/vault/{{ tooling.version.vault }}/vault_{{ tooling.version.vault }}_linux_amd64.zip"
+    version: "{{ tooling.version.vault }}"
+    unzip: true

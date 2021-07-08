@@ -1,7 +1,9 @@
 ---
-- name: Install terraform
+- name: Install terraform (by hashicorp)
   import_tasks:
-    file: tasks/install/hashicorp_product.yml
+    file: tasks/install/_install_versioned_binary.yml
   vars:
     name: terraform
-    version: 0.14.7
+    url: "https://releases.hashicorp.com/terraform/{{ tooling.version.terraform }}/terraform_{{ tooling.version.terraform }}_linux_amd64.zip"
+    version: "{{ tooling.version.terraform }}"
+    unzip: true
