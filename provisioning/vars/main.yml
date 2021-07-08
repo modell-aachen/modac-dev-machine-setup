@@ -59,7 +59,13 @@ dev:
     - name: 1password
       is_classic: false
       channel: edge
-  remove_packages: []
+    - name: kubectl
+      is_classic: true
+    - name: helm
+      is_classic: true
+  remove_packages:
+    - helm
+    - kubectl
   remove_snaps:
     - docker
   env:
