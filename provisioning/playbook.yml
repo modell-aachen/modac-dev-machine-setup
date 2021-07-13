@@ -45,7 +45,7 @@
           lineinfile:
             path: "{{ ansible_env.HOME }}/.env"
             regexp: "^export {{ item.key }}="
-            line: "export {{ item.key }}={{ item.value }}"
+            line: "export {{ item.key }}=\"{{ item.value }}\""
             create: true
           loop: "{{ all_env | dict2items }}"
       tags:
