@@ -1,0 +1,9 @@
+---
+- name: Install k8s-kind
+  import_tasks:
+    file: tasks/install/_install_versioned_binary.yml
+  vars:
+    name: kind
+    url: "https://kind.sigs.k8s.io/dl/{{ tooling.version.kind }}/kind-linux-amd64"
+    version: "{{ tooling.version.kind }}"
+    unzip: false
