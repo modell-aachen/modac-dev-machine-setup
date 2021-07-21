@@ -46,6 +46,7 @@ dev:
     - vault
     - teams
     - k8s-kind
+    - skaffold
   snaps:
     - name: code
       is_classic: true
