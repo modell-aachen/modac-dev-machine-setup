@@ -7,3 +7,4 @@ tooling:
     terragrunt: "v0.28.7"
     skaffold: "v1.27.0"
     kind: "v0.11.1"
+    mkcert: "v1.4.3"

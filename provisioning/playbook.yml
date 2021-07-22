@@ -16,6 +16,8 @@
       {{ dev.remove_packages | union(remove_packages) }}
     all_install_modules: |
       {{ dev.install_modules | union(install_modules) }}
+    all_certificates: |
+      {{ dev.certificates | union(certificates) }}
 
   tasks:
     - name: Install and Remove packages
@@ -58,3 +60,9 @@
             - always
       tags:
         - dotfiles
+
+    - name: Generate local server certificates
+      block:
+      - include_tasks:
+          file: tasks/generate_certificates.yml
+      tags: certificate

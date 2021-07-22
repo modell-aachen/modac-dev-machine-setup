@@ -1,0 +1,15 @@
+---
+- name: Create certificates
+  command: "mkcert {{ host }}"
+
+- name: Creates certificate directories
+  file:
+    path: "{{ location }}"
+    state: directory
+    recurse: yes
+
+- name: Move certificates
+  command: "mv ./{{ host }}.pem {{ location }}"
+
+- name: Move certificates
+  command: "mv ./{{ host }}-key.pem {{ location }}"

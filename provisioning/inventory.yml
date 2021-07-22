@@ -9,3 +9,4 @@ all:
     dotfiles_path: ""
     dotfiles_autoupdate: false
     env: {}
+    certificates: []

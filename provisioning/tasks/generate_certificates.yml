@@ -1,0 +1,10 @@
+---
+- name: Create local CA
+  command: mkcert -install
+
+- name: Create certificates
+  include_tasks: tasks/certificates/generate_certificate.yml
+  vars:
+    host: "{{ item.host }}"
+    location: "{{ item.location }}"
+  loop: "{{ all_certificates }}"
