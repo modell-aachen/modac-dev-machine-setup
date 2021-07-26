@@ -73,7 +73,7 @@ dev:
     - docker
   certificates:
     - host: localhost
-      location: "{{ ansible_env.HOME }}/certs"
+      location: "{{ ansible_env.HOME }}/certs/localhost"
   env:
     REPOS_DIRECTORY: "{{ lookup('env', 'REPOS_DIRECTORY') }}"
     PROVISIONER_DIRECTORY: "{{ lookup('env', 'REPOS_DIRECTORY') }}"

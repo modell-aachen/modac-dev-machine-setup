@@ -10,9 +10,6 @@ all:
       - vim-gtk
     install_modules:
       - caps_remap
-    certificates:
-      - host: localhost
-        location: /path/to/certificate
     snaps:
       - name: telegram-desktop
       - name: jabref

@@ -16,50 +16,48 @@
       {{ dev.remove_packages | union(remove_packages) }}
     all_install_modules: |
       {{ dev.install_modules | union(install_modules) }}
-    all_certificates: |
-      {{ dev.certificates | union(certificates) }}
 
   tasks:
-    - name: Install and Remove packages
-      become: true
-      block:
-        - include_tasks:
-            file: tasks/install_packages.yml
-        - include_tasks:
-            file: tasks/remove_packages.yml
-        - include_tasks:
-            file: tasks/install_snaps.yml
-        - include_tasks:
-            file: tasks/remove_snaps.yml
-      tags:
-        - packages
+  #   - name: Install and Remove packages
+  #     become: true
+  #     block:
+  #       - include_tasks:
+  #           file: tasks/install_packages.yml
+  #       - include_tasks:
+  #           file: tasks/remove_packages.yml
+  #       - include_tasks:
+  #           file: tasks/install_snaps.yml
+  #       - include_tasks:
+  #           file: tasks/remove_snaps.yml
+  #     tags:
+  #       - packages
 
-    - name: Install and configure tooling
-      block:
-        - include_tasks:
-            file: "tasks/install/{{ module }}.yml"
-          loop: "{{ all_install_modules }}"
-          loop_control:
-            loop_var: module
-        - include_tasks:
-            file: tasks/setup_modac_bash.yml
-        - name: Write enviroment variables
-          lineinfile:
-            path: "{{ ansible_env.HOME }}/.env"
-            regexp: "^export {{ item.key }}="
-            line: "export {{ item.key }}=\"{{ item.value }}\""
-            create: true
-          loop: "{{ all_env | dict2items }}"
-      tags:
-        - tooling
+  #   - name: Install and configure tooling
+  #     block:
+  #       - include_tasks:
+  #           file: "tasks/install/{{ module }}.yml"
+  #         loop: "{{ all_install_modules }}"
+  #         loop_control:
+  #           loop_var: module
+  #       - include_tasks:
+  #           file: tasks/setup_modac_bash.yml
+  #       - name: Write enviroment variables
+  #         lineinfile:
+  #           path: "{{ ansible_env.HOME }}/.env"
+  #           regexp: "^export {{ item.key }}="
+  #           line: "export {{ item.key }}=\"{{ item.value }}\""
+  #           create: true
+  #         loop: "{{ all_env | dict2items }}"
+  #     tags:
+  #       - tooling
 
-    - include_tasks:
-        file: tasks/install_dotfiles.yml
-        apply:
-          tags:
-            - always
-      tags:
-        - dotfiles
+  #   - include_tasks:
+  #       file: tasks/install_dotfiles.yml
+  #       apply:
+  #         tags:
+  #           - always
+  #     tags:
+  #       - dotfiles
 
     - name: Generate local server certificates
       block:

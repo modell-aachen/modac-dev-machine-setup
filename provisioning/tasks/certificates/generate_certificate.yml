@@ -1,15 +1,23 @@
 ---
+- stat:
+    path: "{{ location }}"
+  register: certificate_folder
+
 - name: Create certificates
   command: "mkcert {{ host }}"
+  when: not certificate_folder.stat.exists
 
 - name: Creates certificate directories
   file:
     path: "{{ location }}"
     state: directory
     recurse: yes
+  when: not certificate_folder.stat.exists
 
 - name: Move certificates
   command: "mv ./{{ host }}.pem {{ location }}"
+  when: not certificate_folder.stat.exists
 
 - name: Move certificates
   command: "mv ./{{ host }}-key.pem {{ location }}"
+  when: not certificate_folder.stat.exists
