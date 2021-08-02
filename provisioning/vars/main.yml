@@ -30,6 +30,7 @@ dev:
     - libjpeg-dev
     - libpango1.0-dev
     - librsvg2-dev
+    - libnss3-tools
     - sshpass
     - rdesktop  # patchday process
     - apt-transport-https
@@ -39,6 +40,7 @@ dev:
     - docker
     - ghcli
     - lxd
+    - mkcert
     - packer
     - teamviewer
     - terraform
@@ -69,6 +71,9 @@ dev:
     - kubectl
   remove_snaps:
     - docker
+  certificates:
+    - host: localhost
+      location: "{{ ansible_env.HOME }}/certs/localhost"
   env:
     REPOS_DIRECTORY: "{{ lookup('env', 'REPOS_DIRECTORY') }}"
     PROVISIONER_DIRECTORY: "{{ lookup('env', 'REPOS_DIRECTORY') }}"
@@ -78,6 +83,7 @@ dev:
     RMS_AUTH_TOKEN: ''
     JENKINS_USER: ''
     JENKINS_TOKEN: ''
+    QWIKI_DEVELOPMENT_ROOT_CA: "{{ ansible_env.HOME }}/.local/share/mkcert"
 
 
 antigen_install_dir: ~/.antigen

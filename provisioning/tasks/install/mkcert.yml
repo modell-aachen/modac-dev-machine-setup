@@ -1,0 +1,9 @@
+---
+- name: Install mkcert
+  import_tasks:
+    file: tasks/install/_install_versioned_binary.yml
+  vars:
+    name: mkcert
+    url: "https://github.com/FiloSottile/mkcert/releases/download/{{ tooling.version.mkcert }}/mkcert-{{ tooling.version.mkcert }}-linux-amd64"
+    version: "{{ tooling.version.mkcert }}"
+    unzip: false

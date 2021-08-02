@@ -58,3 +58,9 @@
             - always
       tags:
         - dotfiles
+
+    - name: Generate local server certificates
+      block:
+      - include_tasks:
+          file: tasks/generate_certificates.yml
+      tags: certificate
