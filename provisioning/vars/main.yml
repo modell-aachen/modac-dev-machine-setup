@@ -83,6 +83,7 @@ dev:
     RMS_AUTH_TOKEN: ''
     JENKINS_USER: ''
     JENKINS_TOKEN: ''
+    QWIKI_DEVELOPMENT_ROOT_CA: "{{ ansible_env.HOME }}/.local/share/mkcert"
 
 
 antigen_install_dir: ~/.antigen

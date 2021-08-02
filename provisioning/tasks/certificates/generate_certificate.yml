@@ -3,21 +3,40 @@
     path: "{{ location }}"
   register: certificate_folder
 
-- name: Create certificates
-  command: "mkcert {{ host }}"
+- name: Create certificate
   when: not certificate_folder.stat.exists
+  block:
+  - name: Generate certificate
+    command: "mkcert {{ host }}"
+    environment:
+      CAROOT: "{{ all_env['QWIKI_DEVELOPMENT_ROOT_CA'] }}"
 
-- name: Creates certificate directories
-  file:
-    path: "{{ location }}"
-    state: directory
-    recurse: yes
-  when: not certificate_folder.stat.exists
+  - name: Create certificate directories
+    file:
+      path: "{{ location }}"
+      state: directory
+      recurse: yes
 
-- name: Move certificates
-  command: "mv ./{{ host }}.pem {{ location }}"
-  when: not certificate_folder.stat.exists
+  - name: Move certificate
+    copy:
+      src: "./{{ host }}.pem"
+      dest: "{{ location }}/{{ host }}.pem"
+      remote_src: true
+      force: false
 
-- name: Move certificates
-  command: "mv ./{{ host }}-key.pem {{ location }}"
-  when: not certificate_folder.stat.exists
+  - name: Move key
+    copy:
+      src: "./{{ host }}-key.pem"
+      dest: "{{ location }}/{{ host }}-key.pem"
+      remote_src: true
+      force: false
+
+  - name: Remove original certificate file
+    file:
+      path: "./{{ host }}.pem"
+      state: absent
+
+  - name: Remove original key file
+    file:
+      path: "./{{ host }}-key.pem"
+      state: absent
