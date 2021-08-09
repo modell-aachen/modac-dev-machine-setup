@@ -37,6 +37,7 @@ dev:
     - ca-certificates
     - gnupg
   install_modules:
+    - certificates
     - docker
     - ghcli
     - lxd
