@@ -37,11 +37,11 @@ dev:
     - ca-certificates
     - gnupg
   install_modules:
-    - certificates
     - docker
     - ghcli
     - lxd
     - mkcert
+    - certificates
     - packer
     - teamviewer
     - terraform
