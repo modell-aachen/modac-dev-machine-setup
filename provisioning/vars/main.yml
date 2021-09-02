@@ -55,7 +55,7 @@ dev:
       is_classic: true
     - name: node
       is_classic: true
-      channel: 11
+      channel: 12
     - name: go
       is_classic: true
     - name: google-cloud-sdk
