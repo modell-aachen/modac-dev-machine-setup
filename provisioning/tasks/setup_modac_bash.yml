@@ -1,5 +1,8 @@
 ---
 
+- name: Change the working directory to somedir/ before executing the command.
+  shell:  ssh-keyscan -H remote_host.com >> /etc/ssh/ssh_known_hosts
+
 - name: Clone modac-bash
   git:
     repo: "git@github.com:modell-aachen/modac-bash"
