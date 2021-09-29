@@ -19,8 +19,8 @@ vim $HOME/.inventory_local.yml
 ```BASH
 cd $HOME/modac-dev-machine-setup/
 ./dev-provision -h
-machine provision -i ~/.inventory_local.yml packages
-machine provision -i ~/.inventory_local.yml tooling
+./dev-provision -i ~/.inventory_local.yml packages
+./dev-provision -i ~/.inventory_local.yml tooling
 ```
 
 ## Updates
