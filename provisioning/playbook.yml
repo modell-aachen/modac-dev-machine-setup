@@ -27,8 +27,10 @@
             file: tasks/remove_packages.yml
         - include_tasks:
             file: tasks/install_snaps.yml
+            when: '"Microsoft" not in kernel'
         - include_tasks:
             file: tasks/remove_snaps.yml
+            when: '"Microsoft" not in kernel'
       tags:
         - packages
 
