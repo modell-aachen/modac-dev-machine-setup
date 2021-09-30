@@ -1,5 +1,5 @@
 ---
 - name: Ensure lxd is installed.
   include_tasks:
-      file: tasks/install/lxd/lxd.yml
+      file: tasks/lxd/lxd.yml
   when: '"Microsoft" not in ansible_facts["kernel"]'
