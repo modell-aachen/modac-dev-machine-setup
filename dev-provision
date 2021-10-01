@@ -36,8 +36,8 @@ setup() {
   echo ">> Checking if required setup is already done..."
   if [ ! -x "$(command -v ansible)" ]; then
     echo ">> Installing latest version of ansible"
-    sudo apt update
-    sudo apt install --yes ansible
+    sudo apt install python3-pip
+    pip3 install ansible==2.10.7
     echo ">> Done."
   fi
 
