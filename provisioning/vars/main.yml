@@ -5,7 +5,6 @@ dev:
     - easy-rsa
     - git
     - gitk
-    - gnome-tweak-tool
     - htop
     - inotify-tools
     - jq
