@@ -50,12 +50,10 @@ dev:
     - teams
     - k8s-kind
     - skaffold
+    - nvm
   snaps:
     - name: code
       is_classic: true
-    - name: node
-      is_classic: true
-      channel: 12
     - name: go
       is_classic: true
     - name: google-cloud-sdk
@@ -72,6 +70,7 @@ dev:
     - kubectl
   remove_snaps:
     - docker
+    - node
   certificates:
     - host: localhost
       location: "{{ ansible_env.HOME }}/certs/localhost"
