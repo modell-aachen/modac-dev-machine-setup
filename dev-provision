@@ -15,7 +15,8 @@ Available configurations
   dotfiles              only provision dotfiles
   packages              only provision system packages
   tooling               only provision tooling
-  upgrade-provisioner   will upgrade the dev machine provisioner, 
+  scripts               only provision scripts (modac-bash)
+  upgrade-provisioner   will upgrade the dev machine provisioner,
                         i.e. checkout newest version and install requirements
 
 Flags:
@@ -88,7 +89,7 @@ done
 
 case "$1" in
     upgrade-provisioner )
-        upgrade 
+        upgrade
         ;;
     dotfiles )
         provision dotfiles
@@ -98,6 +99,9 @@ case "$1" in
         ;;
     packages )
         provision packages
+        ;;
+    scripts )
+        provision scripts
         ;;
     * )
         provision

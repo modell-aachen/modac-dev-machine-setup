@@ -46,6 +46,11 @@
           loop: "{{ all_install_modules }}"
           loop_control:
             loop_var: module
+      tags:
+        - tooling
+
+    - name: Install and configure modac-bash
+      block:
         - include_tasks:
             file: tasks/setup_modac_bash.yml
         - name: Write enviroment variables
@@ -56,7 +61,7 @@
             create: true
           loop: "{{ all_env | dict2items }}"
       tags:
-        - tooling
+        - scripts
 
     - include_tasks:
         file: tasks/install_dotfiles.yml
