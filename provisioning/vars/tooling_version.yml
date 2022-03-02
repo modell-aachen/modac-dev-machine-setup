@@ -5,8 +5,8 @@ tooling:
     packer: "1.5.0"
     nomad: "0.10.2"
     terragrunt: "v0.28.7"
-    skaffold: "v1.35.2"
-    kind: "v0.11.1"
+    skaffold: "v1.36.0"
+    k3d: "v5.3.0"
     mkcert: "v1.4.3"
     nvm: "v0.39.0"
     node:
