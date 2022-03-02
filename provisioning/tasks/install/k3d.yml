@@ -1,0 +1,9 @@
+---
+- name: Install k3d
+  import_tasks:
+    file: tasks/install/_install_versioned_binary.yml
+  vars:
+    name: k3d
+    url: "https://github.com/rancher/k3d/releases/download/{{ tooling.version.k3d }}/k3d-linux-amd64"
+    version: "{{ tooling.version.k3d }}"
+    unzip: false

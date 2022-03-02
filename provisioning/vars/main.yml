@@ -49,6 +49,7 @@ dev:
     - vault
     - teams
     - k8s-kind
+    - k3d
     - skaffold
     - nvm
   snaps:
