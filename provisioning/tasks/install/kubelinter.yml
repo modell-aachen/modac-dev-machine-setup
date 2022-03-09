@@ -1,0 +1,9 @@
+---
+- name: Install kubelinter (by stackrox)
+  import_tasks:
+    file: tasks/install/_install_versioned_binary.yml
+  vars:
+    name: kubelinter
+    url: "https://github.com/stackrox/kube-linter/releases/download/{{ tooling.version.kubelinter }}/kube-linter-linux.zip"
+    version: "{{ tooling.version.kubelinter }}"
+    unzip: true
