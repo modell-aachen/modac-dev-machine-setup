@@ -51,6 +51,7 @@ dev:
     - k3d
     - skaffold
     - nvm
+    - kube_linter
   snaps:
     - name: code
       is_classic: true
