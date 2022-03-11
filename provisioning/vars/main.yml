@@ -51,6 +51,7 @@ dev:
     - k3d
     - skaffold
     - nvm
+    - poetry
     - kube_linter
   snaps:
     - name: code
