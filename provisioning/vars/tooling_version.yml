@@ -9,6 +9,7 @@ tooling:
     k3d: "v5.3.0"
     mkcert: "v1.4.3"
     nvm: "v0.39.0"
+    poetry: "1.1.13"
     node:
       default: "lts/erbium"
       installed:
