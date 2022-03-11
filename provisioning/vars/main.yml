@@ -52,6 +52,7 @@ dev:
     - skaffold
     - nvm
     - poetry
+    - kube_linter
   snaps:
     - name: code
       is_classic: true
