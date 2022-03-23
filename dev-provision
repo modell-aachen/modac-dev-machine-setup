@@ -37,8 +37,9 @@ setup() {
   echo ">> Checking if required setup is already done..."
   echo ">> Checking default python version .."
 
-  if ! python -c 'import sys; assert sys.version_info >= (3,9)' > /dev/null; then
+  if ! python -c 'import sys; assert sys.version_info >= (3,9)' &> /dev/null; then
     echo ">> [ERROR] Your default python version is too old. Python >= 3.9 required."
+    exit 1
   else
     echo ">> Python 3.9 requirement satisfied."
   fi
