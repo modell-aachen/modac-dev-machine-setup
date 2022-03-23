@@ -1,4 +1,4 @@
 ---
 - name: Installs and configures Docker
   homebrew:
-    name: docker
+    name: homebrew/cask/docker
