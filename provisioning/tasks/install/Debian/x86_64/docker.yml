@@ -1,0 +1,17 @@
+---
+
+- name: Lookup the username running the provisioning
+  become: false
+  local_action: command whoami
+  register: username_on_the_host
+
+- name: Installs and configures Docker
+  become: true
+  block:
+    - name: Install docker from package registry
+      include_role:
+        name: geerlingguy.docker
+      vars:
+        docker_compose_version: "1.29.1"
+        docker_users:
+          - "{{ username_on_the_host.stdout }}"
