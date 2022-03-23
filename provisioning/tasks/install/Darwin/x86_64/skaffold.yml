@@ -1,9 +1,4 @@
 ---
-- name: Install skaffold (by google)
-  include_tasks:
-    file: tasks/install/_install_versioned_binary.yml
-  vars:
-    name: skaffold
-    url: "https://storage.googleapis.com/skaffold/releases/{{ tooling.version.skaffold }}/skaffold-linux-amd64"
-    version: "{{ tooling.version.skaffold }}"
-    unzip: false
+- name: Install skaffold
+  homebrew:
+    name: "skaffold@{{ tooling.version.skaffold }}"
