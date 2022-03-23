@@ -1,11 +1,25 @@
 ---
-- name: Ensure python-apt is installed.
-  apt:
-    name: "python3-apt"
 
-- name: Ensure common packages are installed.
-  apt:
-    name: "{{ all_packages }}"
+- name: Install packages on Debian.
+  block:
+    - name: Ensure python-apt is installed.
+      apt:
+        name: "python3-apt"
 
-- name: Update restic
-  command: restic self-update
+    - name: Ensure common packages are installed.
+      apt:
+        name: "{{ all_packages }}"
+
+    - name: Update restic
+      command: restic self-update
+  when: is_ubuntu
+
+- name: Install packages on Mac.
+  block:
+    - name: Ensure common packages are installed.
+      brew:
+        name: "{{ package }}"
+      loop: "{{ packages_mac_brew }}"
+      loop_control:
+        loop_var: package
+  when: is_mac

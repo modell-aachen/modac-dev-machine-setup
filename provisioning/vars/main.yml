@@ -36,6 +36,24 @@ dev:
     - apt-transport-https
     - ca-certificates
     - gnupg
+
+  packages_mac_brew:
+    - curl
+    - jq
+    - restic
+    - ruby
+    - tmux
+    - vim
+    - wget
+    - python3-psutil
+    - python-is-python3
+    - python3-argcomplete
+    - python3-paramiko
+    - python3-scp
+    - sshpass
+    - ca-certificates
+    - gnupg
+
   install_modules:
     - docker
     - ghcli
