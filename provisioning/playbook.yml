@@ -59,10 +59,8 @@
     - name: Install and configure tooling
       block:
         - name: Loop over custom modules
-        - import_tasks:
+          include_tasks:
             file: "tasks/install/_install_module_if_existing.yaml"
-            vars:
-              module: "{{ module }}"
           loop: "{{ all_install_modules }}"
           loop_control:
             loop_var: module

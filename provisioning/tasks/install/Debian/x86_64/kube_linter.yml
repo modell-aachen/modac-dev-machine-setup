@@ -1,6 +1,6 @@
 ---
 - name: Install kube-linter (by stackrox)
-  import_tasks:
+  include_tasks:
     file: tasks/install/_install_versioned_binary.yml
   vars:
     name: kube-linter

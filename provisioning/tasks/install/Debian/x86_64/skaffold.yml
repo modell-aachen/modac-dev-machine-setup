@@ -1,6 +1,6 @@
 ---
 - name: Install skaffold (by google)
-  import_tasks:
+  include_tasks:
     file: tasks/install/_install_versioned_binary.yml
   vars:
     name: skaffold
