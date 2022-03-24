@@ -2,10 +2,12 @@
 all:
   vars:
     packages: []
+    packages_mac: []
     install_modules: []
     snaps: []
     remove_snaps: []
     remove_packages: []
+    remove_packages_mac: []
     dotfiles_path: ""
     dotfiles_autoupdate: false
     env: {}
