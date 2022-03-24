@@ -4,17 +4,17 @@
   block:
     - name: Ensure unwanted packages are removed.
       apt:
-        name: "{{ all_remove_packages }}"
+        name: "{{ all_remove_packages_debian }}"
         state: absent
   when: is_ubuntu
 
-- name: Remove packages on Mac.
+- name: Remove packages on Darwin.
   block:
     - name: Ensure common packages are installed.
       homebrew:
         name: "{{ package }}"
         state: absent
-      loop: "{{ all_remove_packages_mac }}"
+      loop: "{{ all_remove_packages_darwin }}"
       loop_control:
         loop_var: package
   when: is_macosx

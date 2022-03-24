@@ -52,8 +52,8 @@ setup() {
         sudo apt remove -y ansible-base
     fi
 
-    installedAnsileBase=$(sudo apt list --installed ansible 2>/dev/null)
-    if [[ "$installedAnsileBase" = *"ansible"* ]]; then
+    installedAnsibleBase=$(sudo apt list --installed ansible 2>/dev/null)
+    if [[ "$installedAnsibleBase" = *"ansible"* ]]; then
         echo ">> Purging ansible installation through apt"
         echo ">> $ sudo apt remove -y ansible"
         sudo apt remove -y ansible
