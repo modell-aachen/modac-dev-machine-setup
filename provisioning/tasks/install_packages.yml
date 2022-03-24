@@ -1,6 +1,7 @@
 ---
 
 - name: Install packages on Debian.
+  become: true
   block:
     - name: Ensure python-apt is installed.
       apt:
