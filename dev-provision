@@ -95,6 +95,8 @@ if [ $? != 0 ] ; then echo "Failed parsing options." >&2 ; exit 1 ; fi
 
 eval set -- "$OPTS"
 
+local inventory="${HOME}/.inventory_local.yaml"
+
 while true; do
     case "$1" in
         -i | --inventory )
