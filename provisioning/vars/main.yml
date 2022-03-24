@@ -37,7 +37,9 @@ dev:
     - ca-certificates
     - gnupg
 
-  packages_mac_brew: []
+  packages_mac_brew:
+    - gnu-tar
+    - coreutils
 
   install_modules:
     - docker
