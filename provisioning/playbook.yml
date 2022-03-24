@@ -39,7 +39,6 @@
 
   tasks:
     - name: Install and Remove packages
-      become: true
       block:
         - include_tasks:
             file: tasks/install_packages.yml
@@ -49,6 +48,7 @@
         - packages
 
     - name: Install and Remove snap packages (Ubuntu only)
+      become: true
       block:
         - include_tasks:
             file: tasks/install_snaps.yml
