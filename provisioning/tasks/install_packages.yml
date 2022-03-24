@@ -19,7 +19,7 @@
     - name: Ensure common packages are installed.
       homebrew:
         name: "{{ package }}"
-      loop: "{{ packages_mac_brew }}"
+      loop: "{{ all_packages_mac }}"
       loop_control:
         loop_var: package
   when: is_macosx

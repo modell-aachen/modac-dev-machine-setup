@@ -37,7 +37,7 @@ dev:
     - ca-certificates
     - gnupg
 
-  packages_mac_brew:
+  packages_mac:
     - gnu-tar
     - coreutils
 
@@ -73,6 +73,7 @@ dev:
   remove_packages:
     - helm
     - kubectl
+  remove_packages_mac: []
   remove_snaps:
     - docker
     - node

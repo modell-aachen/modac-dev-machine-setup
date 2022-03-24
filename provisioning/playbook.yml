@@ -14,6 +14,10 @@
       {{ dev.packages | union(packages) }}
     all_remove_packages: |
       {{ dev.remove_packages | union(remove_packages) }}
+    all_packages_mac: |
+      {{ dev.packages_mac | union(packages_mac) }}
+    all_remove_packages_mac: |
+      {{ dev.remove_packages_mac | union(remove_packages_mac) }}
     all_install_modules: |
       {{ dev.install_modules | union(install_modules) }}
 

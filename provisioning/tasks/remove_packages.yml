@@ -13,7 +13,7 @@
       homebrew:
         name: "{{ package }}"
         state: absent
-      loop: "{{ packages_mac_brew }}"
+      loop: "{{ all_remove_packages_mac }}"
       loop_control:
         loop_var: package
   when: is_macosx
