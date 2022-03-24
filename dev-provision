@@ -95,7 +95,7 @@ if [ $? != 0 ] ; then echo "Failed parsing options." >&2 ; exit 1 ; fi
 
 eval set -- "$OPTS"
 
-local inventory="-i ${HOME}/.inventory_local.yml"
+inventory="-i ${HOME}/.inventory_local.yml"
 
 while true; do
     case "$1" in
