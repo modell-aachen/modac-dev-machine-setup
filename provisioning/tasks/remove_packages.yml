@@ -1,5 +1,19 @@
 ---
-- name: Ensure unwanted packages are removed.
-  apt:
-    name: "{{ all_remove_packages }}"
-    state: absent
+- name: Remove packages on Debian.
+  block:
+    - name: Ensure unwanted packages are removed.
+      apt:
+        name: "{{ all_remove_packages }}"
+        state: absent
+  when: is_ubuntu
+
+- name: Remove packages on Mac.
+  block:
+    - name: Ensure common packages are installed.
+      homebrew:
+        name: "{{ package }}"
+        state: absent
+      loop: "{{ packages_mac_brew }}"
+      loop_control:
+        loop_var: package
+  when: is_macosx
