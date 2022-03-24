@@ -1,5 +1,3 @@
-
-
 - name: Check if module for current os and architecture exists for {{ module }}
   stat:
     path: "tasks/install/{{ ansible_facts['os_family'] }}/{{ ansible_facts['machine'] }}/{{ module }}.yml"
