@@ -1,0 +1,9 @@
+---
+- name: Install helm
+  include_tasks:
+    file: tasks/install/_install_versioned_binary.yml
+  vars:
+    name: helm
+    url: "https://get.helm.sh/helm-{{ tooling.version.helm }}-darwin-amd64.tar.gz"
+    version: "{{ tooling.version.helm }}"
+    unzip: true

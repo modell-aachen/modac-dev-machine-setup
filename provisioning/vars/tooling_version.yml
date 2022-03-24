@@ -11,6 +11,8 @@ tooling:
     nvm: "v0.39.0"
     poetry: "1.1.13"
     kube_linter: "0.2.5"
+    helm: ""
+    kubectl: "v1.23.0"
     node:
       default: "lts/erbium"
       installed:
