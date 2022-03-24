@@ -2,3 +2,4 @@
 - name: Installs and configures Docker
   homebrew:
     name: homebrew/cask/docker
+    state: installed
