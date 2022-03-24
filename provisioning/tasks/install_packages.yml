@@ -17,9 +17,9 @@
 - name: Install packages on Mac.
   block:
     - name: Ensure common packages are installed.
-      brew:
+      homebrew:
         name: "{{ package }}"
       loop: "{{ packages_mac_brew }}"
       loop_control:
         loop_var: package
-  when: is_mac
+  when: is_macosx
