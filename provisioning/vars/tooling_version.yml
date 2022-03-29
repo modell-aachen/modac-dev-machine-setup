@@ -11,6 +11,9 @@ tooling:
     nvm: "v0.39.0"
     poetry: "1.1.13"
     kube_linter: "0.2.5"
+    docker:
+      compose: "2.3.4"
+      python_lib: "5.0.3"
     node:
       default: "lts/erbium"
       installed:
