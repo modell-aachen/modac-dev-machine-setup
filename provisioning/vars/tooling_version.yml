@@ -12,7 +12,7 @@ tooling:
     poetry: "1.1.13"
     kube_linter: "0.2.5"
     docker:
-      compose: "2.3.4"
+      compose: "v2.3.4"
       python_lib: "5.0.3"
     node:
       default: "lts/erbium"

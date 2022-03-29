@@ -10,7 +10,7 @@
   block:
     - name: Install docker python lib
       include_role:
-        name: geerlingguy.docker
+        name: geerlingguy.pip
       vars:
         pip_install_packages:
           - name: docker
