@@ -6,5 +6,3 @@
       - subnet: 172.173.0.0/16
         iprange: 172.173.174.0/24
         gateway: 172.173.174.254
-    driver_options:
-      com.docker.network.bridge.host_binding_ipv4: "172.173.0.1"
