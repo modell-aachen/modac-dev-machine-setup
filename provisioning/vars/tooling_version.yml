@@ -5,12 +5,15 @@ tooling:
     packer: "1.5.0"
     nomad: "0.10.2"
     terragrunt: "v0.28.7"
-    skaffold: "v1.36.0"
-    k3d: "v5.3.0"
+    skaffold: "v1.37.0"
+    k3d: "v5.4.0"
     mkcert: "v1.4.3"
     nvm: "v0.39.0"
     poetry: "1.1.13"
     kube_linter: "0.2.5"
+    docker:
+      compose: "v2.3.4"
+      python_lib: "5.0.3"
     node:
       default: "lts/erbium"
       installed:

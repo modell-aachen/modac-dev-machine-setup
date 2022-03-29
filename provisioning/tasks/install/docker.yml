@@ -8,10 +8,22 @@
 - name: Installs and configures Docker
   become: true
   block:
+    - name: Install docker python lib
+      include_role:
+        name: geerlingguy.pip
+      vars:
+        pip_install_packages:
+          - name: docker
+            version: "{{ tooling.version.docker.python_lib }}"
+
     - name: Install docker from package registry
       include_role:
         name: geerlingguy.docker
       vars:
-        docker_compose_version: "1.29.1"
+        docker_compose_version: "{{ tooling.version.docker.compose }}"
         docker_users:
           - "{{ username_on_the_host.stdout }}"
+
+    - name: Create custom network bridge for k8s operations.
+      include_tasks:
+          file: tasks/docker/docker_create_k8s_bridge.yml
