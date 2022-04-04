@@ -28,6 +28,7 @@
       src: "{{ url }}"
       dest: "{{ install_folder }}/"
       remote_src: true
+      extra_opts: [--strip-components=1]
       creates: "{{ install_folder }}/{{ name }}"
     when: unzip
 

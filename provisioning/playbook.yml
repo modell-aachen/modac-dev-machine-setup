@@ -10,16 +10,35 @@
       {{ dev.snaps | union(snaps) }}
     all_remove_snaps: |
       {{ dev.remove_snaps | union(remove_snaps) }}
-    all_packages: |
+    all_packages_debian: |
       {{ dev.packages | union(packages) }}
-    all_remove_packages: |
+    all_remove_packages_debian: |
       {{ dev.remove_packages | union(remove_packages) }}
+    all_packages_darwin: |
+      {{ dev.packages_darwin | union(packages_darwin) }}
+    all_remove_packages_darwin: |
+      {{ dev.remove_packages_darwin | union(remove_packages_darwin) }}
     all_install_modules: |
       {{ dev.install_modules | union(install_modules) }}
 
+  pre_tasks:
+    - name: Set general incompatibility
+      set_fact:
+        is_ubuntu: false
+        is_macosx: false
+
+    - name: Set Ubuntu compatibility
+      set_fact:
+        is_ubuntu: true
+      when: ansible_facts['os_family'] == "Debian"
+
+    - name: Set MAC OSX compatibility
+      set_fact:
+        is_macosx: true
+      when: ansible_facts['os_family'] == "Darwin" and not is_ubuntu
+
   tasks:
     - name: Install and Remove packages
-      become: true
       block:
         - include_tasks:
             file: tasks/install_packages.yml
@@ -28,21 +47,22 @@
       tags:
         - packages
 
-    - name: Install and Remove snap packages
+    - name: Install and Remove snap packages (Ubuntu only)
       become: true
       block:
         - include_tasks:
             file: tasks/install_snaps.yml
         - include_tasks:
             file: tasks/remove_snaps.yml
-      when: '"Microsoft" not in ansible_facts["kernel"]'
+      when: is_ubuntu
       tags:
         - packages
 
     - name: Install and configure tooling
       block:
-        - include_tasks:
-            file: "tasks/install/{{ module }}.yml"
+        - name: Loop over custom modules
+          include_tasks:
+            file: "tasks/install/_install_module_if_existing.yaml"
           loop: "{{ all_install_modules }}"
           loop_control:
             loop_var: module

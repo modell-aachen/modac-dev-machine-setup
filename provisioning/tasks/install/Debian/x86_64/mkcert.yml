@@ -1,6 +1,6 @@
 ---
 - name: Install mkcert
-  import_tasks:
+  include_tasks:
     file: tasks/install/_install_versioned_binary.yml
   vars:
     name: mkcert
