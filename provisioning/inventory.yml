@@ -2,12 +2,10 @@
 all:
   vars:
     packages: []
-    packages_darwin: []
     install_modules: []
     snaps: []
     remove_snaps: []
     remove_packages: []
-    remove_packages_darwin: []
     dotfiles_path: ""
     dotfiles_autoupdate: false
     env: {}

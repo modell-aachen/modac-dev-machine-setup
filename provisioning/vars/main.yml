@@ -36,11 +36,6 @@ dev:
     - apt-transport-https
     - ca-certificates
     - gnupg
-
-  packages_darwin:
-    - gnu-tar
-    - coreutils
-
   install_modules:
     - docker
     - ghcli
@@ -58,8 +53,6 @@ dev:
     - nvm
     - poetry
     - kube_linter
-    - helm
-    - kubectl
   snaps:
     - name: code
       is_classic: true
@@ -70,15 +63,16 @@ dev:
     - name: 1password
       is_classic: false
       channel: edge
+    - name: kubectl
+      is_classic: true
+    - name: helm
+      is_classic: true
   remove_packages:
     - helm
     - kubectl
-  remove_packages_darwin: []
   remove_snaps:
     - docker
     - node
-    - helm
-    - kubectl
   certificates:
     - host: localhost
       location: "{{ ansible_env.HOME }}/certs/localhost"
