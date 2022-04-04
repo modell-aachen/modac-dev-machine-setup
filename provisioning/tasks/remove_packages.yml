@@ -10,7 +10,7 @@
 
 - name: Remove packages on Darwin.
   block:
-    - name: Ensure common packages are installed.
+    - name: Ensure unwanted packages are removed.
       homebrew:
         name: "{{ package }}"
         state: absent
