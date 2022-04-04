@@ -1,6 +1,0 @@
----
-- name: Installs and configures Docker
-  homebrew_cask:
-    name: docker
-    accept_external_apps: true
-    state: installed

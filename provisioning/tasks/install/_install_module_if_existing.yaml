@@ -1,8 +1,0 @@
-- name: Check if module for current os and architecture exists for {{ module }}
-  stat:
-    path: "tasks/install/{{ ansible_facts['os_family'] }}/{{ ansible_facts['machine'] }}/{{ module }}.yml"
-  register: module_result
-
-- name: Include tasks for {{ module }} iff existing
-  include_tasks: "tasks/install/{{ ansible_facts['os_family'] }}/{{ ansible_facts['machine'] }}/{{ module }}.yml"
-  when: module_result.stat.exists

@@ -1,6 +1,6 @@
 ---
 - name: Install terragrunt (by gruntwork.io)
-  include_tasks:
+  import_tasks:
     file: tasks/install/_install_versioned_binary.yml
   vars:
     name: terragrunt

@@ -1,9 +1,0 @@
----
-- name: Install kubectl
-  include_tasks:
-    file: tasks/install/_install_versioned_binary.yml
-  vars:
-    name: kubectl
-    url: "https://storage.googleapis.com/kubernetes-release/release/{{ tooling.version.kubectl }}/bin/linux/amd64/kubectl"
-    version: "{{ tooling.version.kubectl }}"
-    unzip: false

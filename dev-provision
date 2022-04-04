@@ -35,40 +35,15 @@ upgrade() {
 
 setup() {
   echo ">> Checking if required setup is already done..."
-  echo ">> Checking default python version .."
-
-  if ! python -c 'import sys; assert sys.version_info >= (3,9)' &> /dev/null; then
-    echo ">> [ERROR] Your default python version is too old. Python >= 3.9 required."
-    exit 1
-  else
-    echo ">> Python 3.9 requirement satisfied."
-  fi
-
-  if [[ "$(uname -s)" = "Linux"* ]]; then
-    installedAnsileBase=$(sudo apt list --installed ansible-base 2>/dev/null)
-    if [[ "$installedAnsileBase" = *"ansible-base"* ]]; then
-        echo ">> Purging ansible-base installation through apt"
-        echo ">> $ sudo apt remove -y ansible-base"
-        sudo apt remove -y ansible-base
-    fi
-
-    installedAnsibleBase=$(sudo apt list --installed ansible 2>/dev/null)
-    if [[ "$installedAnsibleBase" = *"ansible"* ]]; then
-        echo ">> Purging ansible installation through apt"
-        echo ">> $ sudo apt remove -y ansible"
-        sudo apt remove -y ansible
-    fi
-  fi
-
   if [ ! -x "$(command -v ansible)" ]; then
-    echo ">> Installing latest version of ansible using pip"
-    sudo -H pip3 install ansible
-    sudo -H pip3 install paramiko
+    echo ">> Installing latest version of ansible"
+    sudo apt update
+    sudo apt install --yes ansible
     echo ">> Done."
   fi
 
 
-  echo ">> Install/Updating ansible roles using ansible-galaxy"
+  echo ">> Install/Updating Ansible Roles using ansible-galaxy"
   ansible-galaxy install $1 -p ./provisioning/roles -r ./provisioning/requirements.yml
   echo ">> Done."
 
@@ -94,8 +69,6 @@ OPTS=`getopt -o hi: --long inventory:,help -- "$@"`
 if [ $? != 0 ] ; then echo "Failed parsing options." >&2 ; exit 1 ; fi
 
 eval set -- "$OPTS"
-
-inventory="-i ${HOME}/.inventory_local.yml"
 
 while true; do
     case "$1" in
