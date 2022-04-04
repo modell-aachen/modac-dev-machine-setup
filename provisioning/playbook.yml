@@ -60,6 +60,9 @@
             line: "export {{ item.key }}=\"{{ item.value }}\""
             create: true
           loop: "{{ all_env | dict2items }}"
+        - name: Install modac-bash-helper based on python
+          command: |
+            bash -e "$HOME/.modac-bash/install_modac_shell_helper.sh"
       tags:
         - scripts
 
