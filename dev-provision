@@ -41,7 +41,7 @@ setup() {
     echo ">> [ERROR] Your default python version is too old. Python >= 3.8 required."
     exit 1
   else
-    echo ">> Python 3.9 requirement satisfied."
+    echo ">> Python 3.8 requirement satisfied."
   fi
 
   if [[ "$(uname -s)" = "Linux"* ]]; then
