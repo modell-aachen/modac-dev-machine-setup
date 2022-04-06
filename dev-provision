@@ -58,6 +58,10 @@ setup() {
         echo ">> $ sudo apt remove -y ansible"
         sudo apt remove -y ansible
     fi
+
+    echo ">> Checking for installed pip3"
+    echo ">> $ sudo apt install python3-pip"
+    sudo apt install python3-pip
   fi
 
   if [ ! -x "$(command -v ansible)" ]; then
