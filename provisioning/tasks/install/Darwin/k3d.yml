@@ -4,6 +4,6 @@
     file: tasks/install/_install_versioned_binary.yml
   vars:
     name: k3d
-    url: "https://github.com/rancher/k3d/releases/download/{{ tooling.version.k3d }}/k3d-darwin-amd64"
+    url: "https://github.com/rancher/k3d/releases/download/{{ tooling.version.k3d }}/k3d-darwin-{{ module_architecture }}"
     version: "{{ tooling.version.k3d }}"
     unzip: false

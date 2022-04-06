@@ -1,8 +1,27 @@
-- name: Check if module for current os and architecture exists for {{ module }}
+- name: Check if module overwrite for current os exists for {{ module }}
   stat:
-    path: "tasks/install/{{ ansible_facts['os_family'] }}/{{ ansible_facts['machine'] }}/{{ module }}.yml"
+    path: "tasks/install/{{ ansible_facts['os_family'] }}/{{ module }}.yml"
   register: module_result
 
-- name: Include tasks for {{ module }} iff existing
-  include_tasks: "tasks/install/{{ ansible_facts['os_family'] }}/{{ ansible_facts['machine'] }}/{{ module }}.yml"
+- name: Check if general module exists for {{ module }}
+  stat:
+    path: "tasks/install/general/{{ module }}.yml"
+  register: general_module_result
+
+- name: Set architecture to amd64
+  set:
+    module_architecture: "amd64"
+  when: ansible_facts['machine'] == "x86_64"
+
+- name: Set architecture to arm64
+  set:
+    module_architecture: "arm64"
+  when: ansible_facts['machine'] == "arm64"
+
+- name: Include os specific module tasks for {{ module }} iff existing
+  include_tasks: "tasks/install/{{ ansible_facts['os_family'] }}/{{ module }}.yml"
   when: module_result.stat.exists
+
+- name: Include general module tasks for {{ module }} iff os specific are missing
+  include_tasks: "tasks/install/general/{{ module }}.yml"
+  when: not module_result.stat.exists and general_module_result.exists
