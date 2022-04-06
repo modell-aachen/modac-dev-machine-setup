@@ -39,12 +39,12 @@
 
     - name: Set architecture to amd64
       set_fact:
-        module_architecture: "amd64"
+        machine_architecture: "amd64"
       when: ansible_facts['machine'] == "x86_64"
 
     - name: Set architecture to arm64
       set_fact:
-        module_architecture: "arm64"
+        machine_architecture: "arm64"
       when: ansible_facts['machine'] == "arm64"
 
   tasks:
