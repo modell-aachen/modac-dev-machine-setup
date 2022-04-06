@@ -1,3 +1,12 @@
+# Required packages
+The machine provisioner requires some basic packages.
+If your using ubuntu >= 20.04, you can follow along with the "Usage" section. On other operating system, i.e. MacOS, please satisfy the following requirements manually:
+
+* python >= 3.8
+* pip >= 20.3 ^ pip3 >= 20.3
+* git
+* vim
+
 # Usage
 
 ## Preparations
