@@ -81,10 +81,11 @@
             create: true
           loop: "{{ all_env | dict2items }}"
         - name: Install modac-bash-helper based on python
-          command: |
-            if [ -f "$HOME/.modac-bash/install_modac_shell_helper.sh" ]; then
-              bash -e "$HOME/.modac-bash/install_modac_shell_helper.sh"
-            fi
+          shell:
+            cmd: |
+              if [ -f "$HOME/.modac-bash/install_modac_shell_helper.sh" ]; then
+                bash -e "$HOME/.modac-bash/install_modac_shell_helper.sh"
+              fi
       tags:
         - scripts
 
