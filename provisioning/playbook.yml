@@ -37,6 +37,16 @@
         is_macosx: true
       when: ansible_facts['os_family'] == "Darwin" and not is_ubuntu
 
+    - name: Set architecture to amd64
+      set_fact:
+        module_architecture: "amd64"
+      when: ansible_facts['machine'] == "x86_64"
+
+    - name: Set architecture to arm64
+      set_fact:
+        module_architecture: "arm64"
+      when: ansible_facts['machine'] == "arm64"
+
   tasks:
     - name: Install and Remove packages
       block:

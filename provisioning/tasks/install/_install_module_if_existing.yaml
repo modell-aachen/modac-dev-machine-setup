@@ -9,12 +9,12 @@
   register: general_module_result
 
 - name: Set architecture to amd64
-  set:
+  set_fact:
     module_architecture: "amd64"
   when: ansible_facts['machine'] == "x86_64"
 
 - name: Set architecture to arm64
-  set:
+  set_fact:
     module_architecture: "arm64"
   when: ansible_facts['machine'] == "arm64"
 
@@ -24,4 +24,4 @@
 
 - name: Include general module tasks for {{ module }} iff os specific are missing
   include_tasks: "tasks/install/general/{{ module }}.yml"
-  when: not module_result.stat.exists and general_module_result.exists
+  when: not module_result.stat.exists and general_module_result.stat.exists
