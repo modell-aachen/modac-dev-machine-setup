@@ -17,7 +17,9 @@
     nvm alias default {{ tooling.version.node.default }}
     nvm use {{ tooling.version.node.default }}
 
-- name: Install yarn using npm
-  npm:
-    name: yarn
-    global: yes
+- name: Install yarn for every node versions
+  shell: |
+    . {{ ansible_env.HOME }}/.nvm/nvm.sh
+    nvm use {{ item }}
+    npm install yarn
+  loop: "{{ tooling.version.node.installed }}"
