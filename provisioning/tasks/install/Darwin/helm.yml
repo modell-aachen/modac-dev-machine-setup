@@ -7,3 +7,5 @@
     url: "https://get.helm.sh/helm-{{ tooling.version.helm }}-darwin-{{ machine_architecture }}.tar.gz"
     version: "{{ tooling.version.helm }}"
     unzip: true
+    extra_opts:
+      - "--strip-components=1"
