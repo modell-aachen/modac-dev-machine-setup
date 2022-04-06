@@ -1,0 +1,4 @@
+- name: Install yarn using npm
+  npm:
+    name: yarn
+    global: yes
