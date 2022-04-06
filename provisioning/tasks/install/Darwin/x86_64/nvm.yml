@@ -15,3 +15,8 @@
   shell: |
     . {{ ansible_env.HOME }}/.nvm/nvm.sh
     nvm use {{ tooling.version.node.default }}
+
+- name: Install yarn using npm
+  npm:
+    name: yarn
+    global: yes
