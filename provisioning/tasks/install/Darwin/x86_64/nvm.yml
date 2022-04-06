@@ -21,5 +21,5 @@
   shell: |
     . {{ ansible_env.HOME }}/.nvm/nvm.sh
     nvm use {{ item }}
-    npm install yarn
+    npm install --global yarn
   loop: "{{ tooling.version.node.installed }}"
