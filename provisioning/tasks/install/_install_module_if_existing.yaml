@@ -8,16 +8,6 @@
     path: "tasks/install/general/{{ module }}.yml"
   register: general_module_result
 
-- name: Set architecture to amd64
-  set_fact:
-    module_architecture: "amd64"
-  when: ansible_facts['machine'] == "x86_64"
-
-- name: Set architecture to arm64
-  set_fact:
-    module_architecture: "arm64"
-  when: ansible_facts['machine'] == "arm64"
-
 - name: Include os specific module tasks for {{ module }} iff existing
   include_tasks: "tasks/install/{{ ansible_facts['os_family'] }}/{{ module }}.yml"
   when: module_result.stat.exists
