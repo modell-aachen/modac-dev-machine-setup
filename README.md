@@ -35,9 +35,7 @@ vim $HOME/.inventory_local.yml
 ## Initial setup
 ```BASH
 cd $HOME/modac-dev-machine-setup/
-./dev-provision -h
-./dev-provision -i ~/.inventory_local.yml packages
-./dev-provision -i ~/.inventory_local.yml tooling
+./dev-provision -i ~/.inventory_local.yml
 ```
 
 ## Updates
@@ -48,11 +46,10 @@ machine edit-config
 
 Apply updates:
 ```BASH
-machine provision -i ~/.inventory_local.yml packages
-machine provision -i ~/.inventory_local.yml tooling
+machine provision -i ~/.inventory_local.yml
 ```
 
-## Local Q.wikis
+## Local LXC Q.wiki deployments
 E.g. dev, master, etc.
 ### Setup
 ```BASH
@@ -69,6 +66,26 @@ qontainer create dev
 E.g. dev
 ```BASH
 qontainer login dev
+```
+
+## Local kubernetes (container) Q.wiki deployment
+E.g. dev, master, etc.
+### Setup
+```BASH
+qluster init
+
+qaffold init
+```
+
+### Build
+Deploy current checkedout Q.wiki
+```BASH
+qaffold deploy
+```
+
+### Connect
+```BASH
+qaffold login
 ```
 
 # FAQ
