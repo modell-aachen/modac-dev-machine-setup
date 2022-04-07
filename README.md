@@ -27,6 +27,10 @@ vim $HOME/.inventory_local.yml
 ```
 1) remove unused packages and snaps, insert your keys, e.g.
 2) create a local ssh key and set as SSH key to your GitHub Account (https://github.com/settings/keys)
+3) check successfull authentication against github.com
+    ```bash
+    ssh -T git@github.com
+    ```
 3) create a directory for your repositories and set REPOS_DIRECTORY to the created path
 4) set FONTAWESOME_NPM_AUTH_TOKEN to https://start.1password.com/open/i?a=CXJNQFCHNNGSLNOEP6SLPHLZQ4&h=modac.1password.eu&i=xmhedekcuokrqrch62bsuvr5lu&v=6u4nznoclnkg7467ne4ntutcgq
 5) set GITHUB_AUTH_TOKEN to https://start.1password.com/open/i?a=CXJNQFCHNNGSLNOEP6SLPHLZQ4&h=modac.1password.eu&i=dwpktyrfuj6cyjfy6y74q3ifiy&v=6u4nznoclnkg7467ne4ntutcgq

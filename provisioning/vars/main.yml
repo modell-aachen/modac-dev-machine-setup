@@ -84,7 +84,8 @@ dev:
       location: "{{ ansible_env.HOME }}/certs/localhost"
   env:
     REPOS_DIRECTORY: "{{ lookup('env', 'REPOS_DIRECTORY') }}"
-    PROVISIONER_DIRECTORY: "{{ lookup('env', 'REPOS_DIRECTORY') }}"
+    PROVISIONER_DIRECTORY: "{{ lookup('env', 'PROVISIONER_DIRECTORY') }}"
+    MODAC_BASH_DIRECTORY: "{{ lookup('env', 'MODAC_BASH_DIRECTORY') | default( ansible_env.HOME + '/.modac-bash', true) }}"
     VAULT_ADDR: https://vault.modac.cloud
     GITHUB_AUTH_TOKEN: ''
     GITHUB_ORGANIZATION: modell-aachen
