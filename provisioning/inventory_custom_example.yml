@@ -23,6 +23,7 @@ all:
     env:
       REPOS_DIRECTORY: ""
       PROVISIONER_DIRECTORY: ""
+      MODAC_BASH_DIRECTORY: ""
       GITHUB_AUTH_TOKEN: ""
       FONTAWESOME_NPM_AUTH_TOKEN: ""
       RMS_AUTH_TOKEN: ""

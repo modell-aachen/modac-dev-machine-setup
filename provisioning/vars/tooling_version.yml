@@ -11,11 +11,13 @@ tooling:
     nvm: "v0.39.0"
     poetry: "1.1.13"
     kube_linter: "0.2.5"
+    helm: "v3.8.1"
+    kubectl: "v1.23.0"
     docker:
       compose: "v2.3.4"
       python_lib: "5.0.3"
     node:
-      default: "lts/erbium"
+      default: "lts/gallium"
       installed:
         - "lts/erbium"    # 12.x
         - "lts/fermium"   # 14.x

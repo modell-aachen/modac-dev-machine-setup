@@ -4,11 +4,10 @@
   become: true
   shell: ssh-keyscan -H github.com >> /etc/ssh/ssh_known_hosts
 
-- name: Clone modac-bash
+- name: Clone/Update modac-bash
   git:
     repo: "git@github.com:modell-aachen/modac-bash"
     dest: "{{ ansible_env.HOME }}/.modac-bash"
-    update: false
 
 - name: Check if .bashrc exists
   stat:
