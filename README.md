@@ -103,5 +103,5 @@ sudo systemctl restart lxd-host-dns.service
 If you use zsh, source `.env` and `bashrc.sh` in your `.zshrc`
 ```BASH
 [ -f $HOME/.env ] && source $HOME/.env
-[ -f $HOME/.modac-bash/bashrc.sh ] && source $HOME/.modac-bash/bashrc.sh
+[ -f $HOME/.modac-bash/bashrc.sh ] && autoload bashcompinit && bashcompinit source $HOME/.modac-bash/bashrc.sh
 ```
