@@ -4,3 +4,7 @@
     name: docker
     accept_external_apps: true
     state: installed
+
+- name: Create custom network bridge for k8s operations.
+  include_tasks:
+      file: tasks/docker/docker_create_k8s_bridge.yml
