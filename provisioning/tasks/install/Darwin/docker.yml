@@ -1,4 +1,12 @@
 ---
+- name: Install docker python lib
+  include_role:
+    name: geerlingguy.pip
+  vars:
+    pip_install_packages:
+      - name: docker
+        version: "{{ tooling.version.docker.python_lib }}"
+
 - name: Installs and configures Docker
   homebrew_cask:
     name: docker
