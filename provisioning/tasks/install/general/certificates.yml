@@ -11,7 +11,7 @@
 
 - name: Lookup python certifi CA path
   shell: |
-    python -c "import requests; print(requests.certs.where())"
+    python3 -c "import requests; print(requests.certs.where())"
   register: python_ca_certificate
 
 - name: Check if modac custom rootCA is part of pythons CA
