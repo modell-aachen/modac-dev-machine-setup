@@ -9,6 +9,17 @@
     CAROOT: "{{ all_env['QWIKI_DEVELOPMENT_ROOT_CA'] }}"
   when: not root_ca_folder.stat.exists
 
+- name: Lookup python certifi CA path
+  shell: |
+    python -c "import requests; print(requests.certs.where())"
+  register: python_ca_certificate
+
+- name: Check if modac custom rootCA is part of pythons CA
+  blockinfile:
+    block: "{{ lookup('file', all_env['QWIKI_DEVELOPMENT_ROOT_CA'] + '/rootCA.pem' ) }}"
+    path: "{{ python_ca_certificate.stdout }}"
+    backup: no
+
 - name: Create certificates
   include_tasks: tasks/certificates/generate_certificate.yml
   vars:
