@@ -94,7 +94,7 @@ dev:
     JENKINS_USER: ''
     JENKINS_TOKEN: ''
     QWIKI_DEVELOPMENT_ROOT_CA: "{{ ansible_env.HOME }}/.local/share/mkcert"
-    QWIKI_SSL_CA_CERT: "$(python -c 'import requests; print(requests.certs.where())')"
+    QWIKI_SSL_CA_CERT: "$(python3 -c 'import requests; print(requests.certs.where())')"
 
 
 antigen_install_dir: ~/.antigen
