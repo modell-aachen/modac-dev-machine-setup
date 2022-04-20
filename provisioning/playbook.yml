@@ -21,33 +21,36 @@
     all_install_modules: |
       {{ dev.install_modules | union(install_modules) }}
 
-  pre_tasks:
-    - name: Set general incompatibility
-      set_fact:
-        is_ubuntu: false
-        is_macosx: false
-
-    - name: Set Ubuntu compatibility
-      set_fact:
-        is_ubuntu: true
-      when: ansible_facts['os_family'] == "Debian"
-
-    - name: Set MAC OSX compatibility
-      set_fact:
-        is_macosx: true
-      when: ansible_facts['os_family'] == "Darwin" and not is_ubuntu
-
-    - name: Set architecture to amd64
-      set_fact:
-        machine_architecture: "amd64"
-      when: ansible_facts['machine'] == "x86_64"
-
-    - name: Set architecture to arm64
-      set_fact:
-        machine_architecture: "arm64"
-      when: ansible_facts['machine'] == "arm64"
-
   tasks:
+    - name: set facts
+      tags:
+        - always
+      block:
+        - name: Set general incompatibility
+          set_fact:
+            is_ubuntu: false
+            is_macosx: false
+
+        - name: Set Ubuntu compatibility
+          set_fact:
+            is_ubuntu: true
+          when: ansible_facts['os_family'] == "Debian"
+
+        - name: Set MAC OSX compatibility
+          set_fact:
+            is_macosx: true
+          when: ansible_facts['os_family'] == "Darwin" and not is_ubuntu
+
+        - name: Set architecture to amd64
+          set_fact:
+            machine_architecture: "amd64"
+          when: ansible_facts['machine'] == "x86_64"
+
+        - name: Set architecture to arm64
+          set_fact:
+            machine_architecture: "arm64"
+          when: ansible_facts['machine'] == "arm64"
+
     - name: Install and Remove packages
       block:
         - include_tasks:
