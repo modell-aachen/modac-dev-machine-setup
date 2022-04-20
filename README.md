@@ -87,6 +87,12 @@ Deploy current checkedout Q.wiki
 qaffold deploy
 ```
 
+### Provision
+Provision one or more tenants
+```BASH
+qaffold provision dev
+```
+
 ### Connect
 ```BASH
 qaffold login
