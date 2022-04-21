@@ -8,7 +8,7 @@ If your using ubuntu >= 20.04, you can follow along with the "Usage" section. On
 * git
 * vim
 
-**Important** The command `python` needs to point to the python-executable for Python >= 3.8, `python3` will not work.
+**Important** The command `python3` needs to point to the python-executable for Python >= 3.8, `python` might not work.
 
 
 # Usage
