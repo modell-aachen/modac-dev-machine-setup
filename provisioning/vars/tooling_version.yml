@@ -19,6 +19,4 @@ tooling:
     node:
       default: "lts/gallium"
       installed:
-        - "lts/erbium"    # 12.x
-        - "lts/fermium"   # 14.x
         - "lts/gallium"   # 16.x
