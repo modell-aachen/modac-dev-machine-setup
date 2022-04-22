@@ -2,10 +2,6 @@
 - name: Install yubikey products
   become: true
   block:
-    - name: Ensure yubico repository is enabled
-      apt_repository:
-        repo: ppa:yubico/stable
-
     - name: Ensure yubico products are installed
       apt:
         name:
