@@ -19,6 +19,7 @@
     block: "{{ lookup('file', all_env['QWIKI_DEVELOPMENT_ROOT_CA'] + '/rootCA.pem' ) }}"
     path: "{{ python_ca_certificate.stdout }}"
     backup: no
+  when: not python_ca_certificate.stdout is match("/etc/ssl/certs/*")
 
 - name: Create certificates
   include_tasks: tasks/certificates/generate_certificate.yml
