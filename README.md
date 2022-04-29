@@ -133,3 +133,5 @@ echo "/dev/zvol/rpool/docker  /var/lib/docker    ext4    defaults  0   0" | sudo
 # restart your system
 sudo reboot
 ```
+
+After reboot, please re-run your machine provisioner.
