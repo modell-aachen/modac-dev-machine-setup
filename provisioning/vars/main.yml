@@ -62,6 +62,7 @@ dev:
     - kube_linter
     - helm
     - kubectl
+  install_snaps: true
   snaps:
     - name: code
       is_classic: true
