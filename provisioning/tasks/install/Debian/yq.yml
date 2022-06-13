@@ -1,0 +1,10 @@
+---
+- name: Install yq
+  include_tasks:
+    file: tasks/install/_install_versioned_binary.yml
+  vars:
+    name: yq
+    url: "https://github.com/mikefarah/yq/releases/download/{{ tooling.version.yq }}/yq_linux_amd64"
+    version: "{{ tooling.version.yq }}"
+    unzip: false
+
