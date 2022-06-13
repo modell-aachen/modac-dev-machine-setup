@@ -62,6 +62,7 @@ dev:
     - kube_linter
     - helm
     - kubectl
+    - yq
   snaps:
     - name: code
       is_classic: true
