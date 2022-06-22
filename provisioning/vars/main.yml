@@ -63,6 +63,7 @@ dev:
     - helm
     - kubectl
     - yq
+  install_snaps: true
   snaps:
     - name: code
       is_classic: true

@@ -67,7 +67,7 @@
             file: tasks/install_snaps.yml
         - include_tasks:
             file: tasks/remove_snaps.yml
-      when: is_ubuntu
+      when: is_ubuntu and install_snaps
       tags:
         - packages
 
