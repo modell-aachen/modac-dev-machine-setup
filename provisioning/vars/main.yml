@@ -62,6 +62,7 @@ dev:
     - kube_linter
     - helm
     - kubectl
+    - yq
   install_snaps: true
   snaps:
     - name: code
