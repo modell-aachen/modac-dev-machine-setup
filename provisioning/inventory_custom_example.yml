@@ -10,6 +10,10 @@ all:
       - vim-gtk
     install_modules:
       - caps_remap
+    kubectl_plugins:
+      - ns
+      - ctx
+    install_snaps: true
     snaps:
       - name: telegram-desktop
       - name: jabref

@@ -1,0 +1,25 @@
+---
+- name: Install Krew for Kubernetes
+  shell: |
+    (
+      set -x; cd "$(mktemp -d)" &&
+      OS="$(uname | tr '[:upper:]' '[:lower:]')" &&
+      ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" &&
+      KREW="krew-${OS}_${ARCH}" &&
+      curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/download/{{ tooling.version.krew }}/${KREW}.tar.gz" &&
+      tar zxvf "${KREW}.tar.gz" &&
+      ./"${KREW}" install krew
+    )
+
+- name: Check if .bashrc exists
+  stat:
+    path: "{{ ansible_env.HOME }}/.bashrc"
+  register: bashrc
+
+- name: Ensure krew is sourced in .bashrc
+  lineinfile:
+    path: "{{ ansible_env.HOME }}/.bashrc"
+    line: "{{ item }}"
+  loop:
+    - export PATH="${HOME}/.krew/bin:$PATH"
+  when: bashrc.stat is defined and bashrc.stat.exists

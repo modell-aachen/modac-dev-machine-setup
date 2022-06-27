@@ -43,6 +43,10 @@ dev:
     - coreutils
     - nss
 
+  kubectl_plugins:
+    - ns
+    - ctx
+
   install_modules:
     - docker
     - ghcli
@@ -63,6 +67,7 @@ dev:
     - helm
     - kubectl
     - yq
+
   install_snaps: true
   snaps:
     - name: code

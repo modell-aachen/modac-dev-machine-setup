@@ -20,6 +20,8 @@
       {{ dev.remove_packages_darwin | union(remove_packages_darwin) }}
     all_install_modules: |
       {{ dev.install_modules | union(install_modules) }}
+    all_kubectl_plugins: |
+      {{ dev.kubectl_plugins | union(kubectl_plugins) }}
 
   tasks:
     - name: set facts

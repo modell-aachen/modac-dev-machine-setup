@@ -4,6 +4,8 @@ all:
     packages: []
     packages_darwin: []
     install_modules: []
+    kubectl_plugins: []
+    install_snaps: true
     snaps: []
     remove_snaps: []
     remove_packages: []

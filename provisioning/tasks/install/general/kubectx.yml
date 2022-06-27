@@ -1,0 +1,5 @@
+---
+- name: Install krew plugins for Kubernetes (kubectl)
+  shell: |
+    kubectl krew install {{ item }}
+  loop: "{{ all_kubectl_plugins }}"
