@@ -7,3 +7,11 @@
     url: "https://storage.googleapis.com/kubernetes-release/release/{{ tooling.version.kubectl }}/bin/linux/amd64/kubectl"
     version: "{{ tooling.version.kubectl }}"
     unzip: false
+
+- name: Install Krew for Kubectl
+  include_tasks:
+    file: tasks/install/general/krew.yml
+
+- name: Install krew plugins for Kubernetes (kubectl)
+  include_tasks:
+    file: tasks/install/general/kubectx.yml

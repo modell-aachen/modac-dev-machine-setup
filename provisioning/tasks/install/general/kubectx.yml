@@ -1,5 +1,5 @@
 ---
-- name: Install Kubectx for Kubernetes
+- name: Install krew plugins for Kubernetes (kubectl)
   shell: |
-    kubectl krew install ctx
-    kubectl krew install ns
+    kubectl krew install {{ item }}
+  loop: "{{ all_kubectl_plugins }}"

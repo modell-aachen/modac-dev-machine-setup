@@ -14,6 +14,7 @@ tooling:
     helm: "v3.8.1"
     kubectl: "v1.23.0"
     yq: "v4.25.2"
+    krew: "v0.4.3"
     docker:
       compose: "v2.3.4"
       python_lib: "5.0.3"
