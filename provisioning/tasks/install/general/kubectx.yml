@@ -1,0 +1,5 @@
+---
+- name: Install Kubectx for Kubernetes
+  shell: |
+    kubectl krew install ctx
+    kubectl krew install ns

@@ -63,6 +63,8 @@ dev:
     - helm
     - kubectl
     - yq
+    - krew
+    - kubectx
   install_snaps: true
   snaps:
     - name: code
