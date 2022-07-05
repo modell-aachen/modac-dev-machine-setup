@@ -67,6 +67,7 @@ dev:
     - helm
     - kubectl
     - yq
+    - flux
 
   install_snaps: true
   snaps:
