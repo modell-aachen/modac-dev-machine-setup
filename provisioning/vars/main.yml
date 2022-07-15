@@ -69,6 +69,7 @@ dev:
     - kubectl
     - sops
     - kustomize
+    - onepassword
     - yq
 
   install_snaps: true

@@ -15,7 +15,7 @@ tooling:
     kubectl: "v1.23.0"
     yq: "v4.25.2"
     sops: "v3.7.3"
-    1password: "v2.5.1"
+    onepassword: "v2.5.1"
     kustomize: "v4.5.5"
     krew: "v0.4.3"
     docker:
