@@ -111,3 +111,27 @@ If you use zsh, source `.env` and `bashrc.sh` in your `.zshrc`
 [ -f $HOME/.env ] && source $HOME/.env
 [ -f $HOME/.modac-bash/bashrc.sh ] && source $HOME/.modac-bash/bashrc.sh
 ```
+
+## k3d (docker, dind) and ZFS support
+ZFS is sadly quite painful with Docker in Docker and similar scenarios. It might be best to avoid the problem by creating a volume in your ZFS pool, formatting that volume to ext4, and having docker use "overlay2" on top of that, instead of "zfs".
+
+**CAUTION**: This will erase all your existing docker data (volumes, images, container, networks etc)
+
+```
+# create custom pool for docker data
+sudo zfs create -s -V 50GB rpool/docker
+
+# format storage as ext4
+sudo mkfs.ext4 /dev/zvol/rpool/docker
+
+# stop docker
+sudo systemctl stop docker
+
+# add the mount to /etc/fstab
+echo "/dev/zvol/rpool/docker  /var/lib/docker    ext4    defaults  0   0" | sudo tee -a /etc/fstab
+
+# restart your system
+sudo reboot
+```
+
+After reboot, please re-run your machine provisioner.
