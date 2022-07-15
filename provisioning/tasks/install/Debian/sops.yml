@@ -1,0 +1,11 @@
+---
+- name: Install sops
+  include_tasks:
+    file: tasks/install/_install_versioned_binary.yml
+  vars:
+    name: sops
+    url: "https://github.com/mozilla/sops/releases/download/{{ tooling.version.sops }}/sops-{{ tooling.version.sops }}.linux.amd64"
+    version: "{{ tooling.version.sops }}"
+    unzip: false
+
+

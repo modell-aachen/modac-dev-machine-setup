@@ -37,6 +37,7 @@ dev:
     - apt-transport-https
     - ca-certificates
     - gnupg
+    - age
 
   packages_darwin:
     - gnu-tar
@@ -66,6 +67,9 @@ dev:
     - kube_linter
     - helm
     - kubectl
+    - sops
+    - kustomize
+    - onepassword
     - yq
     - flux
 
