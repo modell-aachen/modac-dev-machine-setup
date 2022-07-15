@@ -1,0 +1,9 @@
+---
+- name: Install flux CLI
+  include_tasks:
+    file: tasks/install/_install_versioned_binary.yml
+  vars:
+    name: flux
+    url: "https://github.com/fluxcd/flux2/releases/download/v{{ tooling.version.flux }}/flux_{{ tooling.version.flux }}_linux_amd64.tar.gz"
+    version: "{{ tooling.version.flux }}"
+    unzip: true
