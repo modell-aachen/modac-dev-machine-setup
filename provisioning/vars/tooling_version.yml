@@ -14,6 +14,9 @@ tooling:
     helm: "v3.8.1"
     kubectl: "v1.23.0"
     yq: "v4.25.2"
+    sops: "v3.7.3"
+    1password: "v2.5.1"
+    kustomize: "v4.5.5"
     krew: "v0.4.3"
     docker:
       compose: "v2.3.4"
