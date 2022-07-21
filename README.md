@@ -16,7 +16,7 @@ If your using ubuntu >= 20.04, you can follow along with the "Usage" section. On
 ## Preparations
 ```BASH
 sudo apt update
-sudo apt install -y software-properties-common git vim python3 python3-pip python-is-python3 python3-crypto
+sudo apt install -y software-properties-common git vim python3 python3-pip python-is-python3
 cd ~
 git clone https://github.com/modell-aachen/modac-dev-machine-setup.git
 cp $HOME/modac-dev-machine-setup/provisioning/inventory_custom_example.yml $HOME/.inventory_local.yml
