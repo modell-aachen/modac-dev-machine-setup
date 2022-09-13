@@ -72,6 +72,7 @@ dev:
     - onepassword
     - yq
     - flux
+    - devspace
 
   install_snaps: true
   snaps:

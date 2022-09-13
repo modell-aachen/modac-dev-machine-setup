@@ -1,0 +1,11 @@
+---
+- name: Install devspace
+  include_tasks:
+    file: tasks/install/_install_versioned_binary.yml
+  vars:
+    name: devspace
+    url: https://github.com/loft-sh/devspace/releases/download/{{ tooling.version.devspace }}/devspace-darwin-amd64
+    version: "{{ tooling.version.devspace }}"
+    unzip: false
+
+
