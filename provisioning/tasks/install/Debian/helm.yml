@@ -4,7 +4,7 @@
     file: tasks/install/_install_versioned_binary.yml
   vars:
     name: helm
-    url: "https://get.helm.sh/helm-{{ tooling.version.helm }}-linux-amd64.tar.gz"
+    url: "https://get.helm.sh/helm-{{ tooling.version.helm }}-linux-{{ machine_architecture }}.tar.gz"
     version: "{{ tooling.version.helm }}"
     unzip: true
     extra_opts:

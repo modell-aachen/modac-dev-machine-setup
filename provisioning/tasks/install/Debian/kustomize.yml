@@ -4,7 +4,7 @@
     file: tasks/install/_install_versioned_binary.yml
   vars:
     name: kustomize
-    url: "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/{{ tooling.version.kustomize }}/kustomize_{{ tooling.version.kustomize }}_linux_amd64.tar.gz"
+    url: "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/{{ tooling.version.kustomize }}/kustomize_{{ tooling.version.kustomize }}_linux_{{ machine_architecture }}.tar.gz"
     version: "{{ tooling.version.kustomize }}"
     unzip: true
 

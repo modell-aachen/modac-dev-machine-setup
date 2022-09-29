@@ -4,6 +4,6 @@
     file: tasks/install/_install_versioned_binary.yml
   vars:
     name: skaffold
-    url: "https://storage.googleapis.com/skaffold/releases/{{ tooling.version.skaffold }}/skaffold-linux-amd64"
+    url: "https://storage.googleapis.com/skaffold/releases/{{ tooling.version.skaffold }}/skaffold-linux-{{ machine_architecture }}"
     version: "{{ tooling.version.skaffold }}"
     unzip: false

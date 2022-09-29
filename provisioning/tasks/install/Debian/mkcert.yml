@@ -4,6 +4,6 @@
     file: tasks/install/_install_versioned_binary.yml
   vars:
     name: mkcert
-    url: "https://github.com/FiloSottile/mkcert/releases/download/{{ tooling.version.mkcert }}/mkcert-{{ tooling.version.mkcert }}-linux-amd64"
+    url: "https://github.com/FiloSottile/mkcert/releases/download/{{ tooling.version.mkcert }}/mkcert-{{ tooling.version.mkcert }}-linux-{{ machine_architecture }}"
     version: "{{ tooling.version.mkcert }}"
     unzip: false
