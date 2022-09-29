@@ -51,15 +51,15 @@ dev:
   install_modules:
     - docker
     - ghcli
-    - lxd
+    #- lxd
     - mkcert
     - certificates
-    - packer
-    - teamviewer
-    - terraform
-    - terragrunt
+    #- packer
+    #- teamviewer
+    #- terraform
+    #- terragrunt
     - vault
-    - teams
+    #- teams
     - k3d
     - skaffold
     - nvm
@@ -69,7 +69,7 @@ dev:
     - kubectl
     - sops
     - kustomize
-    - onepassword
+    #- onepassword
     - yq
     - flux
     - devspace
