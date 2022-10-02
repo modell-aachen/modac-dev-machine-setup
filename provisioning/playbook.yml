@@ -51,7 +51,7 @@
         - name: Set architecture to arm64
           set_fact:
             machine_architecture: "arm64"
-          when: ansible_facts['machine'] == "arm64"
+          when: ansible_facts['machine'] == "arm64" or ansible_facts['machine'] == "aarch64"
 
     - name: Install and Remove packages
       block:

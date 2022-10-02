@@ -21,6 +21,7 @@
         name: geerlingguy.docker
       vars:
         docker_compose_version: "{{ tooling.version.docker.compose }}"
+        docker_apt_arch: "{{ machine_architecture }}"
         docker_users:
           - "{{ username_on_the_host.stdout }}"
         docker_apt_repository: "deb [arch={{ docker_apt_arch }}] {{ docker_repo_url }}/ubuntu {{ ansible_distribution_release }} {{ docker_apt_release_channel }}"

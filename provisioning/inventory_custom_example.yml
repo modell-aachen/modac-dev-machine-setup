@@ -2,23 +2,14 @@
 all:
   vars:
     packages:
-      - nextcloud-desktop
       - silversearcher-ag
       - fzf
-      - texlive-full
-      - pandoc
-      - vim-gtk
-    install_modules:
-      - caps_remap
+    install_modules: []
     kubectl_plugins:
       - ns
       - ctx
-    install_snaps: true
-    snaps:
-      - name: telegram-desktop
-      - name: jabref
-        channel: beta
-      - name: keepassxc
+    install_snaps: false
+    snaps: []
     dotfiles_path: ""
     dotfiles_autoupdate: false
     # caps_remap_behavior - values:
