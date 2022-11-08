@@ -73,6 +73,7 @@ dev:
     - yq
     - flux
     - devspace
+    - infra
 
   install_snaps: true
   snaps:
