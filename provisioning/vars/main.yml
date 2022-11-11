@@ -59,6 +59,7 @@ dev:
       - wget
       - wrk
       - zsh-history-substring-search
+      - zsh
     taps:
       - homebrew/core
       - homebrew/cask
@@ -74,6 +75,7 @@ dev:
       - 1password
       - unnaturalscrollwheels
       - microsoft-teams
+      - iterm2
 
   mas:
     installed_apps: []
@@ -114,6 +116,7 @@ dev:
     - yq
     - flux
     - devspace
+    - oh_my_zsh
 
   install_snaps: true
   snaps:

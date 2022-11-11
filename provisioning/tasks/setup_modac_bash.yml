@@ -14,7 +14,7 @@
     path: "{{ ansible_env.HOME }}/.bashrc"
   register: bashrc
 
-- name: Ensure modac-bash is sourced in .bashrc
+- name: Ensure modac-bash is sourced in .bashrc, iff .bashrc exists
   lineinfile:
     path: "{{ ansible_env.HOME }}/.bashrc"
     line: "{{ item }}"
@@ -22,6 +22,20 @@
     - "[ -f $HOME/.modac-bash/bashrc.sh ] && source $HOME/.modac-bash/bashrc.sh"
     - "[ -f $HOME/.env ] && source $HOME/.env"
   when: bashrc.stat is defined and bashrc.stat.exists
+
+- name: Check if .zprofile exists
+  stat:
+    path: "{{ ansible_env.HOME }}/.zprofile"
+  register: zprofile
+
+- name: Ensure modac-bash is sourced in .zprofile, iff .zprofile exists
+  lineinfile:
+    path: "{{ ansible_env.HOME }}/.zprofile"
+    line: "{{ item }}"
+  loop:
+    - "[ -f $HOME/.modac-bash/bashrc.sh ] && source $HOME/.modac-bash/bashrc.sh"
+    - "[ -f $HOME/.env ] && source $HOME/.env"
+  when: zprofile.stat is defined and zprofile.stat.exists
 
 - name: Create Q.wiki repo
   file:
