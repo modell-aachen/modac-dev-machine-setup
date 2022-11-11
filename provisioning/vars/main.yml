@@ -71,6 +71,9 @@ dev:
       - google-chrome
       - visual-studio-code
       - spotify
+      - 1password
+      - unnaturalscrollwheels
+      - microsoft-teams
 
   mas:
     installed_apps: []
