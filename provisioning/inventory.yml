@@ -13,3 +13,12 @@ all:
     dotfiles_path: ""
     dotfiles_autoupdate: false
     env: {}
+    homebrew:
+      installed_packages: []
+      taps: []
+      cask_appdir: ""
+      cask_apps: []
+    mas:
+      installed_apps: []
+      email: ""
+      password: ""

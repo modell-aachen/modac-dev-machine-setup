@@ -39,6 +39,44 @@ dev:
     - gnupg
     - age
 
+  homebrew:
+    installed_packages:
+      - autoconf
+      - bash-completion
+      - gettext
+      - git
+      - gh
+      - go
+      - gpg
+      - iperf
+      - libevent
+      - mcrypt
+      - nmap
+      - ssh-copy-id
+      - readline
+      - openssl
+      - pv
+      - wget
+      - wrk
+      - zsh-history-substring-search
+    taps:
+      - homebrew/core
+      - homebrew/cask
+    cask_appdir: /Applications
+    cask_apps:
+      - chromedriver
+      - docker
+      - dropbox
+      - firefox
+      - google-chrome
+      - visual-studio-code
+      - spotify
+
+  mas:
+    installed_apps: []
+    email: ""
+    password: ""
+
   packages_darwin:
     - gnu-tar
     - coreutils
@@ -113,3 +151,5 @@ dev:
 
 antigen_install_dir: ~/.antigen
 antigen_install_path: "{{ antigen_install_dir }}/antigen.zsh"
+
+
