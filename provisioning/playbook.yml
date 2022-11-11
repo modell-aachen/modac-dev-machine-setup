@@ -23,8 +23,9 @@
     all_kubectl_plugins: |
       {{ dev.kubectl_plugins | union(kubectl_plugins) }}
 
-  tasks:
-    - name: set facts
+
+  pre_tasks:
+    - name: Derive host machine facts and set variables.
       tags:
         - always
       block:
@@ -52,6 +53,16 @@
           set_fact:
             machine_architecture: "arm64"
           when: ansible_facts['machine'] == "arm64" or ansible_facts['machine'] == "aarch64"
+
+  roles:
+    - role: elliotweiser.osx-command-line-tools
+      when: is_macosx
+
+    - role: geerlingguy.mac.homebrew
+      tags: ['homebrew']
+      when: is_macosx
+
+  tasks:
 
     - name: Install and Remove packages
       block:

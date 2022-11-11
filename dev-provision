@@ -73,7 +73,11 @@ setup() {
 
 
   echo ">> Install/Updating ansible roles using ansible-galaxy"
-  ansible-galaxy install $1 -p ./provisioning/roles -r ./provisioning/requirements.yml
+  ansible-galaxy role install $1 -p ./provisioning/roles -r ./provisioning/requirements.yml
+  echo ">> Done."
+
+  echo ">> Install/Updating ansible collections using ansible-galaxy"
+  ansible-galaxy collection install $1 -p ./provisioning/collections -r ./provisioning/requirements.yml
   echo ">> Done."
 
 }
