@@ -23,3 +23,16 @@
   loop:
     - export PATH="${HOME}/.krew/bin:$PATH"
   when: bashrc.stat is defined and bashrc.stat.exists
+
+- name: Check if .zprofile exists
+  stat:
+    path: "{{ ansible_env.HOME }}/.zprofile"
+  register: zprofile
+
+- name: Ensure krew is sourced in .zprofile
+  lineinfile:
+    path: "{{ ansible_env.HOME }}/.zprofile"
+    line: "{{ item }}"
+  loop:
+    - export PATH="${HOME}/.krew/bin:$PATH"
+  when: zprofile.stat is defined and zprofile.stat.exists

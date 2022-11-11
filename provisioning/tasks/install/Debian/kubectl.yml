@@ -14,4 +14,4 @@
 
 - name: Install krew plugins for Kubernetes (kubectl)
   include_tasks:
-    file: tasks/install/general/kubectx.yml
+    file: tasks/install/general/krew_plugins.yml
