@@ -4,6 +4,6 @@
     file: tasks/install/_install_versioned_binary.yml
   vars:
     name: packer
-    url: "https://releases.hashicorp.com/packer/{{ tooling.version.packer }}/packer_{{ tooling.version.packer }}_linux_{{ machine_architecture }}.zip"
+    url: "https://releases.hashicorp.com/packer/{{ tooling.version.packer }}/packer_{{ tooling.version.packer }}_{{ ansible_system | lower }}_{{ machine_architecture }}.zip"
     version: "{{ tooling.version.packer }}"
     unzip: true

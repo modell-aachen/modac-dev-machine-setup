@@ -4,6 +4,6 @@
     file: tasks/install/_install_versioned_binary.yml
   vars:
     name: kube-linter
-    url: "https://github.com/stackrox/kube-linter/releases/download/{{ tooling.version.kube_linter }}/kube-linter-linux.zip"
+    url: "https://github.com/stackrox/kube-linter/releases/download/{{ tooling.version.kube_linter }}/kube-linter-{{ ansible_system | lower }}.zip"
     version: "{{ tooling.version.kube_linter }}"
     unzip: true

@@ -4,6 +4,6 @@
     file: tasks/install/_install_versioned_binary.yml
   vars:
     name: nomad
-    url: "https://releases.hashicorp.com/nomad/{{ tooling.version.nomad }}/nomad_{{ tooling.version.nomad }}_linux_{{ machine_architecture }}.zip"
+    url: "https://releases.hashicorp.com/nomad/{{ tooling.version.nomad }}/nomad_{{ tooling.version.nomad }}_{{ ansible_system | lower }}_{{ machine_architecture }}.zip"
     version: "{{ tooling.version.nomad }}"
     unzip: true
