@@ -12,7 +12,6 @@ dev:
     - network-manager-openvpn
     - network-manager-openvpn-gnome
     - openvpn
-    - python3-psutil
     - restic
     - resolvconf
     - ruby
@@ -21,9 +20,6 @@ dev:
     - wget
     - perltidy
     - python-is-python3
-    - python3-argcomplete
-    - python3-paramiko
-    - python3-scp
     # Packages needed to build CKE locally
     - build-essential
     - libcairo2-dev
@@ -38,6 +34,20 @@ dev:
     - ca-certificates
     - gnupg
     - age
+
+  remove_packages:
+    - python3-argcomplete
+    - python3-paramiko
+    - python3-scp
+    - python3-psutil
+
+  pip_packages:
+    - name: docker
+      version: "5.0.3"
+    - argcomplete
+    - paramiko
+    - scp
+    - psutil
 
   homebrew:
     installed_packages:
@@ -60,6 +70,15 @@ dev:
       - wrk
       - zsh-history-substring-search
       - zsh
+      - coreutils
+      - findutils
+      - gnu-tar
+      - gnu-sed
+      - gawk
+      - gnutls
+      - gnu-indent
+      - gnu-getopt 
+      - grep
     taps:
       - homebrew/core
       - homebrew/cask

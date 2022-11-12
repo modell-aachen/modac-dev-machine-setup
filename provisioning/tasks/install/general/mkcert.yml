@@ -1,0 +1,9 @@
+---
+- name: Install mkcert
+  include_tasks:
+    file: tasks/install/_install_versioned_binary.yml
+  vars:
+    name: mkcert
+    url: "https://github.com/FiloSottile/mkcert/releases/download/{{ tooling.version.mkcert }}/mkcert-{{ tooling.version.mkcert }}-{{ ansible_system | lower }}-{{ machine_architecture }}"
+    version: "{{ tooling.version.mkcert }}"
+    unzip: false

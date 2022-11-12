@@ -22,6 +22,8 @@
       {{ dev.install_modules | union(install_modules) }}
     all_kubectl_plugins: |
       {{ dev.kubectl_plugins | union(kubectl_plugins) }}
+    all_pip_packages: |
+      {{ dev.pip_packages | union(pip_packages) }}
 
 
   pre_tasks:
@@ -32,7 +34,7 @@
         - name: Set general incompatibility
           set_fact:
             is_ubuntu: false
-            is_macosx: false
+            is_macos: false
 
         - name: Set Ubuntu compatibility
           set_fact:
@@ -41,7 +43,7 @@
 
         - name: Set MAC OSX compatibility
           set_fact:
-            is_macosx: true
+            is_macos: true
           when: ansible_facts['os_family'] == "Darwin" and not is_ubuntu
 
         - name: Set architecture to amd64
@@ -56,7 +58,7 @@
 
   roles:
     - role: elliotweiser.osx-command-line-tools
-      when: is_macosx
+      when: is_macos
 
     - role: geerlingguy.mac.homebrew
       tags: ['homebrew']
@@ -65,9 +67,21 @@
         homebrew_taps: "{{ dev.homebrew.taps }}"
         homebrew_cask_appdir: "{{ dev.homebrew.cask_appdir }}"
         homebrew_cask_apps: "{{ dev.homebrew.cask_apps }}"
-      when: is_macosx
+      when: is_macos
 
   tasks:
+    - name: Install and Remove pip-packages
+      block:
+        - name: Install global Pip packages.
+          pip:
+            name: "{{ item.name | default(item) }}"
+            state: "{{ item.state | default('present') }}"
+            version: "{{ item.version | default(omit) }}"
+            executable: "{{ item.executable | default('pip3') }}"
+          loop: "{{ all_pip_packages }}"
+      tags:
+        - packages
+        - pip_packages
 
     - name: Install and Remove packages
       block:

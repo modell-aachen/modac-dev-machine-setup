@@ -1,21 +1,12 @@
 ---
-
 - name: Lookup the username running the provisioning
   become: false
   local_action: command whoami
   register: username_on_the_host
 
-- name: Installs and configures Docker
+- name: Installs and configures Docker on Debian
   become: true
   block:
-    - name: Install docker python lib
-      include_role:
-        name: geerlingguy.pip
-      vars:
-        pip_install_packages:
-          - name: docker
-            version: "{{ tooling.version.docker.python_lib }}"
-
     - name: Install docker from package registry
       include_role:
         name: geerlingguy.docker
@@ -26,7 +17,17 @@
           - "{{ username_on_the_host.stdout }}"
         docker_apt_repository: "deb [arch={{ docker_apt_arch }}] {{ docker_repo_url }}/ubuntu {{ ansible_distribution_release }} {{ docker_apt_release_channel }}"
         docker_apt_gpg_key: "{{ docker_repo_url }}/ubuntu/gpg"
+  when: is_ubuntu
 
-    - name: Create custom network bridge for k8s operations.
-      include_tasks:
-          file: tasks/docker/docker_create_k8s_bridge.yml
+- name: Installs and configures Docker on Mac
+  block:
+    - name: Installs and configures Docker
+      homebrew_cask:
+        name: docker
+        accept_external_apps: true
+        state: installed
+  when: is_macos
+
+- name: Create custom network bridge for k8s operations.
+  include_tasks:
+      file: tasks/docker/docker_create_k8s_bridge.yml
