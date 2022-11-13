@@ -103,7 +103,7 @@
       tags:
         - packages
 
-    - name: Install and configure tooling
+    - name: Install tooling
       block:
         - name: Loop over custom modules
           include_tasks:
@@ -113,6 +113,15 @@
             loop_var: module
       tags:
         - tooling
+
+    - name: Configure tasks
+      block:
+        - name: Configure shell rc on macos
+          include_tasks:
+            file: "tasks/configure/macos_shell.yaml"
+          when: is_macos
+      tags:
+        - configure
 
     - name: Install and configure modac-bash
       block:

@@ -1,0 +1,22 @@
+
+- name: Configure shell rc for custom gnu tools path
+  block:
+    - name: Check if .zshrc exists
+      stat:
+        path: "{{ ansible_env.HOME }}/.zshrc"
+      register: zshrc
+
+    - name: Ensure PATH environment is extended for gnu-utils
+      lineinfile:
+        path: "{{ ansible_env.HOME }}/.zshrc"
+        line: "{{ item }}"
+      loop:
+        - export PATH="/opt/homebrew/opt/coreutils/libexec/gnubin:$PATH"
+        - export PATH="/opt/homebrew/opt/findutils/libexec/gnubin:$PATH"
+        - export PATH="/opt/homebrew/opt/gnu-tar/libexec/gnubin:$PATH"
+        - export PATH="/opt/homebrew/opt/gnu-sed/libexec/gnubin:$PATH"
+        - export PATH="/opt/homebrew/opt/gawk/libexec/gnubin:$PATH"
+        - export PATH="/opt/homebrew/opt/gnu-getopt/libexec/gnubin:$PATH"
+        - export PATH="/opt/homebrew/opt/grep/libexec/gnubin:$PATH"
+      when: zshrc.stat is defined and zshrc.stat.exists
+  when: configure_shell_rc

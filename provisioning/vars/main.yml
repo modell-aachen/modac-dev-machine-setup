@@ -75,8 +75,6 @@ dev:
       - gnu-tar
       - gnu-sed
       - gawk
-      - gnutls
-      - gnu-indent
       - gnu-getopt 
       - grep
     taps:
@@ -92,6 +90,7 @@ dev:
       - visual-studio-code
       - spotify
       - 1password
+      - 1password/tap/1password-cli
       - unnaturalscrollwheels
       - microsoft-teams
       - iterm2
@@ -112,16 +111,12 @@ dev:
 
   install_modules:
     - docker
-    - ghcli
-    #- lxd
     - mkcert
     - certificates
-    #- packer
-    #- teamviewer
-    #- terraform
-    #- terragrunt
+    - packer
+    # - terraform # not yet available for mac
+    # - terragrunt # not yet available for mac
     - vault
-    #- teams
     - k3d
     - skaffold
     - nvm
@@ -131,11 +126,15 @@ dev:
     - kubectl
     - sops
     - kustomize
-    #- onepassword
+    - onepassword
     - yq
     - flux
     - devspace
-    - oh_my_zsh
+    # the follwing modules will be skipped on macos, since no general tasks exists
+    - teams
+    - teamviewer
+    - lxd
+    - ghcli
 
   install_snaps: true
   snaps:
@@ -177,4 +176,4 @@ dev:
 antigen_install_dir: ~/.antigen
 antigen_install_path: "{{ antigen_install_dir }}/antigen.zsh"
 
-
+configure_shell_rc: true
