@@ -18,5 +18,6 @@
         - export PATH="/opt/homebrew/opt/gawk/libexec/gnubin:$PATH"
         - export PATH="/opt/homebrew/opt/gnu-getopt/libexec/gnubin:$PATH"
         - export PATH="/opt/homebrew/opt/grep/libexec/gnubin:$PATH"
+        - export PATH="$HOME/Library/Python/3.9/bin:$PATH"
       when: zshrc.stat is defined and zshrc.stat.exists
   when: configure_shell_rc
