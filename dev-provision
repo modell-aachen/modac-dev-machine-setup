@@ -66,6 +66,7 @@ setup() {
 
   if [ ! -x "$(command -v ansible)" ]; then
     echo ">> Installing latest version of ansible using pip"
+    sudo -H pip3 install --upgrade pip
     sudo -H pip3 install ansible
     sudo -H pip3 install paramiko
     echo ">> Done."
