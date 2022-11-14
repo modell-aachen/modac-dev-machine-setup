@@ -19,15 +19,6 @@
         docker_apt_gpg_key: "{{ docker_repo_url }}/ubuntu/gpg"
   when: is_ubuntu
 
-- name: Installs and configures Docker on Mac
-  block:
-    - name: Installs and configures Docker
-      homebrew_cask:
-        name: docker
-        accept_external_apps: true
-        state: installed
-  when: is_macos
-
 - name: Create custom network bridge for k8s operations.
   include_tasks:
       file: tasks/docker/docker_create_k8s_bridge.yml

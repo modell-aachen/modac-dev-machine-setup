@@ -92,6 +92,18 @@
       tags:
         - packages
 
+    - name: Configure packages 
+      block:
+        - name: Configure shell rc on macos
+          include_tasks:
+            file: "tasks/configure/Darwin/shell.yaml"
+        - name: Configure docker on macos
+          include_tasks:
+            file: "tasks/configure/Darwin/docker.yaml"
+      tags:
+        - configure
+      when: is_macos
+
     - name: Install and Remove snap packages (Ubuntu only)
       become: true
       block:
@@ -113,15 +125,6 @@
             loop_var: module
       tags:
         - tooling
-
-    - name: Configure tasks
-      block:
-        - name: Configure shell rc on macos
-          include_tasks:
-            file: "tasks/configure/macos_shell.yaml"
-          when: is_macos
-      tags:
-        - configure
 
     - name: Install and configure modac-bash
       block:

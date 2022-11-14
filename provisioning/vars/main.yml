@@ -77,13 +77,16 @@ dev:
       - gawk
       - gnu-getopt 
       - grep
+      - docker
+      - docker-compose
+      - docker-buildx
+      - colima
     taps:
       - homebrew/core
       - homebrew/cask
     cask_appdir: /Applications
     cask_apps:
       - chromedriver
-      - docker
       - dropbox
       - firefox
       - google-chrome
