@@ -12,7 +12,6 @@
         line: "{{ item }}"
         insertbefore: "BOF"
       loop:
-        - export DOCKER_HOST="unix://${HOME}/.colima/default/docker.sock"
         - export PATH="$HOME/Library/Python/3.9/bin:$PATH"
         - export PATH="/opt/homebrew/opt/coreutils/libexec/gnubin:$PATH"
         - export PATH="/opt/homebrew/opt/findutils/libexec/gnubin:$PATH"

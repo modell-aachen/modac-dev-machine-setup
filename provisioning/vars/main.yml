@@ -77,10 +77,13 @@ dev:
       - gawk
       - gnu-getopt 
       - grep
+      - lima
+      - qemu
       - docker
       - docker-compose
       - docker-buildx
       - colima
+      - nss
     taps:
       - homebrew/core
       - homebrew/cask
@@ -103,10 +106,7 @@ dev:
     email: ""
     password: ""
 
-  packages_darwin:
-    - gnu-tar
-    - coreutils
-    - nss
+  packages_darwin: []
 
   kubectl_plugins:
     - ns
