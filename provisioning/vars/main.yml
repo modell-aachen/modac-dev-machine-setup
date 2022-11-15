@@ -84,6 +84,7 @@ dev:
       - docker-buildx
       - colima
       - nss
+      - dnsmasq
     taps:
       - homebrew/core
       - homebrew/cask
