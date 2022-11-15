@@ -75,7 +75,7 @@ dev:
       - gnu-tar
       - gnu-sed
       - gawk
-      - gnu-getopt 
+      - gnu-getopt
       - grep
       - lima
       - qemu
@@ -85,6 +85,7 @@ dev:
       - colima
       - nss
       - dnsmasq
+      - fzf
     taps:
       - homebrew/core
       - homebrew/cask
