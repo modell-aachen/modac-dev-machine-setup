@@ -86,6 +86,7 @@ dev:
       - nss
       - dnsmasq
       - fzf
+      - jq
     taps:
       - homebrew/core
       - homebrew/cask
