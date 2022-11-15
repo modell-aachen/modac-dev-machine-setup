@@ -92,7 +92,7 @@
       tags:
         - packages
 
-    - name: Configure packages 
+    - name: Configure packages on MacOS
       block:
         - name: Configure shell rc on macos
           include_tasks:
@@ -100,6 +100,9 @@
         - name: Configure docker on macos
           include_tasks:
             file: "tasks/configure/Darwin/docker.yaml"
+        - name: Configure dnsmasq on macos
+          include_tasks:
+            file: "tasks/configure/Darwin/dnsmasq.yaml"
       tags:
         - configure
       when: is_macos
