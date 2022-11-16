@@ -121,8 +121,6 @@ dev:
     - mkcert
     - certificates
     - packer
-    # - terraform # not yet available for mac
-    # - terragrunt # not yet available for mac
     - vault
     - k3d
     - skaffold
@@ -143,6 +141,8 @@ dev:
     - teamviewer
     - lxd
     - ghcli
+    - terraform
+    - terragrunt
 
   install_snaps: true
   snaps:
