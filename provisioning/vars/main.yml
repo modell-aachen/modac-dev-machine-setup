@@ -87,6 +87,7 @@ dev:
       - dnsmasq
       - fzf
       - jq
+      - openvpn
     taps:
       - homebrew/core
       - homebrew/cask
