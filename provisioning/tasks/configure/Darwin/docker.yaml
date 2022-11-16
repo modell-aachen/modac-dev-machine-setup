@@ -13,7 +13,3 @@
 - name: Create symlink for docker-buildx
   shell: |
     ln -sfn /opt/homebrew/opt/docker-buildx/bin/docker-buildx $HOME/.docker/cli-plugins/docker-buildx
-
-- name: Create buildx environment
-  shell: |
-    docker buildx create --use

@@ -19,6 +19,13 @@
         docker_apt_gpg_key: "{{ docker_repo_url }}/ubuntu/gpg"
   when: is_ubuntu
 
+- name: Create buildx default builder
+  shell: |
+    docker buildx create --use
+    touch "{{ ansible_env.HOME }}/.docker_buildx_builder_created"
+  args:
+    creates: "{{ ansible_env.HOME }}/.docker_buildx_builder_created"
+
 - name: Create custom network bridge for k8s operations.
   include_tasks:
       file: tasks/docker/docker_create_k8s_bridge.yml
