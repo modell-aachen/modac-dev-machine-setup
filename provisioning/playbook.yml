@@ -133,13 +133,20 @@
       block:
         - include_tasks:
             file: tasks/setup_modac_bash.yml
+
+        - name: Derive QWIKI_SSL_CA_CERT env
+          ansible.builtin.command: |
+            python3 -c 'import requests; print(requests.certs.where())'
+          register: ca_cert_path
+
         - name: Write enviroment variables
           lineinfile:
             path: "{{ ansible_env.HOME }}/.env"
             regexp: "^export {{ item.key }}="
             line: "export {{ item.key }}=\"{{ item.value }}\""
             create: true
-          loop: "{{ all_env | dict2items }}"
+          loop: "{{ {'QWIKI_SSL_CA_CERT': ca_cert_path.stdout } | combine(all_env) | dict2items }}"
+
         - name: Install modac-bash-helper based on python
           shell:
             cmd: |
