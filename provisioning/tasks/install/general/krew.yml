@@ -10,6 +10,7 @@
       tar zxvf "${KREW}.tar.gz" &&
       ./"${KREW}" install krew
     )
+  creates: "{{ ansible_env.HOME }}/.krew"
 
 - name: Configure shell rc for krew
   block:

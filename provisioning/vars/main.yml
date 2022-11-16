@@ -137,6 +137,7 @@ dev:
     - yq
     - flux
     - devspace
+    - infra
     # the follwing modules will be skipped on macos, since no general tasks exists
     - teams
     - teamviewer

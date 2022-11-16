@@ -6,4 +6,4 @@
     name: infra
     url: "https://github.com/infrahq/infra/releases/download/v{{ tooling.version.infra }}/infra_{{ tooling.version.infra }}_{{ ansible_system | lower }}_{{ machine_architecture }}.zip"
     version: "{{ tooling.version.infra }}"
-    unzip: false
+    unzip: true
