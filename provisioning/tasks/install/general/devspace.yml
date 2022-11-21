@@ -4,7 +4,7 @@
     file: tasks/install/_install_versioned_binary.yml
   vars:
     name: devspace
-    url: https://github.com/loft-sh/devspace/releases/download/{{ tooling.version.devspace }}/devspace-linux-amd64
+    url: https://github.com/loft-sh/devspace/releases/download/{{ tooling.version.devspace }}/devspace-{{ ansible_system | lower }}-{{ machine_architecture }}
     version: "{{ tooling.version.devspace }}"
     unzip: false
 

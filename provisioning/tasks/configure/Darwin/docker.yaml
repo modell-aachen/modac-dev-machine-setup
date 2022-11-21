@@ -1,0 +1,15 @@
+- name: Start colima vm for docker 
+  shell: |
+    colima start --cpu 4 --memory 12 --dns 8.8.8.8 --dns 1.1.1.1
+
+- name: Create docker plugins folder
+  shell: |
+    mkdir -p $HOME/.docker/cli-plugins
+
+- name: Create symlink for docker-compose
+  shell: |
+    ln -sfn /opt/homebrew/opt/docker-compose/bin/docker-compose $HOME/.docker/cli-plugins/docker-compose
+
+- name: Create symlink for docker-buildx
+  shell: |
+    ln -sfn /opt/homebrew/opt/docker-buildx/bin/docker-buildx $HOME/.docker/cli-plugins/docker-buildx

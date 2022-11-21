@@ -12,7 +12,6 @@ dev:
     - network-manager-openvpn
     - network-manager-openvpn-gnome
     - openvpn
-    - python3-psutil
     - restic
     - resolvconf
     - ruby
@@ -21,9 +20,6 @@ dev:
     - wget
     - perltidy
     - python-is-python3
-    - python3-argcomplete
-    - python3-paramiko
-    - python3-scp
     # Packages needed to build CKE locally
     - build-essential
     - libcairo2-dev
@@ -39,27 +35,96 @@ dev:
     - gnupg
     - age
 
-  packages_darwin:
-    - gnu-tar
-    - coreutils
-    - nss
+  remove_packages:
+    - python3-argcomplete
+    - python3-paramiko
+    - python3-scp
+    - python3-psutil
+
+
+  pip_packages:
+    - name: docker
+      version: "5.0.3"
+    - argcomplete
+    - paramiko
+    - scp
+    - psutil
+
+  homebrew:
+    installed_packages:
+      - autoconf
+      - bash-completion
+      - gettext
+      - git
+      - gh
+      - go
+      - gpg
+      - iperf
+      - libevent
+      - mcrypt
+      - nmap
+      - ssh-copy-id
+      - readline
+      - openssl
+      - pv
+      - wget
+      - wrk
+      - zsh-history-substring-search
+      - zsh
+      - coreutils
+      - findutils
+      - gnu-tar
+      - gnu-sed
+      - gawk
+      - gnu-getopt
+      - grep
+      - lima
+      - qemu
+      - docker
+      - docker-compose
+      - docker-buildx
+      - colima
+      - nss
+      - dnsmasq
+      - fzf
+      - jq
+      - openvpn
+      - restic
+    taps:
+      - homebrew/core
+      - homebrew/cask
+    cask_appdir: /Applications
+    cask_apps:
+      - chromedriver
+      - dropbox
+      - firefox
+      - google-chrome
+      - visual-studio-code
+      - spotify
+      - 1password
+      - 1password/tap/1password-cli
+      - unnaturalscrollwheels
+      - microsoft-teams
+      - iterm2
+
+  mas:
+    installed_apps: []
+    email: ""
+    password: ""
+
+  packages_darwin: []
 
   kubectl_plugins:
     - ns
     - ctx
+    - konfig
 
   install_modules:
     - docker
-    - ghcli
-    - lxd
     - mkcert
     - certificates
     - packer
-    - teamviewer
-    - terraform
-    - terragrunt
     - vault
-    - teams
     - k3d
     - skaffold
     - nvm
@@ -74,6 +139,13 @@ dev:
     - flux
     - devspace
     - infra
+    # the follwing modules will be skipped on macos, since no general tasks exists
+    - teams
+    - teamviewer
+    - lxd
+    - ghcli
+    - terraform
+    - terragrunt
 
   install_snaps: true
   snaps:
@@ -109,8 +181,9 @@ dev:
     JENKINS_USER: ''
     JENKINS_TOKEN: ''
     QWIKI_DEVELOPMENT_ROOT_CA: "{{ ansible_env.HOME }}/.local/share/mkcert"
-    QWIKI_SSL_CA_CERT: "$(python3 -c 'import requests; print(requests.certs.where())')"
 
 
 antigen_install_dir: ~/.antigen
 antigen_install_path: "{{ antigen_install_dir }}/antigen.zsh"
+
+configure_shell_rc: true

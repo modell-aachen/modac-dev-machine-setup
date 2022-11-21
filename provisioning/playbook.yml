@@ -22,16 +22,19 @@
       {{ dev.install_modules | union(install_modules) }}
     all_kubectl_plugins: |
       {{ dev.kubectl_plugins | union(kubectl_plugins) }}
+    all_pip_packages: |
+      {{ dev.pip_packages | union(pip_packages) }}
 
-  tasks:
-    - name: set facts
+
+  pre_tasks:
+    - name: Derive host machine facts and set variables.
       tags:
         - always
       block:
         - name: Set general incompatibility
           set_fact:
             is_ubuntu: false
-            is_macosx: false
+            is_macos: false
 
         - name: Set Ubuntu compatibility
           set_fact:
@@ -40,7 +43,7 @@
 
         - name: Set MAC OSX compatibility
           set_fact:
-            is_macosx: true
+            is_macos: true
           when: ansible_facts['os_family'] == "Darwin" and not is_ubuntu
 
         - name: Set architecture to amd64
@@ -51,7 +54,34 @@
         - name: Set architecture to arm64
           set_fact:
             machine_architecture: "arm64"
-          when: ansible_facts['machine'] == "arm64"
+          when: ansible_facts['machine'] == "arm64" or ansible_facts['machine'] == "aarch64"
+
+  roles:
+    - role: elliotweiser.osx-command-line-tools
+      when: is_macos
+
+    - role: geerlingguy.mac.homebrew
+      tags: ['homebrew']
+      vars:
+        homebrew_installed_packages: "{{ dev.homebrew.installed_packages }}"
+        homebrew_taps: "{{ dev.homebrew.taps }}"
+        homebrew_cask_appdir: "{{ dev.homebrew.cask_appdir }}"
+        homebrew_cask_apps: "{{ dev.homebrew.cask_apps }}"
+      when: is_macos
+
+  tasks:
+    - name: Install and Remove pip-packages
+      block:
+        - name: Install global Pip packages.
+          pip:
+            name: "{{ item.name | default(item) }}"
+            state: "{{ item.state | default('present') }}"
+            version: "{{ item.version | default(omit) }}"
+            executable: "{{ item.executable | default('pip3') }}"
+          loop: "{{ all_pip_packages }}"
+      tags:
+        - packages
+        - pip_packages
 
     - name: Install and Remove packages
       block:
@@ -61,6 +91,21 @@
             file: tasks/remove_packages.yml
       tags:
         - packages
+
+    - name: Configure packages on MacOS
+      block:
+        - name: Configure shell rc on macos
+          include_tasks:
+            file: "tasks/configure/Darwin/shell.yaml"
+        - name: Configure docker on macos
+          include_tasks:
+            file: "tasks/configure/Darwin/docker.yaml"
+        - name: Configure dnsmasq on macos
+          include_tasks:
+            file: "tasks/configure/Darwin/dnsmasq.yaml"
+      tags:
+        - configure
+      when: is_macos
 
     - name: Install and Remove snap packages (Ubuntu only)
       become: true
@@ -73,7 +118,7 @@
       tags:
         - packages
 
-    - name: Install and configure tooling
+    - name: Install tooling
       block:
         - name: Loop over custom modules
           include_tasks:
@@ -88,13 +133,20 @@
       block:
         - include_tasks:
             file: tasks/setup_modac_bash.yml
+
+        - name: Derive QWIKI_SSL_CA_CERT env
+          ansible.builtin.command: |
+            python3 -c 'import requests; print(requests.certs.where())'
+          register: ca_cert_path
+
         - name: Write enviroment variables
           lineinfile:
             path: "{{ ansible_env.HOME }}/.env"
             regexp: "^export {{ item.key }}="
             line: "export {{ item.key }}=\"{{ item.value }}\""
             create: true
-          loop: "{{ all_env | dict2items }}"
+          loop: "{{ {'QWIKI_SSL_CA_CERT': ca_cert_path.stdout } | combine(all_env) | dict2items }}"
+
         - name: Install modac-bash-helper based on python
           shell:
             cmd: |

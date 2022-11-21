@@ -4,7 +4,7 @@
     file: tasks/install/_install_versioned_binary.yml
   vars:
     name: kubectl
-    url: "https://storage.googleapis.com/kubernetes-release/release/{{ tooling.version.kubectl }}/bin/darwin/{{ machine_architecture }}/kubectl"
+    url: "https://storage.googleapis.com/kubernetes-release/release/{{ tooling.version.kubectl }}/bin/{{ ansible_system | lower }}/{{ machine_architecture }}/kubectl"
     version: "{{ tooling.version.kubectl }}"
     unzip: false
 
@@ -14,4 +14,4 @@
 
 - name: Install krew plugins for Kubernetes (kubectl)
   include_tasks:
-    file: tasks/install/general/kubectx.yml
+    file: tasks/install/general/krew_plugins.yml

@@ -1,4 +1,7 @@
 # Required packages
+
+**MacOS**: Please start with [MacOS required packages](README_mascos.md).
+
 The machine provisioner requires some basic packages.
 If your using ubuntu >= 20.04, you can follow along with the "Usage" section. On other operating system, i.e. MacOS, please satisfy the following requirements manually:
 
@@ -11,6 +14,7 @@ If your using ubuntu >= 20.04, you can follow along with the "Usage" section. On
 **Important** The command `python3` needs to point to the python-executable for Python >= 3.8, `python` might not work.
 
 
+
 # Usage
 
 ## Preparations
@@ -18,9 +22,14 @@ If your using ubuntu >= 20.04, you can follow along with the "Usage" section. On
 sudo apt update
 sudo apt install -y software-properties-common git vim python3 python3-pip python-is-python3
 cd ~
+```
+
+## Inventory creation
+```
 git clone https://github.com/modell-aachen/modac-dev-machine-setup.git
 cp $HOME/modac-dev-machine-setup/provisioning/inventory_custom_example.yml $HOME/.inventory_local.yml
 ```
+
 ## Initial local configuration and adjustments
 ```BASH
 vim $HOME/.inventory_local.yml
@@ -55,6 +64,8 @@ machine provision -i ~/.inventory_local.yml
 
 ## Local LXC Q.wiki deployments
 E.g. dev, master, etc.
+**CAUTION:** This kind of deployment is not supported on MacOS, please refer to local kubernetes deployments (next section).
+
 ### Setup
 ```BASH
 qontainer init

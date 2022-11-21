@@ -23,4 +23,4 @@
       loop: "{{ all_packages_darwin }}"
       loop_control:
         loop_var: package
-  when: is_macosx
+  when: is_macos

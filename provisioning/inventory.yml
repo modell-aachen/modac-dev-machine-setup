@@ -3,6 +3,7 @@ all:
   vars:
     packages: []
     packages_darwin: []
+    pip_packages: []
     install_modules: []
     kubectl_plugins: []
     install_snaps: true
@@ -13,3 +14,12 @@ all:
     dotfiles_path: ""
     dotfiles_autoupdate: false
     env: {}
+    homebrew:
+      installed_packages: []
+      taps: []
+      cask_appdir: ""
+      cask_apps: []
+    mas:
+      installed_apps: []
+      email: ""
+      password: ""

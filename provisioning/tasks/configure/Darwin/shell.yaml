@@ -1,0 +1,24 @@
+
+- name: Configure shell rc for custom gnu tools path
+  block:
+    - name: Check if .zshrc exists
+      stat:
+        path: "{{ ansible_env.HOME }}/.zshrc"
+      register: zshrc
+
+    - name: Ensure PATH environment is extended for gnu-utils
+      lineinfile:
+        path: "{{ ansible_env.HOME }}/.zshrc"
+        line: "{{ item }}"
+        insertbefore: "BOF"
+      loop:
+        - export DOCKER_HOST="unix://${HOME}/.colima/default/docker.sock"
+        - export PATH="$HOME/Library/Python/3.9/bin:$PATH"
+        - export PATH="/opt/homebrew/opt/coreutils/libexec/gnubin:$PATH"
+        - export PATH="/opt/homebrew/opt/findutils/libexec/gnubin:$PATH"
+        - export PATH="/opt/homebrew/opt/gnu-tar/libexec/gnubin:$PATH"
+        - export PATH="/opt/homebrew/opt/gnu-sed/libexec/gnubin:$PATH"
+        - export PATH="/opt/homebrew/opt/gnu-getopt/bin:$PATH"
+        - export PATH="/opt/homebrew/opt/grep/libexec/gnubin:$PATH"
+      when: zshrc.stat is defined and zshrc.stat.exists
+  when: configure_shell_rc

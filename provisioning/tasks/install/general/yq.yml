@@ -4,7 +4,7 @@
     file: tasks/install/_install_versioned_binary.yml
   vars:
     name: yq
-    url: "https://github.com/mikefarah/yq/releases/download/{{ tooling.version.yq }}/yq_linux_amd64"
+    url: "https://github.com/mikefarah/yq/releases/download/{{ tooling.version.yq }}/yq_{{ ansible_system | lower }}_{{ machine_architecture }}"
     version: "{{ tooling.version.yq }}"
     unzip: false
 

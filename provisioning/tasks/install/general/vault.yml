@@ -4,6 +4,6 @@
     file: tasks/install/_install_versioned_binary.yml
   vars:
     name: vault
-    url: "https://releases.hashicorp.com/vault/{{ tooling.version.vault }}/vault_{{ tooling.version.vault }}_linux_amd64.zip"
+    url: "https://releases.hashicorp.com/vault/{{ tooling.version.vault }}/vault_{{ tooling.version.vault }}_{{ ansible_system | lower }}_{{ machine_architecture }}.zip"
     version: "{{ tooling.version.vault }}"
     unzip: true
