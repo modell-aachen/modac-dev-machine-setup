@@ -40,7 +40,7 @@ dev:
     - python3-paramiko
     - python3-scp
     - python3-psutil
-
+    - infra
 
   pip_packages:
     - name: docker
