@@ -41,6 +41,7 @@ dev:
     - python3-scp
     - python3-psutil
 
+
   pip_packages:
     - name: docker
       version: "5.0.3"
@@ -88,6 +89,7 @@ dev:
       - fzf
       - jq
       - openvpn
+      - restic
     taps:
       - homebrew/core
       - homebrew/cask
