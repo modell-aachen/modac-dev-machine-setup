@@ -1,6 +1,6 @@
 tooling:
   version:
-    terraform: "0.14.7"
+    terraform: "1.1.9"
     vault: "1.9.2"
     packer: "1.8.2"
     nomad: "0.10.2"
