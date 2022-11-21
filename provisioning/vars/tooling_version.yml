@@ -4,7 +4,7 @@ tooling:
     vault: "1.9.2"
     packer: "1.8.2"
     nomad: "0.10.2"
-    terragrunt: "v0.28.7"
+    terragrunt: "v0.36.12"
     skaffold: "v1.37.0"
     k3d: "v5.4.0"
     mkcert: "v1.4.4"
