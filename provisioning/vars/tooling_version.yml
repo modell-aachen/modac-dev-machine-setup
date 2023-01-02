@@ -20,7 +20,7 @@ tooling:
     krew: "v0.4.3"
     flux: "0.31.3"
     devspace: "v6.1.1"
-    infra: "0.19.0"
+    infra: "0.20.0"
     docker:
       compose: "v2.3.4"
     node:
