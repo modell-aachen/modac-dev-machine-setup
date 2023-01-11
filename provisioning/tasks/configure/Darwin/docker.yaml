@@ -1,6 +1,6 @@
 - name: Start colima vm for docker 
   shell: |
-    colima start --cpu 4 --memory 12 --dns 8.8.8.8 --dns 1.1.1.1
+    colima start --cpu 4 --memory 12 --dns 8.8.8.8 --dns 1.1.1.1 --mount-type virtiofs -t vz
 
 - name: Create docker plugins folder
   shell: |
