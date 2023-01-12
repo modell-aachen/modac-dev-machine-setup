@@ -6,7 +6,7 @@ tooling:
     nomad: "0.10.2"
     terragrunt: "v0.40.2"
     skaffold: "v1.37.0"
-    k3d: "v5.4.6"
+    k3d: "v5.4.0"
     mkcert: "v1.4.4"
     nvm: "v0.39.0"
     poetry: "1.1.13"
