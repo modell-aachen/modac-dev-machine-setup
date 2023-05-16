@@ -7,6 +7,11 @@
 - name: Installs and configures Docker on Debian
   become: true
   block:
+    - name: Add signed key for docker repository
+      shell: "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o {{ keyfile }}"
+      args:
+        creates: "{{ keyfile }}"
+
     - name: Install docker from package registry
       include_role:
         name: geerlingguy.docker
@@ -15,9 +20,10 @@
         docker_apt_arch: "{{ machine_architecture }}"
         docker_users:
           - "{{ username_on_the_host.stdout }}"
-        docker_apt_repository: "deb [arch={{ docker_apt_arch }}] {{ docker_repo_url }}/ubuntu {{ ansible_distribution_release }} {{ docker_apt_release_channel }}"
-        docker_apt_gpg_key: "{{ docker_repo_url }}/ubuntu/gpg"
+        docker_apt_repository: "deb [arch={{ docker_apt_arch }} signed-by={{ keyfile }}] {{ docker_repo_url }}/ubuntu {{ ansible_distribution_release }} {{ docker_apt_release_channel }}"
   when: is_ubuntu
+  vars:
+    keyfile: /etc/apt/keyrings/docker.gpg
 
 - name: Create buildx default builder
   shell: |

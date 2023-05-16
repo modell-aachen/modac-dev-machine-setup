@@ -3,14 +3,16 @@
   become: true
   block:
     - name: add trusted key
-      apt_key:
-        keyserver: keyserver.ubuntu.com
-        id: 23F3D4EA75716059
+      get_url:
+        url: https://cli.github.com/packages/githubcli-archive-keyring.gpg
+        dest: "{{ keyfile }}"
 
     - name: Ensure cli repository is enabled
       apt_repository:
-        repo: deb https://cli.github.com/packages focal main
+        repo: "deb [arch={{ machine_architecture }} signed-by={{ keyfile }}] https://cli.github.com/packages stable main"
 
     - name: Ensure gh cli is installed
       apt:
         name: gh
+  vars:
+    keyfile: /etc/apt/keyrings/githubcli-archive-keyring.gpg

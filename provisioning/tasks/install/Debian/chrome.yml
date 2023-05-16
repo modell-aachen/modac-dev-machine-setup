@@ -1,6 +1,23 @@
 ---
 - name: Install Google Chrome from remote source
   become: true
-  apt:
-    # yamllint disable-line rule:line-length
-    deb: https://dl.google.com/linux/direct/google-chrome-stable_current_{{ machine_architecture }}.deb
+  block:
+    - name: Remove old google-chrome apt repo
+      file:
+        path: /etc/apt/sources.list.d/google-chrome.list
+        state: absent
+
+    - name: Add signed key for docker apt repo
+      shell: "curl -fsSL https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor -o {{ keyfile }}"
+      args:
+        creates: "{{ keyfile }}"
+
+    - name: Ensure google chrome apt repo is enabled
+      apt_repository:
+        repo: "deb [arch={{ machine_architecture }} signed-by={{ keyfile }}] https://dl.google.com/linux/chrome/deb/ stable main"
+
+    - name: Ensure google chrome is installed
+      apt:
+        name: google-chrome-stable
+  vars:
+    keyfile: /etc/apt/keyrings/google-chrome-archive-keyring.gpg
