@@ -4,13 +4,21 @@ tooling:
     vault: "1.9.2"
     packer: "1.8.2"
     nomad: "0.10.2"
+    # renovate: datasource=github-releases depName=gruntwork-io/terragrunt
     terragrunt: "v0.40.2"
+    # renovate: datasource=github-releases depName=GoogleContainerTools/skaffold
     skaffold: "v1.37.0"
+    # renovate: datasource=github-releases depName=k3d-io/k3d
     k3d: "v5.4.0"
+    # renovate: datasource=github-releases depName=FiloSottile/mkcert
     mkcert: "v1.4.4"
+    # renovate: datasource=github-releases depName=nvm-sh/nvm
     nvm: "v0.39.0"
+    # renovate: datasource=github-releases depName=python-poetry/poetry
     poetry: "1.1.13"
+    # renovate: datasource=github-releases depName=stackrox/kube-linter
     kube_linter: "0.2.5"
+    # renovate: datasource=github-releases depName=helm/helm
     helm: "v3.8.1"
     kubectl: "v1.23.0"
     yq: "v4.25.2"
