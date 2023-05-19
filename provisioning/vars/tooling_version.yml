@@ -9,7 +9,7 @@ tooling:
     # renovate: datasource=github-releases depName=GoogleContainerTools/skaffold
     skaffold: "v1.37.0"
     # renovate: datasource=github-releases depName=k3d-io/k3d
-    k3d: "v5.4.0"
+    k3d: "v5.4.9"
     # renovate: datasource=github-releases depName=FiloSottile/mkcert
     mkcert: "v1.4.4"
     # renovate: datasource=github-releases depName=nvm-sh/nvm

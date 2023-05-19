@@ -42,8 +42,10 @@ dev:
     - infra
 
   pip_packages:
+    - name: urllib3
+      version: "1.26.15" # TODO: Remove; Fix https://github.com/docker/docker-py/issues/3113
     - name: docker
-      version: "5.0.3"
+      version: "6.1.2"
     - argcomplete
     - paramiko
     - scp
