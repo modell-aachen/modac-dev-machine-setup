@@ -6,6 +6,7 @@ tooling:
     nomad: "0.10.2"
     terragrunt: "v0.40.2"
     skaffold: "v1.37.0"
+    # renovate: datasource=github-releases depName=k3d-io/k3d
     k3d: "v5.4.0"
     mkcert: "v1.4.4"
     nvm: "v0.39.0"
@@ -19,7 +20,7 @@ tooling:
     kustomize: "v4.5.5"
     krew: "v0.4.3"
     flux: "0.31.3"
-    devspace: "v6.2.2"
+    devspace: "v6.2.2"″
     infra: "0.20.0"
     docker:
       compose: "v2.3.4"
