@@ -20,7 +20,7 @@ tooling:
     kube_linter: "0.2.5"
     # renovate: datasource=github-releases depName=helm/helm
     helm: "v3.8.1"
-    kubectl: "v1.26.4"
+    kubectl: "v1.25.9"
     yq: "v4.25.2"
     sops: "v3.7.3"
     onepassword: "v2.5.1"
