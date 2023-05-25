@@ -23,7 +23,7 @@ tooling:
     kubectl: "v1.25.9"
     yq: "v4.25.2"
     sops: "v3.7.3"
-    onepassword: "v2.5.1"
+    onepassword: "v2.18.0"
     kustomize: "v4.5.5"
     krew: "v0.4.3"
     flux: "0.31.3"
