@@ -64,13 +64,11 @@ setup() {
     sudo apt install python3-pip
   fi
 
-  if [ ! -x "$(command -v ansible)" ]; then
-    echo ">> Installing latest version of ansible using pip"
-    sudo -H pip3 install --upgrade pip
-    sudo -H pip3 install ansible
-    sudo -H pip3 install paramiko
-    echo ">> Done."
-  fi
+  echo ">> Installing latest version of ansible using pip"
+  sudo -H pip3 install --upgrade pip
+  sudo -H pip3 install --upgrade ansible
+  sudo -H pip3 install --upgrade paramiko
+  echo ">> Done."
 
 
   echo ">> Install/Updating ansible roles using ansible-galaxy"
