@@ -142,14 +142,13 @@ dev:
     - ghcli
     - terraform
     - terragrunt
+    - google-cloud-sdk
 
   install_snaps: true
   snaps:
     - name: code
       is_classic: true
     - name: go
-      is_classic: true
-    - name: google-cloud-sdk
       is_classic: true
     - name: 1password
       is_classic: false
@@ -163,6 +162,7 @@ dev:
     - node
     - helm
     - kubectl
+    - google-cloud-sdk
   certificates:
     - host: localhost
       location: "{{ ansible_env.HOME }}/certs/localhost"
