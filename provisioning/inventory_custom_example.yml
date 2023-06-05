@@ -24,4 +24,3 @@ all:
       RMS_AUTH_TOKEN: ""
       JENKINS_USER: ""
       JENKINS_TOKEN: ""
-      KNOCK_BEARER: ""
