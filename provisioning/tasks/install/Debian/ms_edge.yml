@@ -1,0 +1,22 @@
+---
+- name: Install microsoft edge
+  become: true
+  block:
+    - name: "Add signed key for {{ name }} repository"
+      shell: "curl -fsSL {{ gpg_origin }} | gpg --dearmor -o {{ gpg_keyfile }}"
+      args:
+        creates: "{{ gpg_keyfile }}"
+
+
+    - name: "Ensure {{ name }} repository is enabled"
+      apt_repository:
+        repo: "deb [arch={{ machine_architecture }} signed-by={{ gpg_keyfile }}] {{ apt_repo }}"
+
+    - name: "Ensure {{ name }} is installed"
+      apt:
+        name: microsoft-edge-stable
+  vars:
+    name: microsoft edge
+    gpg_keyfile: /etc/apt/keyrings/microsoft-edge.gpg
+    gpg_origin: https://packages.microsoft.com/keys/microsoft.asc
+    apt_repo: https://packages.microsoft.com/repos/edge stable main

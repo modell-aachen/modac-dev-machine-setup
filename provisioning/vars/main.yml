@@ -143,6 +143,7 @@ dev:
     - terraform
     - terragrunt
     - google-cloud-sdk
+    - ms_edge
 
   install_snaps: true
   snaps:
