@@ -1,5 +1,5 @@
 ---
-- name: Installs and configures Docker on Debian
+- name: Installs and configures google cloud on Debian
   become: true
   block:
     - name: Add signed key google cloud sdk repository
@@ -11,7 +11,7 @@
       apt_repository:
         repo: "deb [signed-by={{ keyfile }}] https://packages.cloud.google.com/apt cloud-sdk main"
 
-    - name: Ensure gh cli is installed
+    - name: Ensure gcloud cli is installed
       apt:
         pkg:
         - google-cloud-cli
