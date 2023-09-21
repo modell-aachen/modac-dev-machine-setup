@@ -13,7 +13,7 @@ tooling:
     # renovate: datasource=github-releases depName=FiloSottile/mkcert
     mkcert: "v1.4.4"
     # renovate: datasource=github-releases depName=nvm-sh/nvm
-    nvm: "v0.39.0"
+    nvm: "v0.39.5"
     # renovate: datasource=github-releases depName=python-poetry/poetry
     poetry: "1.1.13"
     # renovate: datasource=github-releases depName=stackrox/kube-linter
