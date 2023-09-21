@@ -32,7 +32,7 @@ tooling:
     # renovate: datasource=github-releases depName=kubernetes-sigs/krew
     krew: "v0.4.4"
     # renovate: datasource=github-releases depName=fluxcd/flux2
-    flux: "0.31.3"
+    flux: "v0.41.2"
     # renovate: datasource=github-releases depName=devspace-sh/devspace
     devspace: "v6.3.3"
     # renovate: datasource=github-releases depName=infrahq/infra
