@@ -39,7 +39,7 @@ tooling:
     infra: "v0.21.0"
     docker:
       # renovate: datasource=github-releases depName=docker/compose
-      compose: "v2.3.4"
+      compose: "v2.21.0"
     node:
       default: "lts/gallium"
       installed:
