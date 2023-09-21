@@ -1,12 +1,12 @@
 ---
 - name: Set infra package name (macos)
   set_fact:
-    infra_package: infra_{{ tooling.version.infra }}_{{ ansible_system | lower }}_{{ machine_architecture }}.zip
+    infra_package: infra_{{ tooling.version.infra | replace('v', '') }}_{{ ansible_system | lower }}_{{ machine_architecture }}.zip
   when: is_macos
 
 - name: Set infra package name (linux)
   set_fact:
-    infra_package: infra_{{ tooling.version.infra }}_{{ ansible_system | lower }}_x86_64.zip
+    infra_package: infra_{{ tooling.version.infra | replace('v', '') }}_{{ ansible_system | lower }}_x86_64.zip
   when: is_ubuntu
 
 - name: Install infra from infrahq
@@ -14,6 +14,6 @@
     file: tasks/install/_install_versioned_binary.yml
   vars:
     name: infra
-    url: "https://github.com/infrahq/infra/releases/download/v{{ tooling.version.infra }}/{{ infra_package }}"
+    url: "https://github.com/infrahq/infra/releases/download/{{ tooling.version.infra }}/{{ infra_package }}"
     version: "{{ tooling.version.infra }}"
     unzip: true
