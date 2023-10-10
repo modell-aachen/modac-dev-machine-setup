@@ -1,9 +1,8 @@
 ---
 - name: Install flux CLI
-  include_tasks:
-    file: tasks/install/_install_versioned_binary.yml
-  vars:
-    name: flux
-    url: "https://github.com/fluxcd/flux2/releases/download/v{{ tooling.version.flux }}/flux_{{ tooling.version.flux }}_{{ ansible_system | lower }}_{{ machine_architecture }}.tar.gz"
-    version: "{{ tooling.version.flux }}"
-    unzip: true
+  shell: |
+    curl -s https://raw.githubusercontent.com/fluxcd/flux2/main/install/flux.sh | sudo bash
+  args:
+    creates: "{{ ansible_env.HOME }}/.local/bin/flux2"
+
+
