@@ -62,27 +62,6 @@ Apply updates:
 machine provision -i ~/.inventory_local.yml
 ```
 
-## Local LXC Q.wiki deployments
-E.g. dev, master, etc.
-**CAUTION:** This kind of deployment is not supported on MacOS, please refer to local kubernetes deployments (next section).
-
-### Setup
-```BASH
-qontainer init
-```
-
-### Build
-E.g. dev (accessible in browser as `dev.qwiki`)
-```BASH
-qontainer create dev
-```
-
-### Connect
-E.g. dev
-```BASH
-qontainer login dev
-```
-
 ## Local kubernetes (container) Q.wiki deployment
 E.g. dev, master, etc.
 ### Setup
