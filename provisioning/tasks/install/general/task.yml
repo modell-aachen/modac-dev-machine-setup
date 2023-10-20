@@ -1,0 +1,8 @@
+- name: Install task
+  include_tasks:
+    file: tasks/install/_install_versioned_binary.yml
+  vars:
+    name: task
+    url: "https://github.com/go-task/task/releases/download/{{ tooling.version.task }}/task_{{ ansible_system | lower }}_{{ machine_architecture }}.tar.gz"
+    version: "{{ tooling.version.task }}"
+    unzip: true

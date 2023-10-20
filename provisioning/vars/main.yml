@@ -1,110 +1,109 @@
----
 dev:
   packages:
-    - curl
-    - easy-rsa
-    - git
-    - gitk
-    - htop
-    - inotify-tools
-    - jq
-    - net-tools
-    - network-manager-openvpn
-    - network-manager-openvpn-gnome
-    - openvpn
-    - restic
-    - resolvconf
-    - ruby
-    - tmux
-    - vim
-    - wget
-    - python-is-python3
-    # Packages needed to build CKE locally
-    - build-essential
-    - libcairo2-dev
-    - libgif-dev
-    - libjpeg-dev
-    - libpango1.0-dev
-    - librsvg2-dev
-    - libnss3-tools
-    - sshpass
-    - rdesktop  # patchday process
-    - apt-transport-https
-    - ca-certificates
-    - gnupg
-    - age
+  - curl
+  - easy-rsa
+  - git
+  - gitk
+  - htop
+  - inotify-tools
+  - jq
+  - net-tools
+  - network-manager-openvpn
+  - network-manager-openvpn-gnome
+  - openvpn
+  - restic
+  - resolvconf
+  - ruby
+  - tmux
+  - vim
+  - wget
+  - python-is-python3
+  # Packages needed to build CKE locally
+  - build-essential
+  - libcairo2-dev
+  - libgif-dev
+  - libjpeg-dev
+  - libpango1.0-dev
+  - librsvg2-dev
+  - libnss3-tools
+  - sshpass
+  - rdesktop # patchday process
+  - apt-transport-https
+  - ca-certificates
+  - gnupg
+  - age
 
   remove_packages:
-    - python3-argcomplete
-    - python3-paramiko
-    - python3-scp
-    - python3-psutil
-    - infra
+  - python3-argcomplete
+  - python3-paramiko
+  - python3-scp
+  - python3-psutil
+  - infra
 
   pip_packages:
-    - name: docker
-      version: "6.1.2"
-    - argcomplete
-    - paramiko
-    - scp
-    - psutil
+  - name: docker
+    version: "6.1.2"
+  - argcomplete
+  - paramiko
+  - scp
+  - psutil
 
   homebrew:
     installed_packages:
-      - autoconf
-      - bash-completion
-      - gettext
-      - git
-      - gh
-      - go
-      - gpg
-      - iperf
-      - libevent
-      - mcrypt
-      - nmap
-      - ssh-copy-id
-      - readline
-      - openssl
-      - pv
-      - wget
-      - wrk
-      - zsh-history-substring-search
-      - zsh
-      - coreutils
-      - findutils
-      - gnu-tar
-      - gnu-sed
-      - gawk
-      - gnu-getopt
-      - grep
-      - lima
-      - qemu
-      - docker
-      - docker-compose
-      - docker-buildx
-      - colima
-      - nss
-      - dnsmasq
-      - fzf
-      - jq
-      - openvpn
-      - restic
+    - autoconf
+    - bash-completion
+    - gettext
+    - git
+    - gh
+    - go
+    - gpg
+    - iperf
+    - libevent
+    - mcrypt
+    - nmap
+    - ssh-copy-id
+    - readline
+    - openssl
+    - pv
+    - wget
+    - wrk
+    - zsh-history-substring-search
+    - zsh
+    - coreutils
+    - findutils
+    - gnu-tar
+    - gnu-sed
+    - gawk
+    - gnu-getopt
+    - grep
+    - lima
+    - qemu
+    - docker
+    - docker-compose
+    - docker-buildx
+    - colima
+    - nss
+    - dnsmasq
+    - fzf
+    - jq
+    - openvpn
+    - restic
     taps:
-      - homebrew/core
-      - homebrew/cask
+    - homebrew/core
+    - homebrew/cask
     cask_appdir: /Applications
     cask_apps:
-      - chromedriver
-      - dropbox
-      - firefox
-      - google-chrome
-      - visual-studio-code
-      - spotify
-      - 1password
-      - 1password/tap/1password-cli
-      - unnaturalscrollwheels
-      - microsoft-teams
-      - iterm2
+    - chromedriver
+    - dropbox
+    - firefox
+    - google-chrome
+    - visual-studio-code
+    - spotify
+    - 1password
+    - 1password/tap/1password-cli
+    - unnaturalscrollwheels
+    - microsoft-teams
+    - iterm2
 
   mas:
     installed_apps: []
@@ -114,59 +113,60 @@ dev:
   packages_darwin: []
 
   kubectl_plugins:
-    - ns
-    - ctx
-    - konfig
+  - ns
+  - ctx
+  - konfig
 
   install_modules:
-    - docker
-    - mkcert
-    - certificates
-    - packer
-    - vault
-    - k3d
-    - skaffold
-    - nvm
-    - poetry
-    - kube_linter
-    - helm
-    - kubectl
-    - sops
-    - kustomize
-    - onepassword
-    - yq
-    - flux
-    - devspace
-    - infra
-    # the follwing modules will be skipped on macos, since no general tasks exists
-    - ghcli
-    - terraform
-    - terragrunt
-    - google-cloud-sdk
-    - ms_edge
+  - docker
+  - mkcert
+  - certificates
+  - packer
+  - vault
+  - k3d
+  - skaffold
+  - nvm
+  - poetry
+  - kube_linter
+  - helm
+  - kubectl
+  - sops
+  - kustomize
+  - onepassword
+  - yq
+  - flux
+  - devspace
+  - infra
+  - task
+  # the follwing modules will be skipped on macos, since no general tasks exists
+  - ghcli
+  - terraform
+  - terragrunt
+  - google-cloud-sdk
+  - ms_edge
 
   install_snaps: true
   snaps:
-    - name: code
-      is_classic: true
-    - name: go
-      is_classic: true
-    - name: 1password
-      is_classic: false
-      channel: edge
+  - name: code
+    is_classic: true
+  - name: go
+    is_classic: true
+  - name: 1password
+    is_classic: false
+    channel: edge
   remove_packages:
-    - helm
-    - kubectl
+  - helm
+  - kubectl
   remove_packages_darwin: []
   remove_snaps:
-    - docker
-    - node
-    - helm
-    - kubectl
-    - google-cloud-sdk
+  - docker
+  - node
+  - helm
+  - kubectl
+  - google-cloud-sdk
   certificates:
-    - host: localhost
-      location: "{{ ansible_env.HOME }}/certs/localhost"
+  - host: localhost
+    location: "{{ ansible_env.HOME }}/certs/localhost"
   env:
     REPOS_DIRECTORY: "{{ lookup('env', 'REPOS_DIRECTORY') }}"
     PROVISIONER_DIRECTORY: "{{ lookup('env', 'PROVISIONER_DIRECTORY') }}"
