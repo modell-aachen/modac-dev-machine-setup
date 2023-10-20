@@ -40,7 +40,9 @@ tooling:
     docker:
       # renovate: datasource=github-releases depName=docker/compose
       compose: "v2.21.0"
+    # renovate: datasource=github-releases depName=go-task/task
+    task: "v3.31.0"
     node:
       default: "lts/gallium"
       installed:
-        - "lts/gallium"   # 16.x
+      - "lts/gallium" # 16.x
