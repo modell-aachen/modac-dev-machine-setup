@@ -25,7 +25,7 @@ tooling:
     # renovate: datasource=github-releases depName=mikefarah/yq
     yq: "v4.35.2"
     # renovate: datasource=github-releases depName=getsops/sops
-    sops: "v3.8.0"
+    sops: "v3.8.1"
     onepassword: "v2.18.0"
     # renovate: datasource=github-releases depName=kubernetes-sigs/kustomize
     kustomize: "v4.5.5"
