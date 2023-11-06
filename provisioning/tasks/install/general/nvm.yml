@@ -1,4 +1,3 @@
----
 - name: Install nvm
   shell: |
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/{{ tooling.version.nvm }}/install.sh | bash
@@ -13,19 +12,19 @@
   args:
     executable: /bin/bash
 
-- name: Set default node version
-  shell: |
-    . {{ ansible_env.HOME }}/.nvm/nvm.sh
-    nvm alias default {{ tooling.version.node.default }}
-    nvm use {{ tooling.version.node.default }}
-  args:
-    executable: /bin/bash
-
 - name: Install yarn for every node versions
   shell: |
     . {{ ansible_env.HOME }}/.nvm/nvm.sh
     nvm use {{ item }}
     npm install --global yarn
   loop: "{{ tooling.version.node.installed }}"
+  args:
+    executable: /bin/bash
+
+- name: Set default node version
+  shell: |
+    . {{ ansible_env.HOME }}/.nvm/nvm.sh
+    nvm alias default {{ tooling.version.node.default }}
+    nvm use {{ tooling.version.node.default }}
   args:
     executable: /bin/bash

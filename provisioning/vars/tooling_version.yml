@@ -43,6 +43,7 @@ tooling:
     # renovate: datasource=github-releases depName=go-task/task
     task: "v3.31.0"
     node:
-      default: "lts/gallium"
+      default: "lts/iron"
       installed:
       - "lts/gallium" # 16.x
+      - "lts/iron" # 20.x
