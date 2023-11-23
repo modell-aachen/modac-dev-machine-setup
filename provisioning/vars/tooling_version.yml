@@ -39,7 +39,7 @@ tooling:
     infra: "v0.21.0"
     docker:
       # renovate: datasource=github-releases depName=docker/compose
-      compose: "v2.23.0"
+      compose: "v2.23.3"
     # renovate: datasource=github-releases depName=go-task/task
     task: "v3.31.0"
     node:
