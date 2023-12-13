@@ -1,10 +1,20 @@
 ---
+
+- name: Deleting k3s-vr interface
+  nmcli:
+    type: dummy
+    conn_name: k3s-vr
+    ifname: k3s-vr
+    state: absent
+  become: true
+  when: is_ubuntu
+
 - name: Creating k3s-vr interface
   nmcli:
     type: dummy
     conn_name: k3s-vr
     ifname: k3s-vr
-    ip4: 192.168.10.100
+    ip4: 172.25.5.1
     state: present
   become: true
   when: is_ubuntu
