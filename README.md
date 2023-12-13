@@ -44,6 +44,7 @@ vim $HOME/.inventory_local.yml
 4) set FONTAWESOME_NPM_AUTH_TOKEN to https://start.1password.com/open/i?a=CXJNQFCHNNGSLNOEP6SLPHLZQ4&h=modac.1password.eu&i=xmhedekcuokrqrch62bsuvr5lu&v=6u4nznoclnkg7467ne4ntutcgq
 5) set GITHUB_AUTH_TOKEN to https://start.1password.com/open/i?a=CXJNQFCHNNGSLNOEP6SLPHLZQ4&h=modac.1password.eu&i=dwpktyrfuj6cyjfy6y74q3ifiy&v=6u4nznoclnkg7467ne4ntutcgq
 6) set RMS_AUTH_TOKEN to https://start.1password.com/open/i?a=CXJNQFCHNNGSLNOEP6SLPHLZQ4&h=modac.1password.eu&i=loyd7k5wwwnxkp5ncbkkh7pnmq&v=6u4nznoclnkg7467ne4ntutcgq
+7) set NEXUS_BOT_TOKEN to https://start.1password.com/open/i?a=CXJNQFCHNNGSLNOEP6SLPHLZQ4&v=3mhbwhicfwkifyq7bc2nrnhywa&i=32jtgjyel43vabz2wbukslo5bq&h=modac.1password.eu
 
 ## Initial setup
 ```BASH
@@ -62,32 +63,6 @@ Apply updates:
 machine provision -i ~/.inventory_local.yml
 ```
 
-## Local kubernetes (container) Q.wiki deployment
-E.g. dev, master, etc.
-### Setup
-```BASH
-qluster init
-
-qaffold init
-```
-
-### Build
-Deploy current checkedout Q.wiki
-```BASH
-qaffold deploy
-```
-
-### Provision
-Provision one or more tenants
-```BASH
-qaffold provision dev
-```
-
-### Connect
-```BASH
-qaffold login
-```
-
 # FAQ
 ## DNS resolver
 Local Q.wiki (e.g. dev.modac) can't be resolved  ( < Ubuntu 21.04 only):
@@ -101,27 +76,3 @@ If you use zsh, source `.env` and `bashrc.sh` in your `.zshrc`
 [ -f $HOME/.env ] && source $HOME/.env
 [ -f $HOME/.modac-bash/bashrc.sh ] && source $HOME/.modac-bash/bashrc.sh
 ```
-
-## k3d (docker, dind) and ZFS support
-ZFS is sadly quite painful with Docker in Docker and similar scenarios. It might be best to avoid the problem by creating a volume in your ZFS pool, formatting that volume to ext4, and having docker use "overlay2" on top of that, instead of "zfs".
-
-**CAUTION**: This will erase all your existing docker data (volumes, images, container, networks etc)
-
-```
-# create custom pool for docker data
-sudo zfs create -s -V 50GB rpool/docker
-
-# format storage as ext4
-sudo mkfs.ext4 /dev/zvol/rpool/docker
-
-# stop docker
-sudo systemctl stop docker
-
-# add the mount to /etc/fstab
-echo "/dev/zvol/rpool/docker  /var/lib/docker    ext4    defaults  0   0" | sudo tee -a /etc/fstab
-
-# restart your system
-sudo reboot
-```
-
-After reboot, please re-run your machine provisioner.
