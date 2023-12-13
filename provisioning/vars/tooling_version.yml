@@ -8,8 +8,6 @@ tooling:
     terragrunt: "v0.51.4"
     # renovate: datasource=github-releases depName=GoogleContainerTools/skaffold
     skaffold: "v2.7.1"
-    # renovate: datasource=github-releases depName=k3d-io/k3d
-    k3d: "v5.6.0"
     # renovate: datasource=github-releases depName=FiloSottile/mkcert
     mkcert: "v1.4.4"
     # renovate: datasource=github-releases depName=nvm-sh/nvm
