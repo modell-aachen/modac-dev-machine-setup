@@ -25,3 +25,5 @@ all:
       JENKINS_USER: ""
       JENKINS_TOKEN: ""
       NEXUS_BOT_TOKEN: ""
+      HARBOR_USERNAME: ""
+      HARBOR_PASSWORD: ""
