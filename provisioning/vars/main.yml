@@ -88,9 +88,7 @@ dev:
     - jq
     - openvpn
     - restic
-    taps:
-    - homebrew/core
-    - homebrew/cask
+    taps: []
     cask_appdir: /Applications
     cask_apps:
     - chromedriver
