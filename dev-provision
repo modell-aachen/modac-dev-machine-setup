@@ -37,11 +37,11 @@ setup() {
   echo ">> Checking if required setup is already done..."
   echo ">> Checking default python version .."
 
-  if ! python3 -c 'import sys; assert sys.version_info >= (3,8)' &> /dev/null; then
-    echo ">> [ERROR] Your default python version is too old. Python >= 3.8 required."
+  if ! python3 -c 'import sys; assert sys.version_info >= (3,10)' &> /dev/null; then
+    echo ">> [ERROR] Your default python version is too old. Python >= 3.10 required."
     exit 1
   else
-    echo ">> Python 3.8 requirement satisfied."
+    echo ">> Python 3.10 requirement satisfied."
   fi
 
   if [[ "$(uname -s)" = "Linux"* ]]; then

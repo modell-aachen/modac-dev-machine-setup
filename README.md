@@ -5,13 +5,13 @@
 The machine provisioner requires some basic packages.
 If your using ubuntu >= 20.04, you can follow along with the "Usage" section. On other operating system, i.e. MacOS, please satisfy the following requirements manually:
 
-* python >= 3.8
+* python >= 3.10
 * pip >= 20.3
 * pip3 >= 20.3
 * git
 * vim
 
-**Important** The command `python3` needs to point to the python-executable for Python >= 3.8, `python` might not work.
+**Important** The command `python3` needs to point to the python-executable for Python >= 3.10, `python` might not work.
 
 
 
