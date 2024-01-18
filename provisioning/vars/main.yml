@@ -59,7 +59,7 @@ dev:
     - gpg
     - iperf
     - libevent
-    - mcrypt
+    #- mcrypt
     - nmap
     - ssh-copy-id
     - readline
