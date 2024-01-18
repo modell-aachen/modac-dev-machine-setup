@@ -122,7 +122,6 @@ dev:
   - packer
   - vault
   - k3s
-  - skaffold
   - nvm
   - poetry
   - kube_linter
