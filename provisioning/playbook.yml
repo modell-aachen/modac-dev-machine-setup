@@ -18,8 +18,10 @@
       {{ dev.packages_darwin | union(packages_darwin) }}
     all_remove_packages_darwin: |
       {{ dev.remove_packages_darwin | union(remove_packages_darwin) }}
-    all_install_modules: |
+    all_dev_install_modules: |
       {{ dev.install_modules | union(install_modules) }}
+    all_service_install_modules: |
+      {{ service.install_modules | union(install_modules) }}
     all_kubectl_plugins: |
       {{ dev.kubectl_plugins | union(kubectl_plugins) }}
     all_pip_packages: |
@@ -120,12 +122,23 @@
 
     - name: Install tooling
       block:
-        - name: Loop over custom modules
+
+        - name: Loop over custom modules for dev
           include_tasks:
             file: "tasks/install/_install_module_if_existing.yaml"
-          loop: "{{ all_install_modules }}"
+          loop: "{{ all_dev_install_modules }}"
           loop_control:
             loop_var: module
+          when: not service_tooling_only
+
+        - name: Loop over custom modules for service
+          include_tasks:
+            file: "tasks/install/_install_module_if_existing.yaml"
+          loop: "{{ all_service_install_modules }}"
+          loop_control:
+            loop_var: module
+          when: service_tooling_only
+
       tags:
         - tooling
 
