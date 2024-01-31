@@ -167,7 +167,7 @@
         - name: Install modac-bash-helper based on python
           shell:
             cmd: |
-              export NEXUS_BOT_TOKEN={{ dev.env.NEXUS_BOT_TOKEN }}
+              export NEXUS_BOT_TOKEN={{ env.NEXUS_BOT_TOKEN }}
               if [ -f "$HOME/.modac-bash/install_modac_shell_helper.sh" ]; then
                 bash -e "$HOME/.modac-bash/install_modac_shell_helper.sh"
               fi
