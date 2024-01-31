@@ -177,8 +177,21 @@ dev:
     NEXUS_BOT_TOKEN: ''
     QWIKI_DEVELOPMENT_ROOT_CA: "{{ ansible_env.HOME }}/.local/share/mkcert"
 
+  service_tooling_only: false
 
 antigen_install_dir: ~/.antigen
 antigen_install_path: "{{ antigen_install_dir }}/antigen.zsh"
 
 configure_shell_rc: true
+
+service:
+  install_modules:
+  - vault
+  - poetry
+  - helm
+  - kubectl
+  - kustomize
+  - infra
+  - ghcli
+  - google-cloud-sdk
+  - ms_edge

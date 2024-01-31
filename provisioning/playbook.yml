@@ -18,8 +18,10 @@
       {{ dev.packages_darwin | union(packages_darwin) }}
     all_remove_packages_darwin: |
       {{ dev.remove_packages_darwin | union(remove_packages_darwin) }}
-    all_install_modules: |
+    all_dev_install_modules: |
       {{ dev.install_modules | union(install_modules) }}
+    all_service_install_modules: |
+      {{ service.install_modules | union(install_modules) }}
     all_kubectl_plugins: |
       {{ dev.kubectl_plugins | union(kubectl_plugins) }}
     all_pip_packages: |
@@ -110,22 +112,37 @@
     - name: Install and Remove snap packages (Ubuntu only)
       become: true
       block:
-        - include_tasks:
+        - name: Installing snaps
+          include_tasks:
             file: tasks/install_snaps.yml
-        - include_tasks:
+        - name: Removing snaps
+          include_tasks:
             file: tasks/remove_snaps.yml
       when: is_ubuntu and install_snaps
       tags:
         - packages
 
-    - name: Install tooling
+    - name: Install tooling for dev only
       block:
-        - name: Loop over custom modules
+        - name: Loop over custom modules for dev
           include_tasks:
             file: "tasks/install/_install_module_if_existing.yaml"
-          loop: "{{ all_install_modules }}"
+          loop: "{{ all_dev_install_modules }}"
           loop_control:
             loop_var: module
+      when: not service_tooling_only
+      tags:
+        - tooling
+
+    - name: Install tooling for service only
+      block:
+        - name: Loop over custom modules for service
+          include_tasks:
+            file: "tasks/install/_install_module_if_existing.yaml"
+          loop: "{{ all_service_install_modules }}"
+          loop_control:
+            loop_var: module
+      when: service_tooling_only
       tags:
         - tooling
 
@@ -150,6 +167,7 @@
         - name: Install modac-bash-helper based on python
           shell:
             cmd: |
+              export NEXUS_BOT_TOKEN={{ env.NEXUS_BOT_TOKEN }}
               if [ -f "$HOME/.modac-bash/install_modac_shell_helper.sh" ]; then
                 bash -e "$HOME/.modac-bash/install_modac_shell_helper.sh"
               fi

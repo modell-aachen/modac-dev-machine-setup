@@ -1,9 +1,7 @@
 ---
 all:
   vars:
-    packages:
-      - silversearcher-ag
-      - fzf
+    packages: []
     install_modules: []
     kubectl_plugins:
       - ns
@@ -15,16 +13,10 @@ all:
     # caps_remap_behavior - values:
     # escape or none; more options: man xkeyboard-config
     caps_remap_behavior: "escape"
-    service_tooling_only: false
+    service_tooling_only: true
     env:
       REPOS_DIRECTORY: ""
       PROVISIONER_DIRECTORY: ""
       MODAC_BASH_DIRECTORY: ""
       GITHUB_AUTH_TOKEN: ""
-      FONTAWESOME_NPM_AUTH_TOKEN: ""
-      RMS_AUTH_TOKEN: ""
-      JENKINS_USER: ""
-      JENKINS_TOKEN: ""
       NEXUS_BOT_TOKEN: ""
-      HARBOR_USERNAME: ""
-      HARBOR_PASSWORD: ""
