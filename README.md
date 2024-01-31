@@ -25,9 +25,20 @@ cd ~
 ```
 
 ## Inventory creation
+
+### Clone repo
 ```
 git clone https://github.com/modell-aachen/modac-dev-machine-setup.git
+```
+
+### Create inventroy blueprint
+**For development users**
+```
 cp $HOME/modac-dev-machine-setup/provisioning/inventory_custom_example.yml $HOME/.inventory_local.yml
+```
+**For service users**
+```
+cp $HOME/modac-dev-machine-setup/provisioning/inventory_service_example.yml $HOME/.inventory_local.yml
 ```
 
 ## Initial local configuration and adjustments
