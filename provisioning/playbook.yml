@@ -130,7 +130,7 @@
           loop: "{{ all_dev_install_modules }}"
           loop_control:
             loop_var: module
-      when: not service_tooling_only
+      when: service_tooling_only is undefined or not service_tooling_only
       tags:
         - tooling
 
@@ -142,7 +142,7 @@
           loop: "{{ all_service_install_modules }}"
           loop_control:
             loop_var: module
-      when: service_tooling_only
+      when: service_tooling_only is defined and service_tooling_only
       tags:
         - tooling
 
