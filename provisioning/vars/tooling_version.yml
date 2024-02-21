@@ -17,7 +17,7 @@ tooling:
     # renovate: datasource=github-releases depName=helm/helm
     helm: "v3.14.1"
     # renovate: datasource=github-releases depName=kubernetes/kubernetes
-    kubectl: "v1.26.9"
+    kubectl: "v1.28.7"
     # renovate: datasource=github-releases depName=mikefarah/yq
     yq: "v4.41.1"
     # renovate: datasource=github-releases depName=getsops/sops
