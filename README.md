@@ -80,8 +80,8 @@ machine provision
 
 # FAQ
 ## Problem lösen "**GitHub Error Message - Permission denied (publickey)**"
-Quelle: https://stackoverflow.com/questions/12940626/github-error-message-permission-denied-publickey
-Lösung: das eintippen vor ausführen des Skripts.
+Source: https://stackoverflow.com/questions/12940626/github-error-message-permission-denied-publickey
+Solution: Write that before starting the script
 ```BASH
 ssh-agent -s
 ssh-add ~/.ssh/id_rsa
