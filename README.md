@@ -75,7 +75,7 @@ machine edit-config
 
 Apply updates:
 ```BASH
-machine provision -i ~/.inventory_local.yml
+machine provision
 ```
 
 # FAQ
