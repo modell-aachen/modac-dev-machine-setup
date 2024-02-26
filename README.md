@@ -79,6 +79,14 @@ machine provision -i ~/.inventory_local.yml
 ```
 
 # FAQ
+## Problem lösen "**GitHub Error Message - Permission denied (publickey)**"
+Quelle: https://stackoverflow.com/questions/12940626/github-error-message-permission-denied-publickey
+Lösung: das eintippen vor ausführen des Skripts.
+```BASH
+ssh-agent -s
+ssh-add ~/.ssh/id_rsa
+```
+
 ## DNS resolver
 Local Q.wiki (e.g. dev.modac) can't be resolved  ( < Ubuntu 21.04 only):
 
