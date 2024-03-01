@@ -114,6 +114,7 @@ dev:
   - ns
   - ctx
   - konfig
+  - oidc-login
 
   install_modules:
   - docker
