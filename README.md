@@ -99,3 +99,24 @@ If you use zsh, source `.env` and `bashrc.sh` in your `.zshrc`
 [ -f $HOME/.env ] && source $HOME/.env
 [ -f $HOME/.modac-bash/bashrc.sh ] && source $HOME/.modac-bash/bashrc.sh
 ```
+
+## Docker setup fails
+
+The docker task requires a system restart. If any succeeding docker-related tasks fail (kubectl, calico, etc.) try restarting the system
+and the provisioning process (`machine provision`).
+
+## Calico: ImageInspectError 
+
+The calico task can fail because of an [incompatibility issue](https://github.com/k3s-io/k3s/issues/9279):
+
+Workaround:
+
+```BASH
+apt-cache policy docker-ce | grep 24.0.7
+```
+
+Use the printed version (e.g. 5:24.0.7-1~ubuntu.22.04~jammy) to ...
+
+```BASH
+sudo apt install docker-ce=*VERSION*
+```
