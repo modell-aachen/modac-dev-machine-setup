@@ -44,10 +44,10 @@
   shell: asdf plugin-add elixir https://github.com/asdf-vm/asdf-elixir.git
 
 - name: Install Erlang
-  shell: asdf install erlang 26.2
+  shell: asdf install erlang {{ tooling.version.erlang }}
 
 - name: Install Elixir
-  shell: asdf install elixir 1.16.1-otp-26
+  shell: asdf install elixir {{ tooling.version.elixir }}
 
     
 
