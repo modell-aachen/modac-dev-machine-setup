@@ -142,6 +142,7 @@ dev:
   - terragrunt
   - google-cloud-sdk
   - ms_edge
+  - asdf_elixir
 
   install_snaps: true
   snaps:

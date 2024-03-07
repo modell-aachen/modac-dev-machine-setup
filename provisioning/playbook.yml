@@ -175,14 +175,6 @@
         - scripts
 
     - include_tasks:
-        file: tasks/setup_asdf.yml
-        apply:
-          tags:
-            - always
-      tags:
-        - tooling
-
-    - include_tasks:
         file: tasks/install_dotfiles.yml
         apply:
           tags:
