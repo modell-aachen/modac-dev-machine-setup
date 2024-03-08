@@ -96,6 +96,9 @@
 
     - name: Configure packages on MacOS
       block:
+        - name: Add usr/local/bin directory
+          include_tasks:
+            file: "tasks/configure/Darwin/folder.yaml"
         - name: Configure shell rc on macos
           include_tasks:
             file: "tasks/configure/Darwin/shell.yaml"
