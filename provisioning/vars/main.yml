@@ -88,6 +88,7 @@ dev:
     - jq
     - openvpn
     - restic
+    - teleport
     taps: []
     cask_appdir: /Applications
     cask_apps:
