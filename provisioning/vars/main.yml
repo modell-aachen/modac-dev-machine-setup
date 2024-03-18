@@ -88,6 +88,7 @@ dev:
     - jq
     - openvpn
     - restic
+    - teleport
     taps: []
     cask_appdir: /Applications
     cask_apps:
@@ -114,6 +115,7 @@ dev:
   - ns
   - ctx
   - konfig
+  - oidc-login
 
   install_modules:
   - docker
@@ -141,6 +143,7 @@ dev:
   - terragrunt
   - google-cloud-sdk
   - ms_edge
+  - asdf_elixir
 
   install_snaps: true
   snaps:

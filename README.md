@@ -13,7 +13,13 @@ If your using ubuntu >= 20.04, you can follow along with the "Usage" section. On
 
 **Important** The command `python3` needs to point to the python-executable for Python >= 3.10, `python` might not work.
 
+### Note Python3 v.3.12
 
+How do I solve "error: externally-managed-environment":
+
+```BASH
+sudo -H pip3 config --global set global.break-system-packages true
+```
 
 # Usage
 
@@ -75,10 +81,18 @@ machine edit-config
 
 Apply updates:
 ```BASH
-machine provision -i ~/.inventory_local.yml
+machine provision
 ```
 
 # FAQ
+## Problem lösen "**GitHub Error Message - Permission denied (publickey)**"
+Source: https://stackoverflow.com/questions/12940626/github-error-message-permission-denied-publickey
+Solution: Write that before starting the script
+```BASH
+ssh-agent -s
+ssh-add ~/.ssh/id_rsa
+```
+
 ## DNS resolver
 Local Q.wiki (e.g. dev.modac) can't be resolved  ( < Ubuntu 21.04 only):
 
@@ -90,4 +104,25 @@ If you use zsh, source `.env` and `bashrc.sh` in your `.zshrc`
 ```BASH
 [ -f $HOME/.env ] && source $HOME/.env
 [ -f $HOME/.modac-bash/bashrc.sh ] && source $HOME/.modac-bash/bashrc.sh
+```
+
+## Docker setup fails
+
+The docker task requires a system restart. If any succeeding docker-related tasks fail (kubectl, calico, etc.) try restarting the system
+and the provisioning process (`machine provision`).
+
+## Calico: ImageInspectError 
+
+The calico task can fail because of an [incompatibility issue](https://github.com/k3s-io/k3s/issues/9279):
+
+Workaround:
+
+```BASH
+apt-cache policy docker-ce | grep 24.0.7
+```
+
+Use the printed version (e.g. 5:24.0.7-1~ubuntu.22.04~jammy) to ...
+
+```BASH
+sudo apt install docker-ce=*VERSION*
 ```
