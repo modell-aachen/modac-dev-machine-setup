@@ -13,6 +13,7 @@
   shell: |
     python3 -c "import requests; print(requests.certs.where())"
   register: python_ca_certificate
+  changed_when: False
 
 - name: Check if modac custom rootCA is part of pythons CA
   blockinfile:
@@ -20,6 +21,7 @@
     path: "{{ python_ca_certificate.stdout }}"
     backup: no
   when: not python_ca_certificate.stdout is match("/etc/ssl/certs/*")
+  changed_when: False
 
 - name: Create certificates
   include_tasks: tasks/certificates/generate_certificate.yml

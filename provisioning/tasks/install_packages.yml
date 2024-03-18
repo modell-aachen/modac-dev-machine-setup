@@ -13,6 +13,8 @@
 
     - name: Update restic
       command: restic self-update
+      register: result
+      changed_when: '"restic is up to date" not in result.stdout'
   when: is_ubuntu
 
 - name: Install packages on Darwin.
