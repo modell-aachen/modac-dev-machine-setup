@@ -69,6 +69,7 @@
         homebrew_taps: "{{ dev.homebrew.taps }}"
         homebrew_cask_appdir: "{{ dev.homebrew.cask_appdir }}"
         homebrew_cask_apps: "{{ dev.homebrew.cask_apps }}"
+        homebrew_install_path: "/opt/homebrew/Homebrew"
       when: is_macos
 
   tasks:
