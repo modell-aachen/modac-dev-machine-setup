@@ -1,0 +1,56 @@
+
+---
+- name: Install on Ubuntu
+  when: is_ubuntu
+  block:
+    - name: Accept github as known hosts
+      become: true
+      shell: ssh-keyscan -H github.com >> /etc/ssh/ssh_known_hosts
+
+    - name: Clone/Update asdf
+      git:
+        repo: "https://github.com/asdf-vm/asdf.git"
+        dest: "{{ ansible_env.HOME }}/.asdf"
+        version: v0.14.0
+        
+    - name: Configure shell rc for asdf
+      block:
+        - name: Check if .bashrc exists
+          stat:
+            path: "{{ ansible_env.HOME }}/.bashrc"
+          register: bashrc
+
+        - name: Ensure asdf is sourced in .bashrc, if .bashrc exists
+          lineinfile:
+            path: "{{ ansible_env.HOME }}/.bashrc"
+            line: "{{ item }}"
+          loop:
+            - ". \"$HOME/.asdf/asdf.sh\""
+            - ". \"$HOME/.asdf/completions/asdf.bash\""
+          when: bashrc.stat is defined and bashrc.stat.exists
+
+    - name: Install packages on Debian.
+      become: true
+      when: is_ubuntu
+      block:
+        - name: Install dependencies
+          apt:
+            name: 
+              - "libssl-dev"
+              - automake
+              - autoconf
+              - libncurses5-dev
+
+- name: Install asdf plugins
+  block:
+    - name: Add asdf erlang plugin
+      shell: asdf plugin-add erlang https://github.com/asdf-vm/asdf-erlang.git
+
+    - name: Add asdf elixir plugin
+      shell: asdf plugin-add elixir https://github.com/asdf-vm/asdf-elixir.git
+
+    - name: Install Erlang
+      shell: asdf install erlang {{ tooling.version.erlang }}
+
+    - name: Install Elixir
+      shell: asdf install elixir {{ tooling.version.elixir }}

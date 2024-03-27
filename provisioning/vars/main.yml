@@ -89,6 +89,7 @@ dev:
     - openvpn
     - restic
     - teleport
+    - asdf
     taps: []
     cask_appdir: /Applications
     cask_apps:
