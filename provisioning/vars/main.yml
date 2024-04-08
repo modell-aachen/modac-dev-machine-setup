@@ -38,7 +38,6 @@ dev:
   - python3-paramiko
   - python3-scp
   - python3-psutil
-  - infra
 
   pip_packages:
   - name: docker
@@ -136,7 +135,6 @@ dev:
   - yq
   - flux
   - devspace
-  - infra
   - task
   # the follwing modules will be skipped on macos, since no general tasks exists
   - ghcli
@@ -195,7 +193,6 @@ service:
   - helm
   - kubectl
   - kustomize
-  - infra
   - ghcli
   - google-cloud-sdk
   - ms_edge
