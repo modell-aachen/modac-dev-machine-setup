@@ -31,8 +31,6 @@ tooling:
     flux: "v2.2.3"
     # renovate: datasource=github-releases depName=devspace-sh/devspace
     devspace: "v6.3.11"
-    # renovate: datasource=github-releases depName=infrahq/infra
-    infra: "v0.21.0"
     docker:
       # renovate: datasource=github-releases depName=docker/compose
       compose: "v2.24.6"
