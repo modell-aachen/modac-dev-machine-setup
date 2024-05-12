@@ -19,7 +19,7 @@ tooling:
     # renovate: datasource=github-releases depName=kubernetes/kubernetes
     kubectl: "v1.28.7"
     # renovate: datasource=github-releases depName=mikefarah/yq
-    yq: "v4.43.1"
+    yq: "v4.44.1"
     # renovate: datasource=github-releases depName=getsops/sops
     sops: "v3.8.1"
     onepassword: "v2.18.0"
