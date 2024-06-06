@@ -9,13 +9,3 @@
         iprange: 172.173.174.0/24
         gateway: 172.173.174.254
   when: is_macos
-
-- name: Create custom network bridge for k8s (on ubuntu)
-  docker_network:
-    name: modac-qwiki-k8s-bridge
-    driver: bridge
-    ipam_config:
-      - subnet: 172.173.0.0/16
-        iprange: 172.173.174.0/24
-        gateway: 172.173.174.254
-  when: is_ubuntu

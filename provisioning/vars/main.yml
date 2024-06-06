@@ -12,7 +12,6 @@ dev:
   - network-manager-openvpn-gnome
   - openvpn
   - restic
-  - resolvconf
   - ruby
   - tmux
   - vim
