@@ -3,7 +3,7 @@ roles:
   - name: elliotweiser.osx-command-line-tools
   
   - src: geerlingguy.docker
-    version: 7.2.0
+    version: 7.3.0
 
 collections:
   - name: geerlingguy.mac
