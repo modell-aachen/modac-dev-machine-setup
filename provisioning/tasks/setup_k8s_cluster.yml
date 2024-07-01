@@ -1,0 +1,10 @@
+---
+- name: Install all known kubeconfig
+  shell: |
+    curl https://modell-aachen.github.io/k8s-kubeconfig-setup/kubeconfig-setup.sh | bash
+
+- name: Merge to current kubeconfig
+  shell: |
+    cp ~/.kube/config ~/.kube/config.bak
+    KUBECONFIG=~/.kube/modac/all-in-one:~/.kube/config kubectl config view --flatten > /tmp/config
+    mv /tmp/config ~/.kube/config

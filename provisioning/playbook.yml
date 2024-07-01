@@ -178,6 +178,13 @@
       tags:
         - scripts
 
+    - name: Install and configure kubernetes credentials
+      block:
+        - include_tasks:
+            file: tasks/setup_k8s_cluster.yml
+      tags:
+        - creds
+
     - include_tasks:
         file: tasks/install_dotfiles.yml
         apply:
