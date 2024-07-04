@@ -37,7 +37,7 @@ tooling:
       # renovate: datasource=github-releases depName=docker/compose
       compose: "v2.27.1"
     # renovate: datasource=github-releases depName=go-task/task
-    task: "v3.37.2"
+    task: "v3.38.0"
     node:
       default: "lts/iron"
       installed:
