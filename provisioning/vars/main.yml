@@ -198,3 +198,4 @@ service:
   - ghcli
   - google-cloud-sdk
   - ms_edge
+  - onepassword
