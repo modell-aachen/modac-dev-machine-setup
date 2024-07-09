@@ -1,7 +1,6 @@
----
 - name: Install all known kubeconfig
   shell: |
-    curl https://modell-aachen.github.io/k8s-kubeconfig-setup/kubeconfig-setup.sh | bash
+    curl -s https://modell-aachen.github.io/k8s-kubeconfig-setup/kubeconfig-setup.sh | bash
 
 - name: Merge to current kubeconfig
   shell: |
