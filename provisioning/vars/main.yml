@@ -12,7 +12,6 @@ dev:
   - network-manager-openvpn-gnome
   - openvpn
   - restic
-  - resolvconf
   - ruby
   - tmux
   - vim
@@ -54,12 +53,12 @@ dev:
     - gettext
     - git
     - gh
-    - go
+    - homebrew/core/go
     - gpg
     - iperf
     - libevent
     #- mcrypt
-    - nmap
+    - homebrew/core/nmap
     - ssh-copy-id
     - readline
     - openssl
@@ -77,8 +76,8 @@ dev:
     - grep
     - lima
     - qemu
-    - docker
-    - docker-compose
+    - homebrew/cask/docker
+    - homebrew/core/docker-compose
     - docker-buildx
     - colima
     - nss
@@ -196,3 +195,4 @@ service:
   - ghcli
   - google-cloud-sdk
   - ms_edge
+  - onepassword

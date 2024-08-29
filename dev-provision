@@ -12,10 +12,11 @@ Usage:
   dev-provision [configuration]
 
 Available configurations
+  creds | credentials   only provision kubernetes credentials (requires op cli)
   dotfiles              only provision dotfiles
   packages              only provision system packages
-  tooling               only provision tooling
   scripts               only provision scripts (modac-bash)
+  tooling               only provision tooling
   upgrade-provisioner   will upgrade the dev machine provisioner,
                         i.e. checkout newest version and install requirements
 
@@ -136,6 +137,9 @@ case "$1" in
         ;;
     scripts )
         provision scripts
+        ;;
+    creds | credentials )
+        provision creds
         ;;
     * )
         provision

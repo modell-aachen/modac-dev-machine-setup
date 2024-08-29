@@ -9,33 +9,33 @@ tooling:
     # renovate: datasource=github-releases depName=FiloSottile/mkcert
     mkcert: "v1.4.4"
     # renovate: datasource=github-releases depName=nvm-sh/nvm
-    nvm: "v0.39.7"
+    nvm: "v0.40.1"
     # renovate: datasource=github-releases depName=python-poetry/poetry
-    poetry: "1.7.1"
+    poetry: "1.8.3"
     # renovate: datasource=github-releases depName=stackrox/kube-linter
-    kube_linter: "v0.6.7"
+    kube_linter: "v0.6.8"
     # renovate: datasource=github-releases depName=helm/helm
-    helm: "v3.14.1"
+    helm: "v3.15.2"
     # renovate: datasource=github-releases depName=kubernetes/kubernetes
-    kubectl: "v1.28.7"
+    kubectl: "v1.29.6"
     # renovate: datasource=github-releases depName=mikefarah/yq
-    yq: "v4.41.1"
+    yq: "v4.44.3"
     # renovate: datasource=github-releases depName=getsops/sops
-    sops: "v3.8.1"
+    sops: "v3.9.0"
     onepassword: "v2.18.0"
     # renovate: datasource=github-releases depName=kubernetes-sigs/kustomize
     kustomize: "v4.5.5"
     # renovate: datasource=github-releases depName=kubernetes-sigs/krew
     krew: "v0.4.4"
     # renovate: datasource=github-releases depName=fluxcd/flux2
-    flux: "v2.2.3"
+    flux: "v2.3.0"
     # renovate: datasource=github-releases depName=devspace-sh/devspace
-    devspace: "v6.3.11"
+    devspace: "v6.3.12"
     docker:
       # renovate: datasource=github-releases depName=docker/compose
-      compose: "v2.24.6"
+      compose: "v2.29.2"
     # renovate: datasource=github-releases depName=go-task/task
-    task: "v3.34.1"
+    task: "v3.38.0"
     node:
       default: "lts/iron"
       installed:
