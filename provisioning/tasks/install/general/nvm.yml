@@ -28,3 +28,12 @@
     nvm use {{ tooling.version.node.default }}
   args:
     executable: /bin/bash
+
+- name: Set latest yarn for current node version
+  shell: |
+    . {{ ansible_env.HOME }}/.nvm/nvm.sh
+    npm uninstall -g yarn
+    corepack enable
+    corepack install -g yarn@latest
+  args:
+    executable: /bin/bash
