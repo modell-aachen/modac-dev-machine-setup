@@ -38,8 +38,9 @@ tooling:
     task: "v3.38.0"
     node:
       default: "lts/iron"
-      installed:
-      - "lts/gallium" # 16.x
+      modern:
       - "lts/iron" # 20.x
+      legacy:
+      - "lts/gallium" # 16.x
     erlang: "26.2"
     elixir: "1.16.1-otp-26"

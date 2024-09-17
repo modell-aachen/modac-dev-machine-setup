@@ -8,16 +8,27 @@
   shell: |
     . {{ ansible_env.HOME }}/.nvm/nvm.sh
     nvm install {{ item }}
-  loop: "{{ tooling.version.node.installed }}"
+  loop: "{{ tooling.version.node.modern + tooling.version.node.legacy }}"
   args:
     executable: /bin/bash
 
-- name: Install yarn for every node versions
+- name: Install yarn for legacy node versions
   shell: |
     . {{ ansible_env.HOME }}/.nvm/nvm.sh
     nvm use {{ item }}
     npm install --global yarn
-  loop: "{{ tooling.version.node.installed }}"
+  loop: "{{ tooling.version.node.legacy }}"
+  args:
+    executable: /bin/bash
+
+- name: Install latest yarn for modern node versions
+  shell: |
+    . {{ ansible_env.HOME }}/.nvm/nvm.sh
+    nvm use {{ item }}
+    npm uninstall -g yarn
+    corepack enable
+    corepack install -g yarn@latest
+  loop: "{{ tooling.version.node.modern }}"
   args:
     executable: /bin/bash
 
@@ -26,14 +37,5 @@
     . {{ ansible_env.HOME }}/.nvm/nvm.sh
     nvm alias default {{ tooling.version.node.default }}
     nvm use {{ tooling.version.node.default }}
-  args:
-    executable: /bin/bash
-
-- name: Set latest yarn for current node version
-  shell: |
-    . {{ ansible_env.HOME }}/.nvm/nvm.sh
-    npm uninstall -g yarn
-    corepack enable
-    corepack install -g yarn@latest
   args:
     executable: /bin/bash
