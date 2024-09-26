@@ -52,19 +52,20 @@ cp $HOME/modac-dev-machine-setup/provisioning/inventory_service_example.yml $HOM
 vim $HOME/.inventory_local.yml
 ```
 1) remove unused packages and snaps, insert your keys, e.g.
-2) create a local ssh key and set as SSH key to your GitHub Account (https://github.com/settings/keys)
-3) check successfull authentication against github.com
+1) create a local ssh key and set as SSH key to your GitHub Account (https://github.com/settings/keys)
+1) check successfull authentication against github.com
     ```bash
     ssh -T git@github.com
     ```
-3) create a directory for your repositories and set REPOS_DIRECTORY to the created path
-7) set NEXUS_BOT_TOKEN to the value of 1Password entry at https://start.1password.com/open/i?a=CXJNQFCHNNGSLNOEP6SLPHLZQ4&v=3mhbwhicfwkifyq7bc2nrnhywa&i=32jtgjyel43vabz2wbukslo5bq&h=modac.1password.eu
+1) create a directory for your repositories and set REPOS_DIRECTORY to the created path
+1) set NEXUS_BOT_TOKEN to the value of 1Password entry at https://start.1password.com/open/i?a=CXJNQFCHNNGSLNOEP6SLPHLZQ4&v=3mhbwhicfwkifyq7bc2nrnhywa&i=32jtgjyel43vabz2wbukslo5bq&h=modac.1password.eu
 
 ### Additional, development only, configuration and adjustments
-5) set GITHUB_AUTH_TOKEN to the value of 1Password entry at https://start.1password.com/open/i?a=CXJNQFCHNNGSLNOEP6SLPHLZQ4&h=modac.1password.eu&i=dwpktyrfuj6cyjfy6y74q3ifiy&v=6u4nznoclnkg7467ne4ntutcgq
-4) set FONTAWESOME_NPM_AUTH_TOKEN to the value of 1Password entry at https://start.1password.com/open/i?a=CXJNQFCHNNGSLNOEP6SLPHLZQ4&h=modac.1password.eu&i=xmhedekcuokrqrch62bsuvr5lu&v=6u4nznoclnkg7467ne4ntutcgq
+6) set GITHUB_AUTH_TOKEN to the value of 1Password entry at https://start.1password.com/open/i?a=CXJNQFCHNNGSLNOEP6SLPHLZQ4&h=modac.1password.eu&i=dwpktyrfuj6cyjfy6y74q3ifiy&v=6u4nznoclnkg7467ne4ntutcgq
+1) set FONTAWESOME_NPM_AUTH_TOKEN to the value of 1Password entry at https://start.1password.com/open/i?a=CXJNQFCHNNGSLNOEP6SLPHLZQ4&h=modac.1password.eu&i=xmhedekcuokrqrch62bsuvr5lu&v=6u4nznoclnkg7467ne4ntutcgq
+1) set FONTAWESOME_NEXUS_AUTH_TOKEN to the value of 1Password entry at https://start.1password.com/open/i?a=CXJNQFCHNNGSLNOEP6SLPHLZQ4&v=6u4nznoclnkg7467ne4ntutcgq&i=5xls52q24au3eie2itucvc635u&h=modac.1password.eu
 1) set HARBOR_USERNAME to your modac mail address
-2) set HARBOR_PASSWORD to your CLI token (https://harbor.modac.cloud -> Login -> user profile [top right corner] -> User Profile -> CLI secret)
+1) set HARBOR_PASSWORD to your CLI token (https://harbor.modac.cloud -> Login -> user profile [top right corner] -> User Profile -> CLI secret)
 
 
 ## Initial setup
@@ -111,7 +112,7 @@ If you use zsh, source `.env` and `bashrc.sh` in your `.zshrc`
 The docker task requires a system restart. If any succeeding docker-related tasks fail (kubectl, calico, etc.) try restarting the system
 and the provisioning process (`machine provision`).
 
-## Calico: ImageInspectError 
+## Calico: ImageInspectError
 
 The calico task can fail because of an [incompatibility issue](https://github.com/k3s-io/k3s/issues/9279):
 
