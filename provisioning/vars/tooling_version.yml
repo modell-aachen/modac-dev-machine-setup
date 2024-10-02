@@ -5,7 +5,7 @@ tooling:
     packer: "1.8.2"
     nomad: "0.10.2"
     # renovate: datasource=github-releases depName=gruntwork-io/terragrunt
-    terragrunt: "v0.67.0"
+    terragrunt: "v0.67.15"
     # renovate: datasource=github-releases depName=FiloSottile/mkcert
     mkcert: "v1.4.4"
     # renovate: datasource=github-releases depName=nvm-sh/nvm
@@ -15,9 +15,9 @@ tooling:
     # renovate: datasource=github-releases depName=stackrox/kube-linter
     kube_linter: "v0.6.8"
     # renovate: datasource=github-releases depName=helm/helm
-    helm: "v3.15.4"
+    helm: "v3.16.1"
     # renovate: datasource=github-releases depName=kubernetes/kubernetes
-    kubectl: "v1.29.6"
+    kubectl: "v1.31.1"
     # renovate: datasource=github-releases depName=mikefarah/yq
     yq: "v4.44.3"
     # renovate: datasource=github-releases depName=getsops/sops
@@ -28,18 +28,19 @@ tooling:
     # renovate: datasource=github-releases depName=kubernetes-sigs/krew
     krew: "v0.4.4"
     # renovate: datasource=github-releases depName=fluxcd/flux2
-    flux: "v2.3.0"
+    flux: "v2.4.0"
     # renovate: datasource=github-releases depName=devspace-sh/devspace
-    devspace: "v6.3.12"
+    devspace: "v6.3.13"
     docker:
       # renovate: datasource=github-releases depName=docker/compose
-      compose: "v2.29.2"
+      compose: "v2.29.7"
     # renovate: datasource=github-releases depName=go-task/task
     task: "v3.38.0"
     node:
       default: "lts/iron"
-      installed:
-      - "lts/gallium" # 16.x
+      modern:
       - "lts/iron" # 20.x
+      legacy:
+      - "lts/gallium" # 16.x
     erlang: "26.2"
     elixir: "1.16.1-otp-26"
