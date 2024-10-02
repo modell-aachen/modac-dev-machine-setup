@@ -76,8 +76,8 @@ dev:
     - grep
     - lima
     - qemu
-    - homebrew/cask/docker
-    - homebrew/core/docker-compose
+    - docker
+    - docker-compose
     - docker-buildx
     - colima
     - nss
