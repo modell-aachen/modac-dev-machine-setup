@@ -183,6 +183,9 @@ dev:
 antigen_install_dir: ~/.antigen
 antigen_install_path: "{{ antigen_install_dir }}/antigen.zsh"
 
+asdf_install_dir:  "{{ ansible_env.HOME }}/.asdf"
+asdf_path: "{{ asdf_install_dir }}/bin/asdf"
+
 configure_shell_rc: true
 
 service:

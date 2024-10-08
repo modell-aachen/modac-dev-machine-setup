@@ -10,7 +10,7 @@
     - name: Clone/Update asdf
       git:
         repo: "https://github.com/asdf-vm/asdf.git"
-        dest: "{{ ansible_env.HOME }}/.asdf"
+        dest: "{{ asdf_install_dir }}"
         version: v0.14.0
         
     - name: Configure shell rc for asdf
@@ -25,8 +25,8 @@
             path: "{{ ansible_env.HOME }}/.bashrc"
             line: "{{ item }}"
           loop:
-            - ". \"$HOME/.asdf/asdf.sh\""
-            - ". \"$HOME/.asdf/completions/asdf.bash\""
+            - ". \"{{ asdf_install_dir }}/asdf.sh\""
+            - ". \"{{ asdf_install_dir }}/completions/asdf.bash\""
           when: bashrc.stat is defined and bashrc.stat.exists
 
     - name: Install packages on Debian.
@@ -44,13 +44,13 @@
 - name: Install asdf plugins
   block:
     - name: Add asdf erlang plugin
-      shell: asdf plugin-add erlang https://github.com/asdf-vm/asdf-erlang.git
+      shell: "{{asdf_path}} plugin-add erlang https://github.com/asdf-vm/asdf-erlang.git"
 
     - name: Add asdf elixir plugin
-      shell: asdf plugin-add elixir https://github.com/asdf-vm/asdf-elixir.git
+      shell: "{{asdf_path}} plugin-add elixir https://github.com/asdf-vm/asdf-elixir.git"
 
     - name: Install Erlang
-      shell: asdf install erlang {{ tooling.version.erlang }}
+      shell: "{{asdf_path}} install erlang {{ tooling.version.erlang }}"
 
     - name: Install Elixir
-      shell: asdf install elixir {{ tooling.version.elixir }}
+      shell: "{{asdf_path}} install elixir {{ tooling.version.elixir }}"
