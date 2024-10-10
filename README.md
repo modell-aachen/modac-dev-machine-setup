@@ -30,6 +30,16 @@ sudo apt install -y software-properties-common git vim python3 python3-pip pytho
 cd ~
 ```
 
+## Install and configure 1Password
+As preparation you need to install 1password CLI and be able to login.
+Follow the instructions here: https://developer.1password.com/docs/cli/get-started
+
+After following the instructions you should be able to run
+```BASH
+op vault list
+```
+and see a list of your vaults.
+
 ## Inventory creation
 
 ### Clone repo

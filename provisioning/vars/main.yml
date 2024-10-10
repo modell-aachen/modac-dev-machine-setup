@@ -97,8 +97,6 @@ dev:
     - google-chrome
     - visual-studio-code
     - spotify
-    - 1password
-    - 1password/tap/1password-cli
     - unnaturalscrollwheels
     - microsoft-teams
     - iterm2
@@ -130,7 +128,6 @@ dev:
   - kubectl
   - sops
   - kustomize
-  - onepassword
   - yq
   - flux
   - devspace
@@ -149,9 +146,6 @@ dev:
     is_classic: true
   - name: go
     is_classic: true
-  - name: 1password
-    is_classic: false
-    channel: edge
   remove_packages:
   - helm
   - kubectl
@@ -198,4 +192,3 @@ service:
   - ghcli
   - google-cloud-sdk
   - ms_edge
-  - onepassword
