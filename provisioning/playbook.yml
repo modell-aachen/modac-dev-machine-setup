@@ -19,7 +19,7 @@
     all_remove_packages_darwin: |
       {{ dev.remove_packages_darwin | union(remove_packages_darwin) }}
     all_dev_install_modules: |
-      {{ dev.install_modules | union(install_modules) }}
+      {{ dev.install_modules + install_modules }}
     all_service_install_modules: |
       {{ service.install_modules | union(install_modules) }}
     all_kubectl_plugins: |
