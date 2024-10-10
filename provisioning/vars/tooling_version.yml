@@ -21,7 +21,7 @@ tooling:
     # renovate: datasource=github-releases depName=mikefarah/yq
     yq: "v4.44.3"
     # renovate: datasource=github-releases depName=getsops/sops
-    sops: "v3.9.0"
+    sops: "v3.9.1"
     # renovate: datasource=github-releases depName=kubernetes-sigs/kustomize
     kustomize: "v4.5.5"
     # renovate: datasource=github-releases depName=kubernetes-sigs/krew
