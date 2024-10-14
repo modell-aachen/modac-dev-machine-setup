@@ -11,7 +11,7 @@ tooling:
     # renovate: datasource=github-releases depName=nvm-sh/nvm
     nvm: "v0.40.1"
     # renovate: datasource=github-releases depName=python-poetry/poetry
-    poetry: "1.8.3"
+    poetry: "1.8.4"
     # renovate: datasource=github-releases depName=stackrox/kube-linter
     kube_linter: "v0.6.8"
     # renovate: datasource=github-releases depName=helm/helm
