@@ -13,14 +13,6 @@ If your using ubuntu >= 20.04, you can follow along with the "Usage" section. On
 
 **Important** The command `python3` needs to point to the python-executable for Python >= 3.10, `python` might not work.
 
-### Note Python3 v.3.12
-
-How do I solve "error: externally-managed-environment":
-
-```BASH
-sudo -H pip3 config --global set global.break-system-packages true
-```
-
 # Usage
 
 ## Preparations
@@ -39,6 +31,13 @@ After following the instructions you should be able to run
 op vault list
 ```
 and see a list of your vaults.
+
+## Setup python pip
+For newer Ubuntu versions (>=24.04) you need to allow pip to install global packages:
+
+```BASH
+sudo -H pip3 config --global set global.break-system-packages true
+```
 
 ## Inventory creation
 
@@ -83,6 +82,8 @@ vim $HOME/.inventory_local.yml
 cd $HOME/modac-dev-machine-setup/
 ./dev-provision -i ~/.inventory_local.yml
 ```
+
+After that open up a new terminal to have an updated PATH with all the tools available.
 
 ## Updates
 Update your `$HOME/.inventory_local.yml`:
