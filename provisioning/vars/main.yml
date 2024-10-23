@@ -178,7 +178,8 @@ antigen_install_dir: ~/.antigen
 antigen_install_path: "{{ antigen_install_dir }}/antigen.zsh"
 
 asdf_install_dir:  "{{ ansible_env.HOME }}/.asdf"
-asdf_path: "{{ '{{ asdf_install_dir }}/bin/asdf' if is_ubuntu else 'asdf' }}"
+asdf_path_ubuntu: "{{ asdf_install_dir }}/bin/asdf"
+asdf_path: "{{ asdf_path_ubuntu if is_ubuntu else 'asdf' }}"
 
 configure_shell_rc: true
 
