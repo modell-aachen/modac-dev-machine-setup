@@ -1,0 +1,35 @@
+#!/bin/bash
+
+if [ -z $( which devbox ) ]; then
+    echo "Installing devbox"
+    curl -fsSL https://get.jetify.com/devbox | bash
+fi
+
+if [ -z "$( cat $HOME/.bashrc | grep '/.bash_completions/' )" ]; then
+    cat <<EOT >> $HOME/.bashrc
+if [ -d ~/.bash_completions ]; then
+    for completion in \$(find \$HOME/.bash_completions/ -maxdepth 1 -type f); do
+        . \$completion
+    done
+fi
+EOT
+fi
+
+if [ ! -f $HOME/.bash_completions/devbox.sh ]; then
+    mkdir -p $HOME/.bash_completions
+    devbox completion bash > $HOME/.bash_completions/devbox.sh
+fi
+
+if [ -z "$( cat $HOME/.bashrc | grep 'devbox global shellenv' )" ]; then
+    echo 'eval "$(devbox global shellenv)"' >> $HOME/.bashrc
+fi
+
+base_path=$( dirname $(realpath "$0") )
+default_devbox_dir="$HOME/.local/share/devbox/global/default"
+global_devbox="$default_devbox_dir/devbox.json"
+
+echo $base_path
+[ ! -d $default_devbox_dir ] && mkdir -p $default_devbox_dir
+[ ! -f $global_devbox ] && sed "s#{base_path}#$base_path#g" "$base_path/templates/devbox.json" > $global_devbox
+
+devbox global update

@@ -1,0 +1,17 @@
+{
+    "name": "MODAC devbox plugin",
+    "version": "0.0.1",
+    "packages": {
+        "devspace": { "version": "latest" },
+        "gh": { "version": "latest" },
+        "git": { "version": "latest" },
+        "jq": { "version": "latest" },
+        "wget": { "version": "latest" }
+    },
+    "shell": {
+        "init_hook": [
+        ],
+        "scripts": {
+        }
+    }
+}
