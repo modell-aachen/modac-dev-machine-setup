@@ -1,9 +1,0 @@
----
-- name: Install terragrunt (by gruntwork.io)
-  include_tasks:
-    file: tasks/install/_install_versioned_binary.yml
-  vars:
-    name: terragrunt
-    url: "https://github.com/gruntwork-io/terragrunt/releases/download/{{ tooling.version.terragrunt }}/terragrunt_{{ ansible_system | lower }}_{{ machine_architecture }}"
-    version: "{{ tooling.version.terragrunt }}"
-    unzip: false
