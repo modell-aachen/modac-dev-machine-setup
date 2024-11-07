@@ -29,7 +29,7 @@ tooling:
     # renovate: datasource=github-releases depName=fluxcd/flux2
     flux: "v2.4.0"
     # renovate: datasource=github-releases depName=devspace-sh/devspace
-    devspace: "v6.3.13"
+    devspace: "v6.3.14"
     docker:
       # renovate: datasource=github-releases depName=docker/compose
       compose: "v2.30.2"
