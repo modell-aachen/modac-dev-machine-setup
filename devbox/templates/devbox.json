@@ -1,0 +1,13 @@
+{
+    "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.13.6/.schema/devbox.schema.json",
+    "packages": [],
+    "shell": {
+      "init_hook": [
+      ],
+      "scripts": {
+      }
+    },
+    "include": [
+        "path:{base_path}/plugins/modac/plugin.json"
+    ]
+}

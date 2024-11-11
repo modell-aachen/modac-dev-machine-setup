@@ -35,6 +35,8 @@ upgrade() {
 }
 
 setup() {
+  ./devbox/install
+
   echo ">> Checking if required setup is already done..."
   echo ">> Checking default python version .."
 

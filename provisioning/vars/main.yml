@@ -2,20 +2,14 @@ dev:
   packages:
   - curl
   - easy-rsa
-  - git
-  - gitk
   - htop
   - inotify-tools
-  - jq
   - net-tools
   - network-manager-openvpn
   - network-manager-openvpn-gnome
   - openvpn
   - restic
   - ruby
-  - tmux
-  - vim
-  - wget
   - python-is-python3
   # Packages needed to build CKE locally
   - build-essential
@@ -37,6 +31,13 @@ dev:
   - python3-paramiko
   - python3-scp
   - python3-psutil
+  - devspace
+  - git
+  - jq
+  - ghcli
+  - vim
+  - tmux
+  - wget
 
   pip_packages:
   - name: docker
@@ -51,8 +52,6 @@ dev:
     - autoconf
     - bash-completion
     - gettext
-    - git
-    - gh
     - homebrew/core/go
     - gpg
     - iperf
@@ -63,7 +62,6 @@ dev:
     - readline
     - openssl
     - pv
-    - wget
     - wrk
     - zsh-history-substring-search
     - zsh
@@ -83,7 +81,6 @@ dev:
     - nss
     - dnsmasq
     - fzf
-    - jq
     - openvpn
     - restic
     - teleport
@@ -130,10 +127,8 @@ dev:
   - kustomize
   - yq
   - flux
-  - devspace
   - task
   # the follwing modules will be skipped on macos, since no general tasks exists
-  - ghcli
   - terraform
   - google-cloud-sdk
   - ms_edge
@@ -189,6 +184,5 @@ service:
   - helm
   - kubectl
   - kustomize
-  - ghcli
   - google-cloud-sdk
   - ms_edge
