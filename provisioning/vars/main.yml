@@ -53,7 +53,7 @@ dev:
     - bash-completion
     - gettext
     - homebrew/core/go
-    - gpg
+    #- gpg
     - iperf
     - libevent
     #- mcrypt
