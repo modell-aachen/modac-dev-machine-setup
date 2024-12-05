@@ -59,9 +59,6 @@
           when: ansible_facts['machine'] == "arm64" or ansible_facts['machine'] == "aarch64"
 
   roles:
-    - role: elliotweiser.osx-command-line-tools
-      when: is_macos
-
     - role: geerlingguy.mac.homebrew
       tags: ['homebrew']
       vars:
