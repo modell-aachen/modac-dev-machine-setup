@@ -85,12 +85,12 @@ dev:
     - restic
     - teleport
     - asdf
+    - 1password-cli
     taps: []
     cask_appdir: /Applications
     cask_apps:
     - chromedriver
     - dropbox
-    - firefox
     - google-chrome
     - visual-studio-code
     - spotify

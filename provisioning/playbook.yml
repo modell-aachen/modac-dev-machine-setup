@@ -26,7 +26,12 @@
       {{ dev.kubectl_plugins | union(kubectl_plugins) }}
     all_pip_packages: |
       {{ dev.pip_packages | union(pip_packages) }}
-
+    all_homebrew_casks: |
+      {{ dev.homebrew.cask_apps | union(homebrew.cask_apps | default([])) }}
+    all_homebrew_packages: |
+      {{ dev.homebrew.installed_packages | union(homebrew.installed_packages | default([])) }}
+    all_homebrew_taps: |
+      {{ dev.homebrew.taps | union(homebrew.taps | default([])) }}
 
   pre_tasks:
     - name: Derive host machine facts and set variables.
@@ -62,10 +67,10 @@
     - role: geerlingguy.mac.homebrew
       tags: ['homebrew']
       vars:
-        homebrew_installed_packages: "{{ dev.homebrew.installed_packages }}"
-        homebrew_taps: "{{ dev.homebrew.taps }}"
+        homebrew_installed_packages: "{{ all_homebrew_packages }}"
+        homebrew_taps: "{{ all_homebrew_taps }}"
         homebrew_cask_appdir: "{{ dev.homebrew.cask_appdir }}"
-        homebrew_cask_apps: "{{ dev.homebrew.cask_apps }}"
+        homebrew_cask_apps: "{{ all_homebrew_casks }}"
         homebrew_install_path: "/opt/homebrew/Homebrew"
       when: is_macos
 
