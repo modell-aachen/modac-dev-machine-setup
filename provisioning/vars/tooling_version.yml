@@ -17,7 +17,7 @@ tooling:
     # renovate: datasource=github-releases depName=kubernetes/kubernetes
     kubectl: "v1.31.3"
     # renovate: datasource=github-releases depName=mikefarah/yq
-    yq: "v4.44.5"
+    yq: "v4.44.6"
     # renovate: datasource=github-releases depName=getsops/sops
     sops: "v3.9.3"
     # renovate: datasource=github-releases depName=kubernetes-sigs/kustomize
