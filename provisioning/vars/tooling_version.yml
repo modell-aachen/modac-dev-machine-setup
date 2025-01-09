@@ -30,7 +30,7 @@ tooling:
     devspace: "v6.3.14"
     docker:
       # renovate: datasource=github-releases depName=docker/compose
-      compose: "v2.31.0"
+      compose: "v2.32.2"
     # renovate: datasource=github-releases depName=go-task/task
     task: "v3.40.0"
     node:
