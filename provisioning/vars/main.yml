@@ -52,12 +52,12 @@ dev:
     - autoconf
     - bash-completion
     - gettext
-    - homebrew/core/go
+    - go
     #- gpg
     - iperf
     - libevent
     #- mcrypt
-    - homebrew/core/nmap
+    - nmap
     - ssh-copy-id
     - readline
     - openssl

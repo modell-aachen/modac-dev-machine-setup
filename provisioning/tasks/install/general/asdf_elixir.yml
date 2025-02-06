@@ -44,13 +44,20 @@
 - name: Install asdf plugins
   block:
     - name: Add asdf erlang plugin
-      shell: "{{ asdf_path }} plugin-add erlang https://github.com/asdf-vm/asdf-erlang.git"
+      shell: "{{ asdf_path }} plugin add erlang https://github.com/asdf-vm/asdf-erlang.git"
 
     - name: Add asdf elixir plugin
-      shell: "{{ asdf_path }} plugin-add elixir https://github.com/asdf-vm/asdf-elixir.git"
+      shell: "{{ asdf_path }} plugin add elixir https://github.com/asdf-vm/asdf-elixir.git"
 
     - name: Install Erlang
-      shell: "{{ asdf_path }} install erlang {{ tooling.version.erlang }}"
+      shell: |
+        if ! {{ asdf_path }} list erlang | grep -q '{{ tooling.version.erlang }}'; then
+          {{ asdf_path }} install erlang {{ tooling.version.erlang }}
+        fi
 
     - name: Install Elixir
-      shell: "{{ asdf_path }} install elixir {{ tooling.version.elixir }}"
+      shell: |
+        if ! {{ asdf_path }} list elixir | grep -q '{{ tooling.version.elixir }}'; then
+          {{ asdf_path }} install elixir {{ tooling.version.elixir }}
+        fi
+
