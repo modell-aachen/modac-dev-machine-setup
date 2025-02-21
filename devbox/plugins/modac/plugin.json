@@ -9,7 +9,15 @@
         "wget": { "version": "latest" },
         "asdf-vm": { "version": "latest" },
         "kubectl": { "version": "latest" },
-        "krew": { "version": "latest" }
+        "krew": { "version": "latest" },
+        "fluxcd": {"version": "latest"},
+        "yq-go": {"version": "latest"},
+        "kustomize_4": {"version": "latest"},
+        "kubernetes-helm": {"version": "latest"},
+        "terraform": {"version": "latest"},
+        "mkcert": {"version": "latest"},
+        "sops": {"version": "latest"},
+        "go-task": {"version": "latest"}
     },
     "shell": {
         "init_hook": [
