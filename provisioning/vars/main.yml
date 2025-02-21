@@ -11,33 +11,12 @@ dev:
   - restic
   - ruby
   - python-is-python3
-  # Packages needed to build CKE locally
-  - build-essential
-  - libcairo2-dev
-  - libgif-dev
-  - libjpeg-dev
-  - libpango1.0-dev
-  - librsvg2-dev
-  - libnss3-tools
-  - sshpass
-  - rdesktop # patchday process
   - apt-transport-https
   - ca-certificates
   - gnupg
   - age
 
-  remove_packages:
-  - python3-argcomplete
-  - python3-paramiko
-  - python3-scp
-  - python3-psutil
-  - devspace
-  - git
-  - jq
-  - ghcli
-  - vim
-  - tmux
-  - wget
+  remove_packages: []
 
   pip_packages:
   - name: docker
@@ -114,26 +93,14 @@ dev:
 
   install_modules:
   - docker
-  - mkcert
   - certificates
-  - packer
-  - vault
   - k3s
   - nvm
   - poetry
   - kube_linter
-  - helm
-  - kubectl
-  - sops
-  - kustomize
-  - yq
-  - flux
-  - task
   # the follwing modules will be skipped on macos, since no general tasks exists
-  - terraform
   - google-cloud-sdk
   - ms_edge
-  - asdf_elixir
 
   install_snaps: true
   snaps:
@@ -145,12 +112,7 @@ dev:
   - helm
   - kubectl
   remove_packages_darwin: []
-  remove_snaps:
-  - docker
-  - node
-  - helm
-  - kubectl
-  - google-cloud-sdk
+  remove_snaps: []
   certificates:
   - host: localhost
     location: "{{ ansible_env.HOME }}/certs/localhost"
