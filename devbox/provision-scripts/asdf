@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+
+if [[ "$(uname -s)" = "Linux"* ]]; then
+    sudo apt install -y \
+        automake \
+        autoconf \
+        libncurses5-dev \
+        libssl-dev
+fi
+
+asdf plugin-add erlang
+asdf plugin-add elixir
+

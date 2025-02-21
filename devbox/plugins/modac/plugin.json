@@ -6,7 +6,8 @@
         "gh": { "version": "latest" },
         "git": { "version": "latest" },
         "jq": { "version": "latest" },
-        "wget": { "version": "latest" }
+        "wget": { "version": "latest" },
+        "asdf-vm": { "version": "latest" }
     },
     "shell": {
         "init_hook": [

@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 usage() {
     cat << USAGE
 Description:
@@ -67,21 +69,19 @@ setup() {
     sudo apt install python3-pip
   fi
 
-  echo ">> Installing latest version of ansible using pip"
+  echo ">> Installing latest version pip"
   sudo -H pip3 install --upgrade pip
+
+  echo ">> Installing latest version of ansible using pip"
   sudo -H pip3 install --upgrade ansible
   sudo -H pip3 install --upgrade paramiko
-  echo ">> Done."
 
 
   echo ">> Install/Updating ansible roles using ansible-galaxy"
   ansible-galaxy role install $1 -p ./provisioning/roles -r ./provisioning/requirements.yml
-  echo ">> Done."
 
   echo ">> Install/Updating ansible collections using ansible-galaxy"
   ansible-galaxy collection install $1 -p ./provisioning/collections -r ./provisioning/requirements.yml
-  echo ">> Done."
-
 }
 
 provision() {
@@ -90,6 +90,7 @@ provision() {
     tags=${tags:-all}
     local message=${tags:-full system}
     setup
+    ./devbox/provision
     echo ">> Starting $message provisioning ..."
     ansible-playbook \
         --connection=local \

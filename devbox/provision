@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -e
+
+current=$(dirname "$(realpath $0)")
+pushd $current
+
+./provision-scripts/asdf
+popd
