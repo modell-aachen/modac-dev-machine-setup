@@ -43,6 +43,7 @@ dev:
   - name: docker
     version: "6.1.2"
   - argcomplete
+  - jinja2-cli
   - paramiko
   - scp
   - psutil
