@@ -5,4 +5,5 @@ current=$(dirname "$(realpath $0)")
 pushd $current
 
 ./provision-scripts/asdf
+./provision-scripts/kubectl-krew
 popd
