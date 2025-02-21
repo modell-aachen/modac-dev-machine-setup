@@ -1,7 +1,0 @@
----
-- name: Install krew plugins for Kubernetes (kubectl)
-  shell: |
-    kubectl krew install {{ item }}
-  environment:
-    PATH: "{{ ansible_env.HOME }}/.krew/bin:{{ lookup('ansible.builtin.env', 'PATH') }}"
-  loop: "{{ all_kubectl_plugins }}"
