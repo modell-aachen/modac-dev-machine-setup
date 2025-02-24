@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -e
 
+# renovate: datasource=github-releases depName=python-poetry/poetry
+export POETRY_VERSION=2.0.1
+
 function run() {
     local module=$1
 
@@ -15,16 +18,16 @@ function run() {
 }
 
 if [[ "$(uname -s)" = "Linux"* ]]; then
-    ARCH="Ubuntu"
-    IS_UBUNTU=true
+    export ARCH="Ubuntu"
+    export IS_UBUNTU=true
 else
-    ARCH="Darwin"
-    IS_DARWIN=true
+    export export ARCH="Darwin"
+    export export IS_DARWIN=true
 fi
 
 current=$(dirname "$(realpath $0)")
 pushd $current
-for module in "asdf-packages" "asdf" "kubectl-krew" "docker-packages" "docker"; do
+for module in "asdf-packages" "asdf" "kubectl-krew" "docker-packages" "docker" "poetry"; do
     run $module
 done
 popd
