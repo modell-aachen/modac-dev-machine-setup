@@ -93,7 +93,6 @@ dev:
 
   install_modules:
   - certificates
-  - k3s
   - nvm
   - kube_linter
   # the follwing modules will be skipped on macos, since no general tasks exists
