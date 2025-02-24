@@ -17,7 +17,8 @@
         "terraform": {"version": "latest"},
         "mkcert": {"version": "latest"},
         "sops": {"version": "latest"},
-        "go-task": {"version": "latest"}
+        "go-task": {"version": "latest"},
+        "k3d": {"version": "latest", "platforms": ["x86_64-linux", "aarch64-linux"]}
     },
     "shell": {
         "init_hook": [
