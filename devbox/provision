@@ -17,6 +17,16 @@ function run() {
     fi
 }
 
+modules="
+asdf-packages
+asdf
+kubectl-krew
+docker-packages
+docker
+poetry
+k3s-network
+"
+
 if [[ "$(uname -s)" = "Linux"* ]]; then
     export ARCH="Ubuntu"
     export IS_UBUNTU=true
@@ -27,7 +37,7 @@ fi
 
 current=$(dirname "$(realpath $0)")
 pushd $current
-for module in "asdf-packages" "asdf" "kubectl-krew" "docker-packages" "docker" "poetry"; do
+for module in $modules; do
     run $module
 done
 popd
