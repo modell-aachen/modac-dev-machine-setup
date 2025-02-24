@@ -92,7 +92,6 @@ dev:
   - oidc-login
 
   install_modules:
-  - docker
   - certificates
   - k3s
   - nvm
@@ -106,11 +105,7 @@ dev:
   snaps:
   - name: code
     is_classic: true
-  - name: go
-    is_classic: true
-  remove_packages:
-  - helm
-  - kubectl
+  remove_packages: []
   remove_packages_darwin: []
   remove_snaps: []
   certificates:
@@ -142,7 +137,6 @@ configure_shell_rc: true
 
 service:
   install_modules:
-  - vault
   - poetry
   - helm
   - kubectl

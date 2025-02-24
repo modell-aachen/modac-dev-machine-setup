@@ -1,9 +1,30 @@
 #!/usr/bin/env bash
 set -e
 
+function run() {
+    local module=$1
+
+    if [ -f "provision-scripts/$ARCH/$module.bash" ]; then
+        bash ./provision-scripts/$ARCH/$module.bash
+    elif [ -f "provision-scripts/$module.bash" ]; then
+        bash ./provision-scripts/$module.bash
+    else
+        echo "Module '$module.bash' not found"
+        exit 1
+    fi
+}
+
+if [[ "$(uname -s)" = "Linux"* ]]; then
+    ARCH="Ubuntu"
+    IS_UBUNTU=true
+else
+    ARCH="Darwin"
+    IS_DARWIN=true
+fi
+
 current=$(dirname "$(realpath $0)")
 pushd $current
-
-./provision-scripts/asdf
-./provision-scripts/kubectl-krew
+for module in "asdf-packages" "asdf" "kubectl-krew" "docker-packages" "docker"; do
+    run $module
+done
 popd
