@@ -95,7 +95,6 @@ dev:
   - certificates
   - k3s
   - nvm
-  - poetry
   - kube_linter
   # the follwing modules will be skipped on macos, since no general tasks exists
   - google-cloud-sdk
