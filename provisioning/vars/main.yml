@@ -93,8 +93,6 @@ dev:
 
   install_modules:
   - certificates
-  # the follwing modules will be skipped on macos, since no general tasks exists
-  - ms_edge
 
   install_snaps: true
   snaps:
