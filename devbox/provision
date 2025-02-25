@@ -3,6 +3,20 @@ set -e
 
 # renovate: datasource=github-releases depName=python-poetry/poetry
 export POETRY_VERSION=2.0.1
+# renovate: datasource=github-releases depName=nvm-sh/nvm
+export NVM_VERSION="v0.40.1"
+
+export NODE_VERSION=v20
+export NODE_VERSION_NAME=lts/iron
+
+
+if [[ "$(uname -s)" = "Linux"* ]]; then
+    export ARCH="Ubuntu"
+    export IS_UBUNTU=true
+else
+    export export ARCH="Darwin"
+    export export IS_DARWIN=true
+fi
 
 function run() {
     local module=$1
@@ -17,6 +31,8 @@ function run() {
     fi
 }
 
+eval "$(devbox global shellenv --init-hook)"
+
 modules="
 asdf-packages
 asdf
@@ -25,15 +41,8 @@ docker-packages
 docker
 poetry
 k3s-network
+node
 "
-
-if [[ "$(uname -s)" = "Linux"* ]]; then
-    export ARCH="Ubuntu"
-    export IS_UBUNTU=true
-else
-    export export ARCH="Darwin"
-    export export IS_DARWIN=true
-fi
 
 current=$(dirname "$(realpath $0)")
 pushd $current

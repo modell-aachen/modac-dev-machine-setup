@@ -20,8 +20,8 @@ if [ ! -f $HOME/.bash_completions/devbox.sh ]; then
     devbox completion bash > $HOME/.bash_completions/devbox.sh
 fi
 
-if [ -z "$( cat $HOME/.bashrc | grep 'devbox global shellenv' )" ]; then
-    echo 'eval "$(devbox global shellenv)"' >> $HOME/.bashrc
+if [ -z "$( cat $HOME/.bashrc | grep 'devbox global shellenv --init-hook' )" ]; then
+    echo 'eval "$(devbox global shellenv --init-hook)"' >> $HOME/.bashrc
 fi
 
 base_path=$( dirname $(realpath "$0") )

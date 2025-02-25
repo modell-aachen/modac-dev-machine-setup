@@ -18,12 +18,18 @@
         "mkcert": {"version": "latest"},
         "sops": {"version": "latest"},
         "go-task": {"version": "latest"},
-        "k3d": {"version": "latest", "platforms": ["x86_64-linux", "aarch64-linux"]}
+        "k3d": {"version": "latest", "platforms": ["x86_64-linux", "aarch64-linux"]},
+        "nodejs": {"version": "20"}
+    },
+    "env": {
+        "DEVBOX_COREPACK_ENABLED": "true"
     },
     "shell": {
         "init_hook": [
         ],
         "scripts": {
         }
-    }
+    },
+    "include": [
+    ]
 }
