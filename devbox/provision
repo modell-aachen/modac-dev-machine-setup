@@ -3,11 +3,6 @@ set -e
 
 # renovate: datasource=github-releases depName=python-poetry/poetry
 export POETRY_VERSION=2.0.1
-# renovate: datasource=github-releases depName=nvm-sh/nvm
-export NVM_VERSION="v0.40.1"
-
-export NODE_VERSION=v20
-export NODE_VERSION_NAME=lts/iron
 
 
 if [[ "$(uname -s)" = "Linux"* ]]; then
