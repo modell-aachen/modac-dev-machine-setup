@@ -21,7 +21,8 @@
         "k3d": {"version": "latest", "platforms": ["x86_64-linux", "aarch64-linux"]},
         "nodejs": {"version": "20"},
         "google-cloud-sdk": {"version": "latest"},
-        "kube-linter": {"version": "latest"}
+        "kube-linter": {"version": "latest"},
+        "socat": {"version": "latest"}
     },
     "env": {
         "DEVBOX_COREPACK_ENABLED": "true",
