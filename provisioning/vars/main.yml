@@ -91,8 +91,7 @@ dev:
   - konfig
   - oidc-login
 
-  install_modules:
-  - certificates
+  install_modules: []
 
   install_snaps: true
   snaps:

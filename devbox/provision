@@ -5,6 +5,9 @@ set -e
 export POETRY_VERSION=2.0.1
 
 
+export QWIKI_DEVELOPMENT_ROOT_CA="$HOME/.local/share/mkcert"
+
+
 if [[ "$(uname -s)" = "Linux"* ]]; then
     export ARCH="Ubuntu"
     export IS_UBUNTU=true
@@ -37,6 +40,7 @@ docker
 poetry
 k3s-network
 node
+certificates
 "
 
 current=$(dirname "$(realpath $0)")
