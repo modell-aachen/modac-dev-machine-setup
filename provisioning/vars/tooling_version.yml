@@ -13,7 +13,7 @@ tooling:
     # renovate: datasource=github-releases depName=stackrox/kube-linter
     kube_linter: "v0.7.1"
     # renovate: datasource=github-releases depName=helm/helm
-    helm: "v3.17.0"
+    helm: "v3.17.1"
     # renovate: datasource=github-releases depName=kubernetes/kubernetes
     kubectl: "v1.32.1"
     # renovate: datasource=github-releases depName=mikefarah/yq
