@@ -36,8 +36,6 @@
     },
     "shell": {
         "init_hook": [
-            "[ -f $MODAC_BASH_DIRECTORY/bashrc.sh ] && source $MODAC_BASH_DIRECTORY/bashrc.sh",
-            "[ -f $HOME/.env ] && source $HOME/.env",
             "source $PROVISIONER_DIRECTORY/devbox/bashrc.sh",
             "export PATH=\"${KREW_ROOT:-$HOME/.krew}/bin:$PATH\"",
         ],
