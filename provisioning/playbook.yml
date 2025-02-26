@@ -169,14 +169,6 @@
             line: "export {{ item.key }}=\"{{ item.value }}\""
             create: true
           loop: "{{ {'QWIKI_SSL_CA_CERT': ca_cert_path.stdout } | combine(all_env) | dict2items }}"
-
-        - name: Install modac-bash-helper based on python
-          shell:
-            cmd: |
-              export NEXUS_BOT_TOKEN={{ env.NEXUS_BOT_TOKEN }}
-              if [ -f "$HOME/.modac-bash/install_modac_shell_helper.sh" ]; then
-                bash -e "$HOME/.modac-bash/install_modac_shell_helper.sh"
-              fi
       tags:
         - scripts
 

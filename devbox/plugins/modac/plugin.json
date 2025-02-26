@@ -1,5 +1,5 @@
 {
-    "name": "MODAC devbox plugin",
+    "name": "MODAC",
     "version": "0.0.1",
     "packages": {
         "devspace": { "version": "latest" },
@@ -27,17 +27,19 @@
     "env": {
         "DEVBOX_COREPACK_ENABLED": "true",
         "REPOS_DIRECTORY": "$HOME/qwiki-repos",
-        "PROVISIONER_DIRECTORY": "$REPOS_DIRECTORY/devops-machine-provisioner",
+        "PROVISIONER_DIRECTORY": "$HOME/modac-dev-machine-setup",
         "MODAC_BASH_DIRECTORY": "$HOME/.modac-bash",
         "QWIKI_API_HOST": "https://api.qluster.localhost",
         "QWIKI_API_TOKEN": "modell-aachen",
         "QWIKI_EVENTS_HOST": "https://events.qluster.localhost",
-        "QWIKI_MAILHOG_HOST": "https://mailhog.qluster.localhost"
+        "QWIKI_MAILHOG_HOST": "https://mailhog.qluster.localhost",
     },
     "shell": {
         "init_hook": [
             "[ -f $MODAC_BASH_DIRECTORY/bashrc.sh ] && source $MODAC_BASH_DIRECTORY/bashrc.sh",
-            "[ -f $HOME/.env ] && source $HOME/.env"
+            "[ -f $HOME/.env ] && source $HOME/.env",
+            "source $PROVISIONER_DIRECTORY/devbox/bashrc.sh",
+            "export PATH=\"${KREW_ROOT:-$HOME/.krew}/bin:$PATH\"",
         ],
         "scripts": {
         }

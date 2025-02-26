@@ -19,6 +19,7 @@ fi
 function run() {
     local module=$1
 
+    echo "Running $module"
     if [ -f "provision-scripts/$ARCH/$module.bash" ]; then
         bash ./provision-scripts/$ARCH/$module.bash
     elif [ -f "provision-scripts/$module.bash" ]; then
@@ -41,6 +42,7 @@ poetry
 k3s-network
 node
 certificates
+install-modac-shell-helper
 "
 
 current=$(dirname "$(realpath $0)")
