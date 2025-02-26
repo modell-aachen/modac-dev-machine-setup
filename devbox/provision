@@ -33,6 +33,7 @@ function run() {
 eval "$(devbox global shellenv --init-hook)"
 
 modules="
+packages
 setup-envs
 asdf-packages
 asdf
