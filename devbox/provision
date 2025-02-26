@@ -33,6 +33,7 @@ function run() {
 eval "$(devbox global shellenv --init-hook)"
 
 modules="
+setup-envs
 asdf-packages
 asdf
 kubectl-krew
