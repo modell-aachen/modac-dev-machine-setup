@@ -32,55 +32,42 @@ op vault list
 ```
 and see a list of your vaults.
 
-## Setup python pip
-For newer Ubuntu versions (>=24.04) you need to allow pip to install global packages:
-
-```BASH
-sudo -H pip3 config --global set global.break-system-packages true
-```
-
 ## Inventory creation
 
 ### Clone repo
 ```
 git clone https://github.com/modell-aachen/modac-dev-machine-setup.git
+cd modac-dev-machine-setup
 ```
 
-### Create inventroy blueprint
-**For development users**
-```
-cp $HOME/modac-dev-machine-setup/provisioning/inventory_custom_example.yml $HOME/.inventory_local.yml
-```
-**For service users**
-```
-cp $HOME/modac-dev-machine-setup/provisioning/inventory_service_example.yml $HOME/.inventory_local.yml
-```
 
-## Initial local configuration and adjustments
+
+### Install provisioner and devbox packages
 ```BASH
-vim $HOME/.inventory_local.yml
+./devbox/install
 ```
-1) remove unused packages and snaps, insert your keys, e.g.
-1) create a local ssh key and set as SSH key to your GitHub Account (https://github.com/settings/keys)
+
+## Initial local envs
+```BASH
+vim $HOME/.env
+```
 1) check successfull authentication against github.com
     ```bash
     ssh -T git@github.com
     ```
-1) create a directory for your repositories and set REPOS_DIRECTORY to the created path
 1) set NEXUS_BOT_TOKEN to the value of 1Password entry at https://start.1password.com/open/i?a=CXJNQFCHNNGSLNOEP6SLPHLZQ4&v=3mhbwhicfwkifyq7bc2nrnhywa&i=32jtgjyel43vabz2wbukslo5bq&h=modac.1password.eu
 
 ### Additional, development only, configuration and adjustments
 6) set GITHUB_AUTH_TOKEN to the value of 1Password entry at https://start.1password.com/open/i?a=CXJNQFCHNNGSLNOEP6SLPHLZQ4&h=modac.1password.eu&i=dwpktyrfuj6cyjfy6y74q3ifiy&v=6u4nznoclnkg7467ne4ntutcgq
-1) set FONTAWESOME_NPM_AUTH_TOKEN to the value of 1Password entry at https://start.1password.com/open/i?a=CXJNQFCHNNGSLNOEP6SLPHLZQ4&h=modac.1password.eu&i=xmhedekcuokrqrch62bsuvr5lu&v=6u4nznoclnkg7467ne4ntutcgq
 1) set FONTAWESOME_NEXUS_AUTH_TOKEN to the value of 1Password entry at https://start.1password.com/open/i?a=CXJNQFCHNNGSLNOEP6SLPHLZQ4&v=6u4nznoclnkg7467ne4ntutcgq&i=5xls52q24au3eie2itucvc635u&h=modac.1password.eu
 1) set HARBOR_USERNAME to your modac mail address
 1) set HARBOR_PASSWORD to your CLI token (https://harbor.modac.cloud -> Login -> user profile [top right corner] -> User Profile -> CLI secret)
 
 
-## Initial setup
+## Provision dev machine
+
 ```BASH
-cd $HOME/modac-dev-machine-setup/
-./dev-provision -i ~/.inventory_local.yml
+./devbox/provision
 ```
 
 After that open up a new terminal to have an updated PATH with all the tools available.
