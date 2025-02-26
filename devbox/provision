@@ -36,6 +36,7 @@ modules="
 asdf-packages
 asdf
 kubectl-krew
+setup-k8s-cluster
 docker-packages
 docker
 poetry

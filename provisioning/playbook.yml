@@ -128,18 +128,6 @@
       tags:
         - packages
 
-    - name: Install tooling for dev only
-      block:
-        - name: Loop over custom modules for dev
-          include_tasks:
-            file: "tasks/install/_install_module_if_existing.yaml"
-          loop: "{{ all_dev_install_modules }}"
-          loop_control:
-            loop_var: module
-      when: service_tooling_only is undefined or not service_tooling_only
-      tags:
-        - tooling
-
     - name: Install tooling for service only
       block:
         - name: Loop over custom modules for service
@@ -171,13 +159,6 @@
           loop: "{{ {'QWIKI_SSL_CA_CERT': ca_cert_path.stdout } | combine(all_env) | dict2items }}"
       tags:
         - scripts
-
-    - name: Install and configure kubernetes credentials
-      block:
-        - include_tasks:
-            file: tasks/setup_k8s_cluster.yml
-      tags:
-        - creds
 
     - include_tasks:
         file: tasks/install_dotfiles.yml
