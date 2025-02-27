@@ -1,11 +1,35 @@
 #!/usr/bin/env bash
 set -e
 
-if [[ ! "$(command -v curl)" && "$(uname -s)" = "Linux"* ]]; then
-    echo "Installing curl"
-    sudo apt update
-    sudo apt install -y curl
+if [[ "$(uname -s)" = "Linux"* ]]; then
+    if [[ ! "$(command -v curl)" ]]; then
+        echo "Installing curl"
+        sudo apt update
+        sudo apt install -y curl
+    fi
+
+    op_keyring=/usr/share/keyrings/1password-archive-keyring.gpg
+    if [ ! -f "$op_keyring" ]; then
+        curl -sS https://downloads.1password.com/linux/keys/1password.asc | sudo gpg --dearmor --output "$op_keyring"
+    fi
+
+    op_source_list=/etc/apt/sources.list.d/1password.list
+    if [ ! -f "$op_source_list" ]; then
+        echo "deb [arch=amd64 signed-by=$op_keyring] https://downloads.1password.com/linux/debian/amd64 stable main" | sudo tee "$op_source_list"
+    fi
+
+    op_gpg=/usr/share/debsig/keyrings/AC2D62742012EA22/debsig.gpg
+    if [ ! -f "$op_gpg" ]; then
+        sudo mkdir -p /etc/debsig/policies/AC2D62742012EA22
+        curl -sS https://downloads.1password.com/linux/debian/debsig/1password.pol | sudo tee /etc/debsig/policies/AC2D62742012EA22/1password.pol
+        sudo mkdir -p /usr/share/debsig/keyrings/AC2D62742012EA22
+        curl -sS https://downloads.1password.com/linux/keys/1password.asc | sudo gpg --dearmor --output "$op_gpg"
+        sudo apt update
+    fi
+
+    sudo apt install -y 1password 1password-cli
 fi
+
 
 if [ -z $( which devbox ) ]; then
     echo "Installing devbox"
