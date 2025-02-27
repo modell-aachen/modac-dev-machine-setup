@@ -57,3 +57,4 @@ echo $base_path
 [ ! -f $global_devbox ] && sed "s#{base_path}#$base_path#g;s#{env_path}#$env_path#" "$base_path/templates/devbox.json" > $global_devbox
 
 devbox global update
+eval "$(devbox global shellenv --preserve-path-stack -r)" && hash -r

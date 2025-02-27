@@ -33,7 +33,7 @@ function run() {
     fi
 }
 
-eval "$(devbox global shellenv)"
+eval "$(devbox global shellenv --init-hook)"
 
 modules="
 packages
