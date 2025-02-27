@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -e
 
+export BI_RED='\033[1;91m'
+export NC='\033[0m'
+
 # renovate: datasource=github-releases depName=python-poetry/poetry
 export POETRY_VERSION=2.0.1
 

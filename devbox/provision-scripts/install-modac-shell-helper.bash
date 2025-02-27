@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -e
 
+if [[ -z "$NEXUS_BOT_TOKEN" ]]; then
+    echo -e "You need to set ${BI_RED}NEXUS_BOT_TOKEN$NC environment variable in $HOME/.env"
+    exit 1
+fi
+
 dir=/tmp/modac-shell-helper
 pyproject="pyproject.toml"
 
