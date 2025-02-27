@@ -47,8 +47,8 @@ k3s-network
 node
 certificates
 install-modac-shell-helper
-docker
 docker-packages
+docker
 "
 
 current=$(dirname "$(realpath $0)")

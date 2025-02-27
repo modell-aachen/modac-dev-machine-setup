@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -e
 
-
 if [[ ! "$(command -v curl)" && "$(uname -s)" = "Linux"* ]]; then
     echo "Installing curl"
     sudo apt update
@@ -11,16 +10,6 @@ fi
 if [ -z $( which devbox ) ]; then
     echo "Installing devbox"
     curl -fsSL https://get.jetify.com/devbox | bash
-fi
-
-if [ -z "$( cat $HOME/.bashrc | grep '/.bash_completions/' )" ]; then
-    cat <<EOT >> $HOME/.bashrc
-if [ -d ~/.bash_completions ]; then
-    for completion in \$(find \$HOME/.bash_completions/ -maxdepth 1 -type f); do
-        . \$completion
-    done
-fi
-EOT
 fi
 
 env_path="$HOME/.env"
