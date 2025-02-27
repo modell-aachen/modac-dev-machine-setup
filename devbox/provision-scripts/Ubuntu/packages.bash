@@ -3,7 +3,7 @@ set -e
 
 sudo apt update
 sudo apt install -y \
-    curl \
+    python3-pip \
     easy-rsa \
     htop \
     inotify-tools \
