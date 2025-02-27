@@ -18,21 +18,11 @@ If your using ubuntu >= 20.04, you can follow along with the "Usage" section. On
 ## Preparations
 ```BASH
 sudo apt update
-sudo apt install -y software-properties-common git vim python3 python3-pip python-is-python3
+sudo apt install -y software-properties-common git vim python3-pip
 cd ~
 ```
 
-## Install and configure 1Password
-As preparation you need to install 1password CLI and be able to login.
-Follow the instructions here: https://developer.1password.com/docs/cli/get-started
-
-After following the instructions you should be able to run
-```BASH
-op vault list
-```
-and see a list of your vaults.
-
-## Inventory creation
+## Installation
 
 ### Clone repo
 ```
@@ -41,11 +31,20 @@ cd modac-dev-machine-setup
 ```
 
 
-
 ### Install provisioner and devbox packages
 ```BASH
 ./devbox/install
 ```
+
+### Configure 1Password
+As preparation you need to install 1password CLI and be able to login.
+Follow the instructions here: https://developer.1password.com/docs/cli/get-started/#step-2-turn-on-the-1password-desktop-app-integration
+
+After following the instructions you should be able to run
+```BASH
+op vault list
+```
+and see a list of your vaults.
 
 ## Initial local envs
 ```BASH
@@ -92,12 +91,6 @@ ssh-agent -s
 ssh-add ~/.ssh/id_rsa
 ```
 
-## DNS resolver
-Local Q.wiki (e.g. dev.modac) can't be resolved  ( < Ubuntu 21.04 only):
-
-```BASH
-sudo systemctl restart lxd-host-dns.service
-```
 ## ZSH
 If you use zsh, source `.env` and `bashrc.sh` in your `.zshrc`
 ```BASH
