@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 set -e
 
+
+if [[ ! "$(command -v curl)" && "$(uname -s)" = "Linux"* ]]; then
+    echo "Installing curl"
+    sudo apt update
+    sudo apt install -y curl
+fi
+
 if [ -z $( which devbox ) ]; then
     echo "Installing devbox"
     curl -fsSL https://get.jetify.com/devbox | bash
