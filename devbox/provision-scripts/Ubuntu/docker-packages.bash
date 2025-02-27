@@ -22,6 +22,4 @@ sudo apt-get install -y \
 
 if [[ $( id -nG "$USER" | grep -w docker ) != *docker* ]]; then
     sudo usermod -aG docker "$USER"
-    echo -e "Please ${BI_RED}logout and login again$NC to use docker and re-run this script"
-    exit 1
 fi

@@ -52,6 +52,8 @@ docker-packages
 docker
 "
 
+op signin
+
 current=$(dirname "$(realpath $0)")
 pushd $current
 for module in $modules; do
