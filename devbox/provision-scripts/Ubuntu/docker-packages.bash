@@ -19,3 +19,12 @@ sudo apt-get install -y \
     containerd.io \
     docker-buildx-plugin \
     docker-compose-plugin
+
+BIRed='\033[1;91m'
+NC='\033[0m'
+
+if [[ $( id -nG "$USER" | grep -w docker ) != *docker* ]]; then
+    sudo usermod -aG docker "$USER"
+    echo -e "Please ${BIRed}logout and login again$NC to use docker without sudo"
+    exit 1
+fi

@@ -39,13 +39,13 @@ asdf-packages
 asdf
 kubectl-krew
 setup-k8s-cluster
-docker-packages
-docker
 poetry
 k3s-network
 node
 certificates
 install-modac-shell-helper
+docker
+docker-packages
 "
 
 current=$(dirname "$(realpath $0)")
