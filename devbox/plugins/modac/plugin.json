@@ -22,7 +22,8 @@
         "nodejs": {"version": "20"},
         "google-cloud-sdk": {"version": "latest"},
         "kube-linter": {"version": "latest"},
-        "socat": {"version": "latest"}
+        "socat": {"version": "latest"},
+        "_1password-cli": {"version": "latest"},
     },
     "env": {
         "DEVBOX_COREPACK_ENABLED": "true",
