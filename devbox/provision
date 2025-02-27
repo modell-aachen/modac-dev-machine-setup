@@ -46,6 +46,7 @@ poetry
 k3s-network
 node
 certificates
+setup-dev
 install-modac-shell-helper
 docker-packages
 docker
