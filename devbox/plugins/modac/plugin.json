@@ -38,7 +38,7 @@
     "shell": {
         "init_hook": [
             "source $PROVISIONER_DIRECTORY/devbox/bashrc.sh",
-            "export PATH=\"${KREW_ROOT:-$HOME/.krew}/bin:$PATH\"",
+            "export PATH=\"${KREW_ROOT:-$HOME/.krew}/bin:$HOME/.local/bin:$PATH\"",
         ],
         "scripts": {
         }
