@@ -62,8 +62,8 @@ if [[ "$(uname -s)" = "Linux"* ]]; then
 
     if apt-cache policy 1password | grep -wq "Installed: (none)"; then
         sudo apt install -y 1password 1password-cli
-        echo "Please configure 1Password and connect to 1Password cli."
-        echo "Afterwards, run `source ~/.bashrc` and trigger provisioning with `machine provision`."
+        echo -e "Please configure 1Password and ${BI_RED}connect to 1Password cli.$NC"
+        echo -e "Afterwards, run ${BI_RED}'source ~/.bashrc'$NC and trigger provisioning with ${BI_RED}'machine provision'$NC."
         exit 1
     fi
 fi

@@ -36,8 +36,10 @@ cd modac-dev-machine-setup
 ```
 
 ### Configure 1Password
-As preparation you need to install 1password CLI and be able to login.
-Follow the instructions here: https://developer.1password.com/docs/cli/get-started/#step-2-turn-on-the-1password-desktop-app-integration
+As preparation you need to
+* log into 1Password app
+* integrate with 1Password cli.
+  Follow the instructions here: https://developer.1password.com/docs/cli/get-started/#step-2-turn-on-the-1password-desktop-app-integration
 
 After following the instructions you should be able to run
 ```BASH
@@ -79,6 +81,16 @@ machine provision
 ```
 
 # FAQ
+
+## I want to use a different 'REPOS_DIRECTORY' than '$HOME/qwiki-repos'
+
+Add an ENV variable to "$(devbox global path)/devbox.json:
+```BASH
+machine edit-config
+```
+* add `"REPOS_DIRECTORY": "$HOME/path"` to the `env` object
+
+
 ## Problem lösen "**GitHub Error Message - Permission denied (publickey)**"
 Source: https://stackoverflow.com/questions/12940626/github-error-message-permission-denied-publickey
 Solution: Write that before starting the script

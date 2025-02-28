@@ -42,9 +42,9 @@ USAGE
 
     case "$subcommand" in
         provision )
-            pushd "$PROVISIONER_DIRECTORY"
+            pushd "$PROVISIONER_DIRECTORY" > /dev/null
             ./devbox/provision $@
-            popd - >/dev/null
+            popd > /dev/null
             ;;
         edit-config )
             editor "$(devbox global path)/devbox.json"

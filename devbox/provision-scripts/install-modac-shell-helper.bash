@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
+eval "$(devbox global shellenv --init-hook)"
 if [[ -z "$NEXUS_BOT_TOKEN" ]]; then
     echo -e "You need to set ${BI_RED}NEXUS_BOT_TOKEN$NC environment variable in $HOME/.env"
     exit 1
