@@ -8,9 +8,10 @@ Usage:
 Available Commands:
   edit-config   edit custom inventory file
   provision     provision this machine
+  pull-changes  pull changes for dev machine provisioner
 
 Flags:
-  -h, --help   shows this help message
+  -h, --help    shows this help message
 USAGE
     }
 
@@ -46,6 +47,12 @@ USAGE
             ./devbox/provision $@
             popd > /dev/null
             ;;
+        pull-changes )
+            pushd "$PROVISIONER_DIRECTORY" > /dev/null
+            echo "Pulling changes for dev machine provisioner ..."
+            git pull origin main
+            popd > /dev/null
+            ;;
         edit-config )
             editor "$(devbox global path)/devbox.json"
             ;;
@@ -62,7 +69,7 @@ _machine-completion()
     local prev=${COMP_WORDS[COMP_CWORD-1]}
     case ${COMP_CWORD} in
         1)
-            COMPREPLY=($(compgen -W "--help provision edit-config" -- $cur))
+            COMPREPLY=($(compgen -W "--help provision edit-config pull-changes" -- $cur))
             ;;
         *)
             case $prev in

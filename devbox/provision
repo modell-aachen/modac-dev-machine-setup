@@ -51,11 +51,11 @@ docker-packages
 docker
 "
 
-pushd "$current"
+pushd "$current" > /dev/null
 
 bash ./install
 eval "$(devbox global shellenv --init-hook)"
 op signin
 for module in $modules; do run $module; done
 
-popd
+popd > /dev/null
