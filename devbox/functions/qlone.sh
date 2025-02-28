@@ -62,7 +62,7 @@ qlone() {
     fi
 
     if [ ! -d "$repo_path" ] ; then
-        git clone git@github.com:modell-aachen/$repo.git "$repo_path"
+        gh repo clone "modell-aachen/$repo" "$repo_path"
     fi
 
     if [ "$is_switching_directory" = 1 ] ; then
@@ -82,7 +82,6 @@ _qlone-completion()
 
     local repos="
         QwikiContrib
-        RMS
         deploy
         devops-machine-provisioner
         dotfiles
