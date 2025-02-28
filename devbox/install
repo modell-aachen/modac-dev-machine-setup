@@ -7,37 +7,18 @@ if [[ "$(uname -s)" = "Linux"* ]]; then
         sudo apt update
         sudo apt install -y curl
     fi
-
-    op_keyring=/usr/share/keyrings/1password-archive-keyring.gpg
-    if [ ! -f "$op_keyring" ]; then
-        curl -sS https://downloads.1password.com/linux/keys/1password.asc | sudo gpg --dearmor --output "$op_keyring"
-    fi
-
-    op_source_list=/etc/apt/sources.list.d/1password.list
-    if [ ! -f "$op_source_list" ]; then
-        echo "deb [arch=amd64 signed-by=$op_keyring] https://downloads.1password.com/linux/debian/amd64 stable main" | sudo tee "$op_source_list"
-    fi
-
-    op_gpg=/usr/share/debsig/keyrings/AC2D62742012EA22/debsig.gpg
-    if [ ! -f "$op_gpg" ]; then
-        sudo mkdir -p /etc/debsig/policies/AC2D62742012EA22
-        curl -sS https://downloads.1password.com/linux/debian/debsig/1password.pol | sudo tee /etc/debsig/policies/AC2D62742012EA22/1password.pol
-        sudo mkdir -p /usr/share/debsig/keyrings/AC2D62742012EA22
-        curl -sS https://downloads.1password.com/linux/keys/1password.asc | sudo gpg --dearmor --output "$op_gpg"
-        sudo apt update
-    fi
-
-    sudo apt install -y 1password 1password-cli
 fi
-
 
 if [ -z $( which devbox ) ]; then
     echo "Installing devbox"
     curl -fsSL https://get.jetify.com/devbox | bash
 fi
 
-env_path="$HOME/.env"
-[[ ! -f "$env_path" ]] && touch "$env_path"
+env_path="$HOME/.secrets/.env"
+if [[ ! -f "$env_path" ]]; then
+    mkdir -p "$HOME/.secrets"
+    touch "$env_path"
+fi
 
 if [ ! -f $HOME/.bash_completions/devbox.sh ]; then
     mkdir -p $HOME/.bash_completions
@@ -58,3 +39,31 @@ echo $base_path
 
 devbox global update
 eval "$(devbox global shellenv --preserve-path-stack -r)" && hash -r
+
+if [[ "$(uname -s)" = "Linux"* ]]; then
+    op_keyring=/usr/share/keyrings/1password-archive-keyring.gpg
+    if [ ! -f "$op_keyring" ]; then
+        curl -sS https://downloads.1password.com/linux/keys/1password.asc | sudo gpg --dearmor --output "$op_keyring"
+    fi
+
+    op_source_list=/etc/apt/sources.list.d/1password.list
+    if [ ! -f "$op_source_list" ]; then
+        echo "deb [arch=amd64 signed-by=$op_keyring] https://downloads.1password.com/linux/debian/amd64 stable main" | sudo tee "$op_source_list"
+    fi
+
+    op_gpg=/usr/share/debsig/keyrings/AC2D62742012EA22/debsig.gpg
+    if [ ! -f "$op_gpg" ]; then
+        sudo mkdir -p /etc/debsig/policies/AC2D62742012EA22
+        curl -sS https://downloads.1password.com/linux/debian/debsig/1password.pol | sudo tee /etc/debsig/policies/AC2D62742012EA22/1password.pol
+        sudo mkdir -p /usr/share/debsig/keyrings/AC2D62742012EA22
+        curl -sS https://downloads.1password.com/linux/keys/1password.asc | sudo gpg --dearmor --output "$op_gpg"
+        sudo apt update
+    fi
+
+    if apt-cache policy 1password | grep -wq "Installed: (none)"; then
+        sudo apt install -y 1password 1password-cli
+        echo "Please configure 1Password and connect to 1Password cli."
+        echo "Afterwards, run `source ~/.bashrc` and trigger provisioning with `machine provision`."
+        exit 1
+    fi
+fi

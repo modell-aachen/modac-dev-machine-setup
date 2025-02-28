@@ -23,7 +23,9 @@
         "google-cloud-sdk": {"version": "latest"},
         "kube-linter": {"version": "latest"},
         "socat": {"version": "latest"},
-        "jinja2-cli": {"version": "latest"}
+        "jinja2-cli": {"version": "latest"},
+        "fzf": {"version": "latest"},
+        "restic": {"version": "latest"}
     },
     "env": {
         "DEVBOX_COREPACK_ENABLED": "true",

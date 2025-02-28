@@ -10,6 +10,7 @@ export POETRY_VERSION=2.0.1
 
 export QWIKI_DEVELOPMENT_ROOT_CA="$HOME/.local/share/mkcert"
 
+current=$(dirname "$(realpath $0)")
 
 if [[ "$(uname -s)" = "Linux"* ]]; then
     export ARCH="Ubuntu"
@@ -33,8 +34,6 @@ function run() {
     fi
 }
 
-eval "$(devbox global shellenv --init-hook)"
-
 modules="
 packages
 setup-envs
@@ -52,11 +51,11 @@ docker-packages
 docker
 "
 
-op signin
+pushd "$current"
 
-current=$(dirname "$(realpath $0)")
-pushd $current
-for module in $modules; do
-    run $module
-done
+bash ./install
+eval "$(devbox global shellenv --init-hook)"
+op signin
+for module in $modules; do run $module; done
+
 popd

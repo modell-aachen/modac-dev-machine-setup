@@ -11,7 +11,6 @@ sudo apt install -y \
     network-manager-openvpn \
     network-manager-openvpn-gnome \
     openvpn \
-    restic \
     python-is-python3 \
     apt-transport-https \
     ca-certificates \

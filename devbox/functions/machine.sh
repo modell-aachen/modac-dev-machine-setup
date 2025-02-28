@@ -44,7 +44,7 @@ USAGE
         provision )
             pushd "$PROVISIONER_DIRECTORY"
             ./devbox/provision $@
-            pop - >/dev/null
+            popd - >/dev/null
             ;;
         edit-config )
             editor "$(devbox global path)/devbox.json"

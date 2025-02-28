@@ -18,7 +18,7 @@ If your using ubuntu >= 20.04, you can follow along with the "Usage" section. On
 ## Preparations
 ```BASH
 sudo apt update
-sudo apt install -y software-properties-common git vim python3-pip
+sudo apt install -y software-properties-common git vim
 cd ~
 ```
 
@@ -30,10 +30,9 @@ git clone https://github.com/modell-aachen/modac-dev-machine-setup.git
 cd modac-dev-machine-setup
 ```
 
-
 ### Install provisioner and devbox packages
 ```BASH
-./devbox/install
+./devbox/provision
 ```
 
 ### Configure 1Password
@@ -46,33 +45,30 @@ op vault list
 ```
 and see a list of your vaults.
 
-## Initial local envs
-```BASH
-vim $HOME/.env
-```
 1) check successfull authentication against github.com
     ```bash
     ssh -T git@github.com
     ```
-1) set NEXUS_BOT_TOKEN to the value of 1Password entry at https://start.1password.com/open/i?a=CXJNQFCHNNGSLNOEP6SLPHLZQ4&v=3mhbwhicfwkifyq7bc2nrnhywa&i=32jtgjyel43vabz2wbukslo5bq&h=modac.1password.eu
 
-### Additional, development only, configuration and adjustments
-6) set GITHUB_AUTH_TOKEN to the value of 1Password entry at https://start.1password.com/open/i?a=CXJNQFCHNNGSLNOEP6SLPHLZQ4&h=modac.1password.eu&i=dwpktyrfuj6cyjfy6y74q3ifiy&v=6u4nznoclnkg7467ne4ntutcgq
-1) set FONTAWESOME_NEXUS_AUTH_TOKEN to the value of 1Password entry at https://start.1password.com/open/i?a=CXJNQFCHNNGSLNOEP6SLPHLZQ4&v=6u4nznoclnkg7467ne4ntutcgq&i=5xls52q24au3eie2itucvc635u&h=modac.1password.eu
-1) set HARBOR_USERNAME to your modac mail address
-1) set HARBOR_PASSWORD to your CLI token (https://harbor.modac.cloud -> Login -> user profile [top right corner] -> User Profile -> CLI secret)
+### Add Harbor secrets to 1Password
+1) in 1Password: New Item
+1) Add Login
+1) Change `Login` title to `Harbor`
+1) set username to your modac email address
+1) set password (https://harbor.modac.cloud -> Login -> user profile [top right corner] -> User Profile -> CLI secret)
 
 
 ## Provision dev machine
 
 ```BASH
-./devbox/provision
+source $HOME/.bashrc
+machine provision
 ```
 
 After that open up a new terminal to have an updated PATH with all the tools available.
 
 ## Updates
-Update your `$HOME/.inventory_local.yml`:
+Update your `$(devbox global path)/devbox.json`:
 ```BASH
 machine edit-config
 ```
@@ -89,13 +85,6 @@ Solution: Write that before starting the script
 ```BASH
 ssh-agent -s
 ssh-add ~/.ssh/id_rsa
-```
-
-## ZSH
-If you use zsh, source `.env` and `bashrc.sh` in your `.zshrc`
-```BASH
-[ -f $HOME/.env ] && source $HOME/.env
-[ -f $HOME/.modac-bash/bashrc.sh ] && source $HOME/.modac-bash/bashrc.sh
 ```
 
 ## Docker setup fails
