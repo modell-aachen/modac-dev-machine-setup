@@ -39,20 +39,18 @@ USAGE
     if [ $# -gt 0 ]; then
         shift
     fi
-    local machineDir=$HOME/modac-dev-machine-setup
-    local inventoryFile=$HOME/.inventory_local.yml
 
     case "$subcommand" in
         provision )
-            cd $machineDir
-            ./dev-provision -i $inventoryFile $@
-            cd - >/dev/null
+            pushd "$PROVISIONER_DIRECTORY"
+            ./devbox/provision $@
+            pop - >/dev/null
             ;;
         edit-config )
-            editor $inventoryFile
+            editor "$(devbox global path)/devbox.json"
             ;;
         "" )
-            cd $machineDir
+            cd "$PROVISIONER_DIRECTORY"
             ;;
     esac
 
@@ -69,7 +67,7 @@ _machine-completion()
         *)
             case $prev in
                 provision )
-                    local local_tooling="--help dotfiles packages tooling scripts upgrade-provisioner"
+                    local local_tooling="--help"
                     COMPREPLY=($(compgen -W "$local_tooling" -- $cur))
                     ;;
             esac
