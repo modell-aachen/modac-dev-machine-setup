@@ -1,7 +1,7 @@
 qtest() {
     local workingDir=$(pwd)
     qlone QwikiContrib
-    ./backend-test "$@"
+    ./core/backend-test "$@"
     cd "$workingDir"
 }
 
