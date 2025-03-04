@@ -7,9 +7,6 @@ export NC='\033[0m'
 # renovate: datasource=github-releases depName=python-poetry/poetry
 export POETRY_VERSION=2.0.1
 
-
-export QWIKI_DEVELOPMENT_ROOT_CA="$HOME/.local/share/mkcert"
-
 current=$(dirname "$(realpath $0)")
 
 if [[ "$(uname -s)" = "Linux"* ]]; then
