@@ -36,13 +36,14 @@
         "QWIKI_API_TOKEN": "modell-aachen",
         "QWIKI_EVENTS_HOST": "https://events.qluster.localhost",
         "QWIKI_MAILHOG_HOST": "https://mailhog.qluster.localhost",
-        "QWIKI_DEVELOPMENT_ROOT_CA": "$HOME/.local/share/mkcert"
+        "QWIKI_DEVELOPMENT_ROOT_CA": "$HOME/.local/share/mkcert",
+        "ASDF_DATA_DIR": "$HOME/.asdf"
     },
     "shell": {
         "init_hook": [
             "[ -f $PROVISIONER_DIRECTORY/devbox/bashrc.sh ] && source $PROVISIONER_DIRECTORY/devbox/bashrc.sh",
             "[ -d $HOME/.bash_completions ] && for c in $(find $HOME/.bash_completions -type f); do source $c; done",
-            "export PATH=\"${KREW_ROOT:-$HOME/.krew}/bin:$HOME/.local/bin:$PATH\""
+            "export PATH=\"${KREW_ROOT:-$HOME/.krew}/bin:$HOME/.local/bin:$ASDF_DATA_DIR/shims:$PATH\""
         ],
         "scripts": {
         }
