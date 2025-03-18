@@ -22,19 +22,6 @@ sudo apt install -y software-properties-common git vim
 cd ~
 ```
 
-## Installation
-
-### Clone repo
-```
-git clone https://github.com/modell-aachen/modac-dev-machine-setup.git
-cd modac-dev-machine-setup
-```
-
-### Install provisioner and devbox packages
-```BASH
-./devbox/provision
-```
-
 ### Configure 1Password
 As preparation you need to
 * log into 1Password app
@@ -59,6 +46,19 @@ and see a list of your vaults.
 1) set username to your modac email address
 1) set password (https://harbor.modac.cloud -> Login -> user profile [top right corner] -> User Profile -> CLI secret)
 
+
+## Installation
+
+### Clone repo
+```
+git clone https://github.com/modell-aachen/modac-dev-machine-setup.git
+cd modac-dev-machine-setup
+```
+
+### Install provisioner and devbox packages
+```BASH
+./devbox/provision
+```
 
 ## Provision dev machine
 
