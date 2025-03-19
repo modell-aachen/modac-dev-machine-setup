@@ -51,6 +51,7 @@ and see a list of your vaults.
 
 ### Clone repo
 ```
+cd ~
 git clone https://github.com/modell-aachen/modac-dev-machine-setup.git
 cd modac-dev-machine-setup
 ```
