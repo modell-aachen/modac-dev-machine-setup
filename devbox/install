@@ -20,10 +20,12 @@ if [[ ! -f "$env_path" ]]; then
     touch "$env_path"
 fi
 
-if [ ! -f $HOME/.bash_completions/devbox.sh ]; then
-    mkdir -p $HOME/.bash_completions
-    devbox completion bash > $HOME/.bash_completions/devbox.sh
-fi
+for shell in bash zsh; do
+    if [ ! -f $HOME/.bash_completions_${shell}/devbox.sh ]; then
+        mkdir -p $HOME/.bash_completions_${shell}
+        devbox completion ${shell} > $HOME/.bash_completions_${shell}/devbox.sh
+    fi
+done
 
 if [ -z "$( cat $HOME/.bashrc | grep 'devbox global shellenv --init-hook' )" ]; then
     echo 'eval "$(devbox global shellenv --init-hook)"' >> $HOME/.bashrc
