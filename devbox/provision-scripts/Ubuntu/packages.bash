@@ -15,4 +15,5 @@ sudo apt install -y \
     apt-transport-https \
     ca-certificates \
     gnupg \
-    age
+    age \
+    libnss3-tools
