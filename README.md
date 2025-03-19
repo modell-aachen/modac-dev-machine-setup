@@ -90,15 +90,6 @@ machine edit-config
 ```
 * add `"REPOS_DIRECTORY": "$HOME/path"` to the `env` object
 
-
-## Problem lösen "**GitHub Error Message - Permission denied (publickey)**"
-Source: https://stackoverflow.com/questions/12940626/github-error-message-permission-denied-publickey
-Solution: Write that before starting the script
-```BASH
-ssh-agent -s
-ssh-add ~/.ssh/id_rsa
-```
-
 ## Docker setup fails
 
 The docker task requires a system restart. If any succeeding docker-related tasks fail (kubectl, calico, etc.) try restarting the system
