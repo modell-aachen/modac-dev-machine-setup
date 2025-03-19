@@ -23,7 +23,7 @@ tooling:
     # renovate: datasource=github-releases depName=kubernetes-sigs/kustomize
     kustomize: "v4.5.5"
     # renovate: datasource=github-releases depName=kubernetes-sigs/krew
-    krew: "v0.4.4"
+    krew: "v0.4.5"
     # renovate: datasource=github-releases depName=fluxcd/flux2
     flux: "v2.5.1"
     # renovate: datasource=github-releases depName=devspace-sh/devspace
