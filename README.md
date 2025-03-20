@@ -39,6 +39,13 @@ and see a list of your vaults.
     ssh -T git@github.com
     ```
 
+if not, one possibility is :
+```bash
+sudo apt install gh
+gh auth login
+```
+do auth with ssh when promted
+
 ### Add Harbor secrets to 1Password
 1) in 1Password: New Item
 1) Add Login
