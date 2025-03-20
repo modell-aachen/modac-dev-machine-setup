@@ -15,5 +15,6 @@ if [[ "$ip_address_line" != ipv4.addresses*$ip* ]]; then
         type dummy \
         ifname $name \
         ipv4.addresses $ip \
+        ipv4.method manual \
         con-name $name
 fi
