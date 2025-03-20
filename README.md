@@ -88,6 +88,8 @@ machine provision
 
 After that open up a new terminal to have an updated PATH with all the tools available.
 
+Back to QwikiContrib: [QwikiContrib](https://github.com/modell-aachen/QwikiContrib/)
+
 ## Updates
 Update your `$(devbox global path)/devbox.json`:
 ```BASH
