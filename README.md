@@ -69,6 +69,11 @@ cd modac-dev-machine-setup
 ```
 
 ### By `Please logout and login again to use docker without sudo` restart your laptop and then:
+check again that you can login to 1password:
+```BASH
+op vault list
+```
+Then resume:
 ```BASH
  cd modac-dev-machine-setup/
 ./devbox/provision
