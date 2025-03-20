@@ -44,7 +44,7 @@ if not, one possibility is :
 sudo apt install gh
 gh auth login
 ```
-do auth with ssh when promted
+do auth with ssh when prompted
 
 ### Add Harbor secrets to 1Password
 1) in 1Password: New Item
