@@ -10,22 +10,25 @@
         "asdf-vm": { "version": "latest" },
         "kubectl": { "version": "latest" },
         "krew": { "version": "latest" },
-        "fluxcd": {"version": "latest"},
-        "yq-go": {"version": "latest"},
-        "kustomize_4": {"version": "latest"},
-        "kubernetes-helm": {"version": "latest"},
-        "terraform": {"version": "latest"},
-        "mkcert": {"version": "latest"},
-        "sops": {"version": "latest"},
-        "go-task": {"version": "latest"},
-        "k3d": {"version": "latest", "platforms": ["x86_64-linux", "aarch64-linux"]},
-        "nodejs": {"version": "20"},
-        "google-cloud-sdk": {"version": "latest"},
-        "kube-linter": {"version": "latest"},
-        "socat": {"version": "latest"},
-        "jinja2-cli": {"version": "latest"},
-        "fzf": {"version": "latest"},
-        "restic": {"version": "latest"}
+        "fluxcd": { "version": "latest" },
+        "yq-go": { "version": "latest" },
+        "kustomize_4": { "version": "latest" },
+        "kubernetes-helm": { "version": "latest" },
+        "terraform": { "version": "latest" },
+        "mkcert": { "version": "latest" },
+        "sops": { "version": "latest" },
+        "go-task": { "version": "latest" },
+        "k3d": {
+            "version": "latest",
+            "platforms": ["x86_64-linux", "aarch64-linux"]
+        },
+        "nodejs": { "version": "20" },
+        "google-cloud-sdk": { "version": "latest" },
+        "kube-linter": { "version": "latest" },
+        "socat": { "version": "latest" },
+        "jinja2-cli": { "version": "latest" },
+        "fzf": { "version": "latest" },
+        "restic": { "version": "latest" }
     },
     "env": {
         "DEVBOX_COREPACK_ENABLED": "true",
@@ -42,12 +45,10 @@
     "shell": {
         "init_hook": [
             "[ -f $PROVISIONER_DIRECTORY/devbox/bashrc.sh ] && source $PROVISIONER_DIRECTORY/devbox/bashrc.sh",
-            "[ -d $HOME/.bash_completions ] && for c in $(find $HOME/.bash_completions -type f); do source $c; done",
+            "SHELL=bash; [ -n \"$ZSH_VERSION\" ] && SHELL=zsh; [ -d $HOME/.${SHELL}_completions ] && for c in $(find $HOME/.${SHELL}_completions -type f); do source $c; done",
             "export PATH=\"${KREW_ROOT:-$HOME/.krew}/bin:$HOME/.local/bin:$ASDF_DATA_DIR/shims:$PATH\""
         ],
-        "scripts": {
-        }
+        "scripts": {}
     },
-    "include": [
-    ]
+    "include": []
 }
