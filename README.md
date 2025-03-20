@@ -70,6 +70,7 @@ cd modac-dev-machine-setup
 
 ### By `Please logout and login again to use docker without sudo` restart your laptop and then:
 ```BASH
+ cd modac-dev-machine-setup/
 ./devbox/provision
 ```
 
