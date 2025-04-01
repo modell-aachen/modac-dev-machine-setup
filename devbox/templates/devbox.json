@@ -2,21 +2,16 @@
     "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.13.6/.schema/devbox.schema.json",
     "packages": [],
     "shell": {
-        "init_hook": [
-        ],
-        "scripts": {
-        }
+        "init_hook": [],
+        "scripts": {}
     },
     "op_secrets_tpl": {
         "HARBOR_USERNAME": "op://Employee/Harbor/username",
         "HARBOR_PASSWORD": "op://Employee/Harbor/password",
         "NEXUS_BOT_TOKEN": "op://3mhbwhicfwkifyq7bc2nrnhywa/Nexus - Bot Readonly/password",
-        "FONTAWESOME_NEXUS_AUTH_TOKEN": "op://Entwicklung Sensitiv/FONTAWESOME_NEXUS_AUTH_TOKEN/password"
+        "FONTAWESOME_NEXUS_AUTH_TOKEN": "op://Entwicklung/FONTAWESOME_NEXUS_AUTH_TOKEN/password"
     },
-    "env": {
-    },
+    "env": {},
     "env_from": "{env_path}",
-    "include": [
-        "path:{base_path}/plugins/modac/plugin.json"
-    ]
+    "include": ["path:{base_path}/plugins/modac/plugin.json"]
 }
