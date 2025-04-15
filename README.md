@@ -13,6 +13,10 @@ If your using ubuntu >= 20.04, you can follow along with the "Usage" section. On
 
 **Important** The command `python3` needs to point to the python-executable for Python >= 3.10, `python` might not work.
 
+## MacOS
+
+These packages can be installed using xcode-select, eg. run `xcode-select --install` to launch the installer.
+
 # Usage
 
 ## Preparations

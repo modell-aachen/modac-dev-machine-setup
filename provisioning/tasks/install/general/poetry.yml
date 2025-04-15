@@ -1,7 +1,0 @@
----
-- name: Install poetry
-  shell: |
-    curl -sSL https://install.python-poetry.org | python3 - --version {{ tooling.version.poetry }}
-  args:
-    creates: "{{ ansible_env.HOME }}/.local/bin/poetry"
-    

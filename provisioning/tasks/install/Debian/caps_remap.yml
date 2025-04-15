@@ -1,5 +1,0 @@
----
-- name: Ensure caps is switched to preferred behavior
-  dconf:
-    key: /org/gnome/desktop/input-sources/xkb-options
-    value: "['caps:{{ caps_remap_behavior | default('capslock') }}']"

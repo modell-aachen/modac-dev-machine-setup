@@ -1,6 +1,0 @@
----
-- name: Install Teamviewer from remote source
-  become: true
-  apt:
-    deb: https://download.teamviewer.com/download/linux/teamviewer_{{ machine_architecture }}.deb
-  when: '"Microsoft" not in ansible_facts["kernel"]'

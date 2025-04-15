@@ -1,6 +1,0 @@
----
-- name: Install oh-my-zsh
-  shell: |
-    curl sSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh | zsh -c 
-  args:
-    creates: "{{ ansible_env.HOME }}/.oh-my-zsh"

@@ -1,9 +1,0 @@
----
-- name: Install yubikey products
-  become: true
-  block:
-    - name: Ensure yubico products are installed
-      apt:
-        name:
-          - yubikey-manager
-          - libpam-yubico
