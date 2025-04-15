@@ -1,24 +1,16 @@
 #!/usr/bin/env bash
 set -e
 
+current=$(dirname "$(realpath $0)")
+
+. "$current/provision-scripts/helper.bash"
+
 function add_init_hook() {
     local shell=$1
     local shell_path="$HOME/.${shell}rc"
 
     if [[ -f "$shell_path" && -z "$( cat "$shell_path" | grep 'devbox global shellenv --init-hook' )" ]]; then
         echo 'eval "$(devbox global shellenv --init-hook)"' >> "$shell_path"
-    fi
-}
-
-function add_devbox_completions() {
-    local shell=$1
-    local shell_path="$HOME/.${shell}rc"
-    local completions_path="$HOME/.${shell}_completions"
-    local devbox_completions_path="$completions_path/devbox.sh"
-
-    if [[ -f "$shell_path" && ! -f "$devbox_completions_path" ]]; then
-        mkdir -p "$completions_path"
-        devbox completion ${shell} > "$devbox_completions_path"
     fi
 }
 
@@ -43,7 +35,7 @@ fi
 
 for shell in bash zsh; do
     add_init_hook "$shell"
-    add_devbox_completions "$shell"
+    install_completion "$shell" devbox 0_14_1
 done
 
 base_path=$( dirname $(realpath "$0") )
