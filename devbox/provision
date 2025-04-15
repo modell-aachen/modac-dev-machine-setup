@@ -43,6 +43,7 @@ k3s-network
 node
 certificates
 setup-dev
+completions
 install-modac-shell-helper
 docker-packages
 docker
