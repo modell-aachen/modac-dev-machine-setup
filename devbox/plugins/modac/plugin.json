@@ -40,13 +40,12 @@
         "QWIKI_EVENTS_HOST": "https://events.qluster.localhost",
         "QWIKI_MAILHOG_HOST": "https://mailhog.qluster.localhost",
         "QWIKI_DEVELOPMENT_ROOT_CA": "$HOME/.local/share/mkcert",
-        "ASDF_DATA_DIR": "$HOME/.asdf"
     },
     "shell": {
         "init_hook": [
             "[ -f $PROVISIONER_DIRECTORY/devbox/bashrc.sh ] && source $PROVISIONER_DIRECTORY/devbox/bashrc.sh",
             "SHELL=bash; [ -n \"$ZSH_VERSION\" ] && SHELL=zsh; [ -d $HOME/.${SHELL}_completions ] && for c in $(find $HOME/.${SHELL}_completions -type f); do source $c; done",
-            "export PATH=\"${KREW_ROOT:-$HOME/.krew}/bin:$HOME/.local/bin:$ASDF_DATA_DIR/shims:$PATH\""
+            "export PATH=\"${KREW_ROOT:-$HOME/.krew}/bin:$HOME/.local/bin:$PATH\""
         ],
         "scripts": {}
     },
