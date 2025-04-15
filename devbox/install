@@ -1,6 +1,27 @@
 #!/usr/bin/env bash
 set -e
 
+function add_init_hook() {
+    local shell=$1
+    local shell_path="$HOME/.${shell}rc"
+
+    if [[ -f "$shell_path" && -z "$( cat "$shell_path" | grep 'devbox global shellenv --init-hook' )" ]]; then
+        echo 'eval "$(devbox global shellenv --init-hook)"' >> "$shell_path"
+    fi
+}
+
+function add_devbox_completions() {
+    local shell=$1
+    local shell_path="$HOME/.${shell}rc"
+    local completions_path="$HOME/.${shell}_completions"
+    local devbox_completions_path="$completions_path/devbox.sh"
+
+    if [[ -f "$shell_path" && ! -f "$devbox_completions_path" ]]; then
+        mkdir -p "$completions_path"
+        devbox completion ${shell} > "$devbox_completions_path"
+    fi
+}
+
 if [[ "$(uname -s)" = "Linux"* ]]; then
     if [[ ! "$(command -v curl)" ]]; then
         echo "Installing curl"
@@ -21,15 +42,9 @@ if [[ ! -f "$env_path" ]]; then
 fi
 
 for shell in bash zsh; do
-    if [ ! -f $HOME/.${shell}_completions/devbox.sh ]; then
-        mkdir -p $HOME/.${shell}_completions
-        devbox completion ${shell} > $HOME/.${shell}_completions/devbox.sh
-    fi
+    add_init_hook "$shell"
+    add_devbox_completions "$shell"
 done
-
-if [ -z "$( cat $HOME/.bashrc | grep 'devbox global shellenv --init-hook' )" ]; then
-    echo 'eval "$(devbox global shellenv --init-hook)"' >> $HOME/.bashrc
-fi
 
 base_path=$( dirname $(realpath "$0") )
 default_devbox_dir="$HOME/.local/share/devbox/global/default"
