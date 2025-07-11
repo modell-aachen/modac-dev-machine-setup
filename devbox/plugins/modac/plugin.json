@@ -2,6 +2,7 @@
     "name": "MODAC",
     "version": "0.0.1",
     "packages": {
+        "claude-code": { "version": "latest" },
         "devspace": { "version": "latest" },
         "gh": { "version": "latest" },
         "git": { "version": "latest" },
