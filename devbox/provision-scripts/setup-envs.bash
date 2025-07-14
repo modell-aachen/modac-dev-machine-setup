@@ -12,12 +12,10 @@ if [[ "$( jq .env_from $config_file )" != *"$HOME/.secrets/.env"* ]]; then
     mv "$tmp_file" "$config_file"
 fi
 
-if [[ "$( jq .op_secrets_tpl $config_file )" == "null" ]]; then
-    echo "Adding op_secrets_tpl to $config_file"
-    op_tpl=$( jq -cM '.op_secrets_tpl' "$PROVISIONER_DIRECTORY/devbox/templates/devbox.json" )
-    jq  -c ". + {\"op_secrets_tpl\": $op_tpl}" "$config_file" | jq . >| "$tmp_file"
-    mv "$tmp_file" "$config_file"
-fi
+echo "Updating op_secrets_tpl in $config_file"
+op_tpl=$( jq -cM '.op_secrets_tpl' "$PROVISIONER_DIRECTORY/devbox/templates/devbox.json" )
+jq  -c ". + {\"op_secrets_tpl\": $op_tpl}" "$config_file" | jq . >| "$tmp_file"
+mv "$tmp_file" "$config_file"
 
 if [[ $( cat "$HOME/.env" ) == *"export "* ]]; then
     echo "Removing export from $HOME/.env"
