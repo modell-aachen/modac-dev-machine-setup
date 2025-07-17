@@ -56,4 +56,8 @@ eval "$(devbox global shellenv --init-hook)"
 op signin
 for module in $modules; do run $module; done
 
+claude_md_directory="$HOME/.claude"
+mkdir -p "$claude_md_directory"
+cp "$current/../claude/team-claude.md" "$claude_md_directory/CLAUDE.md"
+
 popd > /dev/null

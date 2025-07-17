@@ -135,3 +135,8 @@ Use the printed version (e.g. 5:24.0.7-1~ubuntu.22.04~jammy) to ...
 ```BASH
 sudo apt install docker-ce=*VERSION*
 ```
+
+## CLAUDE.md: How to add personal preferences
+
+The team's CLAUDE.md contains what we all can agree on. But everyone works differently. So feel free to enter your personal preferences to ~/.claude/personal-CLAUDE.md.
+It will be included automatically and take precedence over the team defaults if conflicting.
