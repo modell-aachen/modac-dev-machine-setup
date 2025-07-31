@@ -82,15 +82,12 @@ _qlone-completion()
 
     local repos="
         QwikiContrib
-        deploy
-        devops-machine-provisioner
         dotfiles
         dotfiles-pandoc
         latex-modac
         qwiki-cli
         qwiki-gitops
         qwikinow-deployment
-        terraform
     "
 
     COMPREPLY=( $(compgen -W "$repos" -- ${cur}) )
