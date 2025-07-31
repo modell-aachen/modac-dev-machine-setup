@@ -38,7 +38,6 @@
         "QWIKI_API_HOST": "https://api.qluster.localhost",
         "QWIKI_API_TOKEN": "modell-aachen",
         "QWIKI_EVENTS_HOST": "https://events.qluster.localhost",
-        "QWIKI_MAILHOG_HOST": "https://mailhog.qluster.localhost",
         "QWIKI_DEVELOPMENT_ROOT_CA": "$HOME/.local/share/mkcert",
         "ASDF_DATA_DIR": "$HOME/.asdf"
     },
