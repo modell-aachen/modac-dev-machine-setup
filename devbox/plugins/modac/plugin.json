@@ -15,7 +15,6 @@
         "yq-go": { "version": "latest" },
         "kustomize_4": { "version": "latest" },
         "kubernetes-helm": { "version": "latest" },
-        "terraform": { "version": "latest" },
         "mkcert": { "version": "latest" },
         "sops": { "version": "latest" },
         "go-task": { "version": "latest" },
