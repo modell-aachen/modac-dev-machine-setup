@@ -10,7 +10,11 @@
         "HARBOR_PASSWORD": "op://Employee/Harbor/password",
         "NEXUS_BOT_TOKEN": "op://4kbrfouay733wowrd7fkpkcymq/Nexus - Bot Readonly/password",
         "FONTAWESOME_NEXUS_AUTH_TOKEN": "op://Entwicklung/FONTAWESOME_NEXUS_AUTH_TOKEN/password",
-        "OBAN_AUTH_TOKEN": "op://Entwicklung/Oban Pro/credential"
+        "OBAN_AUTH_TOKEN": "op://Entwicklung/Oban Pro/credential",
+        "AZURE_TRANSLATE_ENDPOINT": "op://Entwicklung/Azure Translate/username",
+        "AZURE_TRANSLATE_API_KEY": "op://Entwicklung/Azure Translate/credential",
+        "TOLGEE_PROJECT_ID": "op://Entwicklung/Tolgee/text",
+        "TOLGEE_API_KEY": "op://Entwicklung/Tolgee/credential"
     },
     "env": {},
     "env_from": "{env_path}",
