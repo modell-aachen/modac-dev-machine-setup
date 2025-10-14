@@ -28,7 +28,8 @@
         "socat": { "version": "latest" },
         "jinja2-cli": { "version": "latest" },
         "fzf": { "version": "latest" },
-        "restic": { "version": "latest" }
+        "restic": { "version": "latest" },
+        "crane": { "version": "latest" }
     },
     "env": {
         "DEVBOX_COREPACK_ENABLED": "true",
