@@ -6,12 +6,13 @@ Usage:
   machine [command]
 
 Available Commands:
-  edit-config   edit custom inventory file
-  provision     provision this machine
-  pull-changes  pull changes for dev machine provisioner
+  edit-config    edit custom inventory file
+  provision      provision this machine
+  pull-changes   pull changes for dev machine provisioner
+  backup-devbox  backup devbox configuration devbox.json
 
 Flags:
-  -h, --help    shows this help message
+  -h, --help     shows this help message
 USAGE
     }
 
@@ -45,6 +46,16 @@ USAGE
         provision )
             pushd "$PROVISIONER_DIRECTORY" > /dev/null
             ./devbox/provision $@
+            popd > /dev/null
+            ;;
+        backup-devbox )
+            pushd "$PROVISIONER_DIRECTORY" > /dev/null
+            ./devbox/backup-config $@
+            popd > /dev/null
+            ;;
+        restore-devbox )
+            pushd "$PROVISIONER_DIRECTORY" > /dev/null
+            ./devbox/restore-config $@
             popd > /dev/null
             ;;
         pull-changes )

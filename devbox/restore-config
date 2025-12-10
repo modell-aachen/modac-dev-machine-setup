@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+VAULT_NAME="Employee"
+ITEM_TITLE="Devbox global devbox.json backup"
+
+DEVBOX_ROOT="${DEVBOX_PROJECT_ROOT:-$HOME/.local/share/devbox/global/default}"
+FILE_PATH="$DEVBOX_ROOT/devbox.json"
+
+mkdir -p "$DEVBOX_ROOT"
+
+if ! op whoami >/dev/null 2>&1; then
+  echo "You must be signed in to 1Password CLI (run: eval \"\$(op signin)\")" >&2
+  exit 1
+fi
+
+ITEM_ID="$(op item list --vault "$VAULT_NAME" --format json \
+  | jq -r --arg title "$ITEM_TITLE" '.[] | select(.title == $title) | .id' \
+  | head -n1 || true)"
+
+if [[ -z "$ITEM_ID" || "$ITEM_ID" == "null" ]]; then
+  echo "Error: Could not find item titled '$ITEM_TITLE' in vault '$VAULT_NAME'." >&2
+  exit 1
+fi
+
+op document get "$ITEM_ID" --vault "$VAULT_NAME" > "$FILE_PATH"
+
+echo "Restored devbox config to: $FILE_PATH"
