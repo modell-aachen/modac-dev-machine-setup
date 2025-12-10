@@ -23,7 +23,7 @@
         "kubernetes-helm": { "version": "latest" },
         "kustomize_4": { "version": "latest" },
         "mkcert": { "version": "latest" },
-        "nodejs": { "version": "20" },
+        "nodejs": { "version": "22" },
         "restic": { "version": "latest" },
         "socat": { "version": "latest" },
         "sops": { "version": "latest" },
