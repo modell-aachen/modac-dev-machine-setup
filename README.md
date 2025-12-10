@@ -19,37 +19,6 @@ These packages can be installed using xcode-select, eg. run `xcode-select --inst
 
 # Usage
 
-## Preparations
-```BASH
-sudo apt update
-sudo apt install -y software-properties-common git vim
-cd ~
-```
-
-### Configure 1Password
-As preparation you need to
-* log into 1Password app
-* integrate with 1Password cli.
-  Follow the instructions here: https://developer.1password.com/docs/cli/get-started/#step-2-turn-on-the-1password-desktop-app-integration
-
-After following the instructions you should be able to run
-```BASH
-op vault list
-```
-and see a list of your vaults.
-
-1) check successfull authentication against github.com
-    ```bash
-    ssh -T git@github.com
-    ```
-
-if not, one possibility is :
-```bash
-sudo apt install gh
-gh auth login
-```
-do auth with ssh when prompted
-
 ### Add Harbor secrets to 1Password
 1) in 1Password: New Item
 1) Add Login
@@ -71,6 +40,12 @@ cd modac-dev-machine-setup
 ```BASH
 ./devbox/provision
 ```
+
+### Login to 1Password
+
+* The 1Password app is provisioned. You should be able to login
+* Make sure that you provided the needed secrets in 1Password (Harbor)
+* run `./devbox/provision` again
 
 ### By `Please logout and login again to use docker without sudo` restart your laptop and then:
 check again that you can login to 1password:
