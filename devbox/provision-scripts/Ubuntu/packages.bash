@@ -5,7 +5,6 @@ sudo apt update
 sudo apt install -y \
     python3-pip \
     easy-rsa \
-    htop \
     inotify-tools \
     net-tools \
     network-manager-openvpn \
@@ -15,5 +14,4 @@ sudo apt install -y \
     apt-transport-https \
     ca-certificates \
     gnupg \
-    age \
     libnss3-tools
