@@ -80,7 +80,7 @@ _machine-completion()
     local prev=${COMP_WORDS[COMP_CWORD-1]}
     case ${COMP_CWORD} in
         1)
-            COMPREPLY=($(compgen -W "--help provision edit-config pull-changes" -- $cur))
+            COMPREPLY=($(compgen -W "--help provision edit-config pull-changes backup-devbox restore-devbox" -- $cur))
             ;;
         *)
             case $prev in
