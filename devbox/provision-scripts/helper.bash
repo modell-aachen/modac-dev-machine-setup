@@ -34,6 +34,7 @@ function pyenv_envs() {
 function source_path() {
     local shell=$1
     if [[ -f "$shell_path"  ]]; then
+        echo "Sourcing $shell_path"
         source $shell_path
     fi
 }

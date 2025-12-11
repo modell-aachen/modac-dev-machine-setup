@@ -33,6 +33,7 @@ function run() {
 
 modules="
 packages
+python
 setup-envs
 asdf-packages
 asdf
