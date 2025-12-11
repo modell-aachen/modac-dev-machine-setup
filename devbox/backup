@@ -290,13 +290,13 @@ single file or a directory to be backed up to 1Password as a Document:
     {
       "name": "ssh-config",          // REQUIRED, unique identifier used in CLI
       "path": "\$HOME/.ssh",          // REQUIRED, file or directory path
-      "vault": "Personal",           // OPTIONAL, 1Password vault name (default: "Personal")
+      "vault": "Employee",           // OPTIONAL, 1Password vault name (default: "Employee")
       "type": "directory"            // OPTIONAL, "file" (default) or "directory"
     },
     {
       "name": "gitconfig",
       "path": "\$HOME/.gitconfig",
-      "vault": "Personal",
+      "vault": "Employee",
       "type": "file"
     }
   ]
@@ -306,7 +306,7 @@ Fields
 ------
 - name   (string, required)
 - path   (string, required) — supports leading "\$HOME" or "~"
-- vault  (string, optional; default "Personal")
+- vault  (string, optional; default "Employee")
 - type   (string, optional; "file" (default) or "directory")
 
 devbox.json itself
@@ -316,7 +316,7 @@ devbox.json is always part of the effective backup list as:
   {
     "name": "devbox-config",
     "path": "<resolved devbox.json path>",
-    "vault": "Personal",
+    "vault": "Employee",
     "type": "file"
   }
 
