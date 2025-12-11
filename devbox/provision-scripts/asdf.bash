@@ -4,8 +4,8 @@ set -e
 config_file="$( devbox global path)/devbox.json"
 tmp_file="$( devbox global path)/tmp.json"
 
-asdf plugin-add erlang
-asdf plugin-add elixir
+asdf plugin add erlang
+asdf plugin add elixir
 
 asdf_dir=$(asdf info | grep ASDF_DIR | sed 's/ASDF_DIR=//')
 

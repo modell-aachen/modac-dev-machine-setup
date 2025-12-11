@@ -24,6 +24,7 @@
         "kustomize_4": { "version": "latest" },
         "mkcert": { "version": "latest" },
         "nodejs": { "version": "22" },
+        "pyenv": { "version": "latest" },
         "restic": { "version": "latest" },
         "socat": { "version": "latest" },
         "sops": { "version": "latest" },

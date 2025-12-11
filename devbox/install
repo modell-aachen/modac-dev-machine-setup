@@ -36,6 +36,8 @@ fi
 for shell in bash zsh; do
     add_init_hook "$shell"
     install_completion "$shell" devbox 0_14_1
+    pyenv_envs "$shell"
+    source_path "$shell"
 done
 
 base_path=$( dirname $(realpath "$0") )
