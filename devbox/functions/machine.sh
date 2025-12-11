@@ -9,7 +9,7 @@ Available Commands:
   edit-config    edit custom inventory file
   provision      provision this machine
   pull-changes   pull changes for dev machine provisioner
-  backup-devbox  backup devbox configuration devbox.json
+  backup         create / restore backup files to/from 1Password configured in devbox.json
 
 Flags:
   -h, --help     shows this help message
@@ -48,14 +48,9 @@ USAGE
             ./devbox/provision $@
             popd > /dev/null
             ;;
-        backup-devbox )
+        backup )
             pushd "$PROVISIONER_DIRECTORY" > /dev/null
-            ./devbox/backup-config $@
-            popd > /dev/null
-            ;;
-        restore-devbox )
-            pushd "$PROVISIONER_DIRECTORY" > /dev/null
-            ./devbox/restore-config $@
+            ./devbox/backup $@
             popd > /dev/null
             ;;
         pull-changes )
@@ -80,13 +75,17 @@ _machine-completion()
     local prev=${COMP_WORDS[COMP_CWORD-1]}
     case ${COMP_CWORD} in
         1)
-            COMPREPLY=($(compgen -W "--help provision edit-config pull-changes backup-devbox restore-devbox" -- $cur))
+            COMPREPLY=($(compgen -W "--help provision edit-config pull-changes backup" -- $cur))
             ;;
         *)
             case $prev in
                 provision )
                     local local_tooling="--help"
                     COMPREPLY=($(compgen -W "$local_tooling" -- $cur))
+                    ;;
+                backup )
+                    local sub_commands="--help create restore"
+                    COMPREPLY=($(compgen -W "$sub_commands" -- $cur))
                     ;;
             esac
             ;;
