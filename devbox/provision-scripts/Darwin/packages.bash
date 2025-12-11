@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 set -e
 
-pyenv install 3 -s
-pyenv global 3
+brew install \
+    bash \
+    gettext \
+    gnu-getopt
 
-pip3 install --upgrade pip
+brew install --cask visual-studio-code

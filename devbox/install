@@ -22,6 +22,17 @@ if [[ "$(uname -s)" = "Linux"* ]]; then
     fi
 fi
 
+if [[ "$(uname -s)" = "Darwin" ]]; then
+    if [[ ! "$(command -v brew)" ]]; then
+        echo "Installing homebrew"
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+        echo >> $HOME/.profile
+        echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> $HOME/.profile
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+    fi
+fi
+
 if [ -z $( which devbox ) ]; then
     echo "Installing devbox"
     curl -fsSL https://get.jetify.com/devbox | bash
@@ -49,6 +60,12 @@ echo $base_path
 devbox global update
 eval "$(devbox global shellenv --preserve-path-stack -r)" && hash -r
 
+function notice_and_exit() {
+    echo -e "Please configure 1Password and ${BI_RED}connect to 1Password cli.$NC"
+    echo -e "Afterwards, run ${BI_RED}'source ~/.YOUR_SHELL_RC'$NC and trigger provisioning with ${BI_RED}'machine provision'$NC."
+    exit 1
+}
+
 if [[ "$(uname -s)" = "Linux"* ]]; then
     op_keyring=/usr/share/keyrings/1password-archive-keyring.gpg
     if [ ! -f "$op_keyring" ]; then
@@ -71,8 +88,16 @@ if [[ "$(uname -s)" = "Linux"* ]]; then
 
     if apt-cache policy 1password | grep -wq "Installed: (none)"; then
         sudo apt install -y 1password 1password-cli
-        echo -e "Please configure 1Password and ${BI_RED}connect to 1Password cli.$NC"
-        echo -e "Afterwards, run ${BI_RED}'source ~/.bashrc'$NC and trigger provisioning with ${BI_RED}'machine provision'$NC."
-        exit 1
+        notice_and_exit
+    fi
+else
+    if [[ ! $(brew list | grep -w 1password-cli) ]]; then
+        brew install --cask \
+            1password \
+            1password-cli
+        
+        notice_and_exit
     fi
 fi
+
+

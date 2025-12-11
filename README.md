@@ -1,31 +1,12 @@
 # Required packages
 
-**MacOS**: Please start with [MacOS required packages](README_mascos.md).
-
 The machine provisioner requires some basic packages.
-If your using ubuntu >= 20.04, you can follow along with the "Usage" section. On other operating system, i.e. MacOS, please satisfy the following requirements manually:
 
-* python >= 3.10
-* pip >= 20.3
-* pip3 >= 20.3
-* git
-* vim
+For MacOs: Start  of with `xcode-select --install` to launch the installer for some base packages.
 
-**Important** The command `python3` needs to point to the python-executable for Python >= 3.10, `python` might not work.
-
-## MacOS
-
-These packages can be installed using xcode-select, eg. run `xcode-select --install` to launch the installer.
+All other operating systems don't have any further requirements
 
 # Usage
-
-### Add Harbor secrets to 1Password
-1) in 1Password: New Item
-1) Add Login
-1) Change `Login` title to `Harbor`
-1) set username to your modac email address
-1) set password (https://harbor.modac.cloud -> Login -> user profile [top right corner] -> User Profile -> CLI secret)
-
 
 ## Installation
 
@@ -44,8 +25,14 @@ cd modac-dev-machine-setup
 ### Login to 1Password
 
 * The 1Password app is provisioned. You should be able to login
-* Make sure that you provided the needed secrets in 1Password (Harbor)
-* run `./devbox/provision` again
+
+### Provide needed secrets to 1Password for Harbor
+1) in 1Password: New Item
+1) Add Login
+1) Change `Login` title to `Harbor`
+1) set username to your modac email address
+1) set password (https://harbor.modac.cloud -> Login -> user profile [top right corner] -> User Profile -> CLI secret)
+
 
 ### By `Please logout and login again to use docker without sudo` restart your laptop and then:
 check again that you can login to 1password:
@@ -58,14 +45,7 @@ Then resume:
 ./devbox/provision
 ```
 
-## Provision dev machine
-
-```BASH
-source $HOME/.bashrc
-machine provision
-```
-
-After that open up a new terminal to have an updated PATH with all the tools available.
+After that, you can always use the shortcut version `machine provision`
 
 Back to QwikiContrib: [QwikiContrib](https://github.com/modell-aachen/QwikiContrib/)
 
