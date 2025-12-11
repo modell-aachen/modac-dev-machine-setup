@@ -4,6 +4,11 @@ set -e
 brew install \
     bash \
     gettext \
-    gnu-getopt
+    gnu-getopt \
+    gpg \
+    openssh \
+    libfido2
 
-brew install --cask visual-studio-code
+brew install --cask \
+    visual-studio-code \
+    yubico-authenticator
