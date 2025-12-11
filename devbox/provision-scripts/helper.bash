@@ -21,22 +21,9 @@ function pyenv_envs() {
     local shell_path="$HOME/.${shell}rc"
     local cmd='eval "$(pyenv init - '"$shell"')"'
 
-
     if [[ -f "$shell_path" && -z "$( cat "$shell_path" | grep "$cmd" )" ]]; then
         echo "Setting pyenv envs for $shell"
 
-        echo 'export PYENV_ROOT="$HOME/.pyenv"' >> "$shell_path"
-        echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> "$shell_path"
         echo "$cmd" >> "$shell_path"
-    fi
-}
-
-function source_path() {
-    local shell=$1
-    local shell_path="$HOME/.${shell}rc"
-
-    if [[ -f "$shell_path"  ]]; then
-        echo "Sourcing $shell_path"
-        source $shell_path
     fi
 }

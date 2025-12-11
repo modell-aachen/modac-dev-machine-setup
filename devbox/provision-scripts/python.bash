@@ -6,9 +6,18 @@ pyenv global 3
 
 pip3 install --upgrade pip
 
-. ./provision-scripts/helper.bash
+function pyenv_init_hook() {
+    local shell=$1
+    local shell_path="$HOME/.${shell}rc"
+    local cmd='eval "$(pyenv init - '"$shell"')"'
+
+    if [[ -f "$shell_path" && -z "$( cat "$shell_path" | grep "$cmd" )" ]]; then
+        echo "Setting up pyenv init hook for $shell"
+
+        echo "$cmd" >> "$shell_path"
+    fi
+}
 
 for shell in bash zsh; do
-    pyenv_envs "$shell"
-    source_path "$shell"
+    pyenv_init_hook "$shell"
 done
