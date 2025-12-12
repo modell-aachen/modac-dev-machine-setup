@@ -16,3 +16,7 @@ brew install --cask \
     yubico-authenticator \
     openvpn-connect \
     orbstack
+
+if [[ -f "$HOME/Brewfile" ]]; then
+    brew bundle --file="$HOME/Brewfile"
+fi
