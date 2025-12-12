@@ -18,5 +18,5 @@ brew install --cask \
     orbstack
 
 if [[ -f "$HOME/Brewfile" ]]; then
-    brew bundle --file="$HOME/Brewfile"
+    brew bundle check --file="$HOME/Brewfile" || brew bundle --file="$HOME/Brewfile"
 fi
