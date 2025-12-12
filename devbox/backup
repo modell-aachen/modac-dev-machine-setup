@@ -367,7 +367,7 @@ main() {
 
   process_backups "$config_path" "$filter_name" "$action"
 
-  echo "${action^} completed."
+  echo "${action} completed."
 }
 
 main "$@"
