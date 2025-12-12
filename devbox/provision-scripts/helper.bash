@@ -15,15 +15,3 @@ function install_completion() {
         "$cmd" completion "$shell" > "$cmd_completion_path"
     fi
 }
-
-function pyenv_envs() {
-    local shell=$1
-    local shell_path="$HOME/.${shell}rc"
-    local cmd='eval "$(pyenv init - '"$shell"')"'
-
-    if [[ -f "$shell_path" && -z "$( cat "$shell_path" | grep "$cmd" )" ]]; then
-        echo "Setting pyenv envs for $shell"
-
-        echo "$cmd" >> "$shell_path"
-    fi
-}

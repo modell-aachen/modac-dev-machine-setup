@@ -7,8 +7,12 @@ brew install \
     gnu-getopt \
     gpg \
     openssh \
-    libfido2
+    libfido2 \
+    openvpn \
+    nmap
 
 brew install --cask \
     visual-studio-code \
-    yubico-authenticator
+    yubico-authenticator \
+    openvpn-connect \
+    orbstack
