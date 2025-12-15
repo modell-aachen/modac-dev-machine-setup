@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -e
 
+if [[ "$( pip3 config list | grep global.bread-system-packages )" != *true* ]]; then
+    echo "Configuring pip to break system packages"
+    pip3 config set global.break-system-packages true
+fi
+
 pyenv install 3 -s
 pyenv global 3
 
