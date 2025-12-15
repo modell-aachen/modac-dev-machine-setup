@@ -4,11 +4,10 @@ set -e
 if [[ ! $(brew list | grep -w docker) ]]; then
     brew install \
         docker \
-        docker-buildx \
-        colima
+        docker-buildx 
 
     mkdir -p "$HOME/.docker"
     echo -e "{\n\t\"cliPluginsExtraDirs\": [ \"$HOMEBREW_PREFIX/lib/docker/cli-plugins\" ]\n}" > "$HOME/.docker/config.json"
 
-    colima start
+    docker context use orbstack 
 fi
