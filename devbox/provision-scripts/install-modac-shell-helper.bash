@@ -7,11 +7,6 @@ if [[ -z "$NEXUS_BOT_TOKEN" ]]; then
     exit 1
 fi
 
-if [[ "$( pip3 config list | grep global.bread-system-packages )" != *true* ]]; then
-    echo "Configuring pip to break system packages"
-    pip3 config set global.break-system-packages true
-fi
-
 dir=/tmp/modac-shell-helper
 pyproject="pyproject.toml"
 
