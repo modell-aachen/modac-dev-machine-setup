@@ -15,3 +15,23 @@ sudo apt install -y \
     ca-certificates \
     gnupg \
     libnss3-tools
+
+# Install python build dependencies
+sudo apt install -y \
+    make \
+    build-essential \
+    libssl-dev \
+    zlib1g-dev \
+    libbz2-dev \
+    libreadline-dev \
+    libsqlite3-dev \
+    curl \
+    git \
+    libncursesw5-dev  \
+    xz-utils \
+    tk-dev \
+    libxml2-dev \
+    libxmlsec1-dev \
+    libffi-dev \
+    liblzma-dev \
+    libzstd-dev
