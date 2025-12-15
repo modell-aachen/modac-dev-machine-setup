@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -e
 
+if [ -n "$CONTAINER_ID" ]; then
+    echo "Running inside a distrobox, skipping docker install"
+    exit 0
+fi
+
 if [ ! -f /etc/apt/keyrings/docker.asc ]; then
     sudo apt-get install ca-certificates curl
     sudo install -m 0755 -d /etc/apt/keyrings
