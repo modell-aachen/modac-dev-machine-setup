@@ -17,6 +17,38 @@ else
     export export IS_DARWIN=true
 fi
 
+function show_help() {
+    cat << EOF
+Usage: provision [OPTIONS] [COMMAND]
+
+Provision a development machine with required tools and configurations.
+
+OPTIONS:
+    --filter <modules>    Comma-separated list of modules to run (implies --skip-install)
+    --skip-install        Skip running install, devbox shellenv, and op signin
+    -h, --help            Show this help message
+
+COMMANDS:
+    list-modules          List all available modules
+
+EXAMPLES:
+    provision                           # Run all modules
+    provision --filter python,node      # Run only python and node modules (skips install)
+    provision --skip-install            # Run all modules but skip install steps
+    provision list-modules              # List all available modules
+
+EOF
+    exit 0
+}
+
+function list_modules() {
+    echo "Available modules:"
+    for module in $modules; do
+        echo "  - $module"
+    done
+    exit 0
+}
+
 function run() {
     local module=$1
 
@@ -47,15 +79,72 @@ setup-dev
 completions
 claude
 install-modac-shell-helper
+orbstack
 docker-packages
 docker
+github-auth-login
 "
+
+# Parse command line arguments
+filter_modules=""
+skip_install=false
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -h|--help)
+            show_help
+            ;;
+        list-modules)
+            list_modules
+            ;;
+        --filter)
+            filter_modules="$2"
+            skip_install=true  # Implied when using --filter
+            shift 2
+            ;;
+        --skip-install)
+            skip_install=true
+            shift
+            ;;
+        *)
+            echo "Unknown option: $1"
+            echo "Run 'provision --help' for usage information"
+            exit 1
+            ;;
+    esac
+done
+
+# Convert filter to array if provided
+if [ -n "$filter_modules" ]; then
+    IFS=',' read -ra filter_array <<< "$filter_modules"
+    echo "Filtering modules: ${filter_array[*]}"
+fi
 
 pushd "$current" > /dev/null
 
-bash ./install
-eval "$(devbox global shellenv --init-hook)"
-op signin
-for module in $modules; do run $module; done
+if [ "$skip_install" = false ]; then
+    bash ./install
+    eval "$(devbox global shellenv --init-hook)"
+    op signin
+else
+    echo "Skipping install steps"
+fi
+
+for module in $modules; do
+    # If filter is set, only run modules in the filter list
+    if [ -n "$filter_modules" ]; then
+        skip=true
+        for filter_item in "${filter_array[@]}"; do
+            if [ "$module" = "$filter_item" ]; then
+                skip=false
+                break
+            fi
+        done
+        if [ "$skip" = true ]; then
+            echo "Skipping $module (not in filter)"
+            continue
+        fi
+    fi
+    run "$module"
+done
 
 popd > /dev/null

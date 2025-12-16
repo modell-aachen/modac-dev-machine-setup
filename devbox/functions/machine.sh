@@ -8,6 +8,12 @@ Usage:
 Available Commands:
   edit-config    edit custom inventory file
   provision      provision this machine
+                   Options:
+                     --filter <modules>    Comma-separated list of modules to run (implies --skip-install)
+                     --skip-install        Skip running install, devbox shellenv, and op signin
+                     --help                Show provision help
+                   Subcommands:
+                     list-modules       List all available modules
   pull-changes   pull changes for dev machine provisioner
   backup         create / restore backup files to/from 1Password configured in devbox.json
 
@@ -80,7 +86,7 @@ _machine-completion()
         *)
             case $prev in
                 provision )
-                    local local_tooling="--help"
+                    local local_tooling="--help --filter list-modules"
                     COMPREPLY=($(compgen -W "$local_tooling" -- $cur))
                     ;;
                 backup )
