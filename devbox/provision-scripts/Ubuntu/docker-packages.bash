@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
 set -e
 
+source "$(dirname "$0")/../helper.bash"
+
 if [ -n "$CONTAINER_ID" ]; then
-    echo "Running inside a distrobox, skipping docker install"
+    log_info "Running inside a distrobox, skipping docker install"
     exit 0
 fi
 
 if [ ! -f /etc/apt/keyrings/docker.asc ]; then
+    log_info "Installing prerequisites and Docker GPG key"
     sudo apt-get install ca-certificates curl
     sudo install -m 0755 -d /etc/apt/keyrings
     sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
@@ -14,10 +17,12 @@ if [ ! -f /etc/apt/keyrings/docker.asc ]; then
 fi
 
 if [ ! -f /etc/apt/sources.list.d/docker.list ]; then
+    log_info "Adding Docker repository"
     echo "deb [signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list
     sudo apt update
 fi
 
+log_info "Installing Docker packages"
 sudo apt-get install -y \
     docker-ce \
     docker-ce-cli \
@@ -26,5 +31,6 @@ sudo apt-get install -y \
     docker-compose-plugin
 
 if [[ $( id -nG "$USER" | grep -w docker ) != *docker* ]]; then
+    log_info "Adding user to docker group"
     sudo usermod -aG docker "$USER"
 fi
