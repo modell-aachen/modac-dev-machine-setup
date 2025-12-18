@@ -9,7 +9,8 @@ brew install \
     openssh \
     libfido2 \
     openvpn \
-    nmap
+    nmap \
+    fswatch
 
 brew install --cask \
     visual-studio-code \
