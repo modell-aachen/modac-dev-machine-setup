@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 set -e
 
+source "$(dirname "$0")/../helper.bash"
+
 if [ -n "$CONTAINER_ID" ]; then
-    echo "Running inside a distrobox, skipping k3s network setup"
+    log_info "Running inside a distrobox, skipping k3s network setup"
     exit 0
 fi
 
@@ -12,10 +14,12 @@ ip_address_line=$( nmcli connection show k3s-vr /dev/null 2>&1 | grep ipv4.addre
 
 
 if [[ "$ip_address_line" == *ipv4.addresses* && "$ip_address_line" != *$ip* ]]; then
+    log_info "Deleting existing k3s-vr connection with incorrect IP"
     nmcli connection delete $name
 fi
 
 if [[ "$ip_address_line" != ipv4.addresses*$ip* ]]; then
+    log_info "Creating k3s-vr network connection with IP $ip"
     nmcli connection add \
         type dummy \
         ifname $name \

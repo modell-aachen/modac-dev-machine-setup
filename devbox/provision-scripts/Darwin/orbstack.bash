@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 
+source "$(dirname "$0")/../helper.bash"
+
 if [[ "$(orbctl status)" == "Stopped" ]]; then
-    echo "Starting OrbStack..."
+    log_info "Starting OrbStack"
     orbctl start
 
-    echo "Login to OrbStack .."
+    log_info "Logging in to OrbStack"
     orbctl login
 fi

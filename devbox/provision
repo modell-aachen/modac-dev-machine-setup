@@ -13,9 +13,14 @@ if [[ "$(uname -s)" = "Linux"* ]]; then
     export ARCH="Ubuntu"
     export IS_UBUNTU=true
 else
-    export export ARCH="Darwin"
-    export export IS_DARWIN=true
+    export ARCH="Darwin"
+    export IS_DARWIN=true
 fi
+
+# Logging configuration
+export PROVISION_LOG_FILE=""
+export PROVISION_LOG_LEVEL="INFO"
+export PROVISION_VERBOSE="false"
 
 function show_help() {
     cat << EOF
@@ -26,6 +31,8 @@ Provision a development machine with required tools and configurations.
 OPTIONS:
     --filter <modules>    Comma-separated list of modules to run (implies --skip-install)
     --skip-install        Skip running install, devbox shellenv, and op signin
+    --verbose             Enable verbose/debug logging
+    --log-file <path>     Write logs to specified file (default: no file logging)
     -h, --help            Show this help message
 
 COMMANDS:
@@ -35,6 +42,8 @@ EXAMPLES:
     provision                           # Run all modules
     provision --filter python,node      # Run only python and node modules (skips install)
     provision --skip-install            # Run all modules but skip install steps
+    provision --verbose                 # Run with verbose logging
+    provision --log-file /tmp/prov.log  # Run and log to file
     provision list-modules              # List all available modules
 
 EOF
@@ -49,17 +58,55 @@ function list_modules() {
     exit 0
 }
 
+function init_logging() {
+    # Source helper.bash to get logging functions
+    source "./provision-scripts/helper.bash"
+
+    # If log file not specified but verbose, create default log file
+    if [ "$PROVISION_VERBOSE" = "true" ] && [ -z "$PROVISION_LOG_FILE" ]; then
+        export PROVISION_LOG_FILE="/tmp/provision-$(date +%Y%m%d-%H%M%S).log"
+        echo "Logging to: $PROVISION_LOG_FILE"
+    fi
+
+    if [ -n "$PROVISION_LOG_FILE" ]; then
+        # Create log file and write header
+        mkdir -p "$(dirname "$PROVISION_LOG_FILE")"
+        echo "========================================" > "$PROVISION_LOG_FILE"
+        echo "Provision run started: $(date)" >> "$PROVISION_LOG_FILE"
+        echo "Architecture: $ARCH" >> "$PROVISION_LOG_FILE"
+        echo "Log level: $PROVISION_LOG_LEVEL" >> "$PROVISION_LOG_FILE"
+        echo "========================================" >> "$PROVISION_LOG_FILE"
+        echo "" >> "$PROVISION_LOG_FILE"
+    fi
+}
+
 function run() {
     local module=$1
+    local script_path=""
 
-    echo "Running $module"
+    # Determine script path
     if [ -f "provision-scripts/$ARCH/$module.bash" ]; then
-        bash ./provision-scripts/$ARCH/$module.bash
+        script_path="provision-scripts/$ARCH/$module.bash"
     elif [ -f "provision-scripts/$module.bash" ]; then
-        bash ./provision-scripts/$module.bash
+        script_path="provision-scripts/$module.bash"
     else
-        echo "Module '$module.bash' not found"
+        log_error "Module '$module.bash' not found"
         exit 1
+    fi
+
+    # Log module start with timing
+    log_module_start "$module"
+    local start_time=$(date +%s)
+
+    # Execute the module script
+    if bash "$script_path"; then
+        local end_time=$(date +%s)
+        local duration=$((end_time - start_time))
+        log_module_end "$module" "$duration"
+    else
+        local exit_code=$?
+        log_error "Module '$module' failed with exit code $exit_code"
+        exit $exit_code
     fi
 }
 
@@ -105,6 +152,15 @@ while [[ $# -gt 0 ]]; do
             skip_install=true
             shift
             ;;
+        --verbose)
+            export PROVISION_VERBOSE="true"
+            export PROVISION_LOG_LEVEL="DEBUG"
+            shift
+            ;;
+        --log-file)
+            export PROVISION_LOG_FILE="$2"
+            shift 2
+            ;;
         *)
             echo "Unknown option: $1"
             echo "Run 'provision --help' for usage information"
@@ -121,12 +177,15 @@ fi
 
 pushd "$current" > /dev/null
 
+# Initialize logging infrastructure
+init_logging
+
 if [ "$skip_install" = false ]; then
     bash ./install
     eval "$(devbox global shellenv --init-hook)"
     op signin
 else
-    echo "Skipping install steps"
+    log_info "Skipping install steps"
 fi
 
 for module in $modules; do
@@ -140,11 +199,13 @@ for module in $modules; do
             fi
         done
         if [ "$skip" = true ]; then
-            echo "Skipping $module (not in filter)"
+            log_debug "Skipping $module (not in filter)"
             continue
         fi
     fi
     run "$module"
 done
+
+log_info "Provision completed successfully"
 
 popd > /dev/null
