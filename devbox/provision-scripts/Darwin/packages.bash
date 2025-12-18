@@ -10,7 +10,8 @@ brew install \
     libfido2 \
     openvpn \
     nmap \
-    fswatch
+    fswatch \
+    gnu-sed
 
 brew install --cask \
     visual-studio-code \
