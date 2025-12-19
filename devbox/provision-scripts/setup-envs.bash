@@ -12,9 +12,27 @@ if [[ "$( jq .env_from $config_file )" != *"$HOME/.secrets/.env"* ]]; then
     mv "$tmp_file" "$config_file"
 fi
 
-echo "Updating op_secrets_tpl in $config_file"
-op_tpl=$( jq -cM '.op_secrets_tpl' "$PROVISIONER_DIRECTORY/devbox/templates/devbox.json" )
-jq  -c ". + {\"op_secrets_tpl\": $op_tpl}" "$config_file" | jq . >| "$tmp_file"
+echo "Merging op_secrets_tpl in $config_file with template"
+
+jq -c '
+  . as $cfg
+  | (input | .op_secrets_tpl) as $tpl
+  | $cfg
+  | .op_secrets_tpl = (
+      ($cfg.op_secrets_tpl // {})      # existing map (maybe empty)
+      + ( $tpl | to_entries            # template entries
+          | map(
+              if (.key | in($cfg.op_secrets_tpl // {}))
+              then empty               # skip keys that already exist
+              else { (.key): .value }  # add new keys
+              end
+            )
+          | add // {}
+        )
+    )
+' "$config_file" "$PROVISIONER_DIRECTORY/devbox/templates/devbox.json" \
+  | jq . > "$tmp_file"
+
 mv "$tmp_file" "$config_file"
 
 if [[ $( cat "$HOME/.env" ) == *"export "* ]]; then
@@ -22,6 +40,7 @@ if [[ $( cat "$HOME/.env" ) == *"export "* ]]; then
     sed -i 's/^export //' "$HOME/.env"
 fi
 
-mkdir -p $HOME/.secrets
+mkdir -p "$HOME/.secrets"
 jq -r '.op_secrets_tpl | to_entries | .[] | .key + "=" + (.value | @sh)' "$config_file" >| $HOME/.secrets/env.tpl
-op inject --in-file $HOME/.secrets/env.tpl --out-file $HOME/.secrets/.env --force
+op inject \
+    --in-file $HOME/.secrets/env.tpl --out-file $HOME/.secrets/.env --force
