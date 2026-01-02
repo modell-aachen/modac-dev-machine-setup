@@ -7,7 +7,8 @@ export NC='\033[0m'
 # renovate: datasource=github-releases depName=python-poetry/poetry
 export POETRY_VERSION=2.0.1
 
-current=$(dirname "$(realpath $0)")
+current=$(cd "$(dirname "$0")" && pwd)
+base_path="$current/.."
 
 if [[ "$(uname -s)" = "Linux"* ]]; then
     export ARCH="Ubuntu"
@@ -53,10 +54,10 @@ function run() {
     local module=$1
 
     echo "Running $module"
-    if [ -f "provision-scripts/$ARCH/$module.bash" ]; then
-        bash ./provision-scripts/$ARCH/$module.bash
-    elif [ -f "provision-scripts/$module.bash" ]; then
-        bash ./provision-scripts/$module.bash
+    if [ -f "$base_path/provision-scripts/$ARCH/$module.bash" ]; then
+        bash "$base_path/provision-scripts/$ARCH/$module.bash" "$base_path"
+    elif [ -f "$base_path/provision-scripts/$module.bash" ]; then
+        bash "$base_path/provision-scripts/$module.bash" "$base_path"
     else
         echo "Module '$module.bash' not found"
         exit 1
@@ -122,7 +123,7 @@ fi
 pushd "$current" > /dev/null
 
 if [ "$skip_install" = false ]; then
-    bash ./install
+    "$current/modac-install"
     eval "$(devbox global shellenv --init-hook)"
     op signin
 else

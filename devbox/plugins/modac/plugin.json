@@ -45,6 +45,7 @@
     "shell": {
         "init_hook": [
             "[ -f $PROVISIONER_DIRECTORY/devbox/bashrc.sh ] && source $PROVISIONER_DIRECTORY/devbox/bashrc.sh",
+            "SHELL=bash; [ -n \"$ZSH_VERSION\" ] && SHELL=zsh; source <(devbox completion $SHELL)",
             "SHELL=bash; [ -n \"$ZSH_VERSION\" ] && SHELL=zsh; [ -d $HOME/.${SHELL}_completions ] && for c in $(find $HOME/.${SHELL}_completions -type f); do source $c; done",
             "export PATH=\"${KREW_ROOT:-$HOME/.krew}/bin:$HOME/.local/bin:$ASDF_DATA_DIR/shims:$HOME/.pyenv/bin:$HOMEBREW_PREFIX/bin:$HOMEBREW_PREFIX/opt/gnu-getopt/bin:$HOMEBREW_PREFIX/opt/gnu-sed/libexec/gnubin:$PATH\""
         ],

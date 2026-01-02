@@ -1,9 +1,35 @@
 #!/usr/bin/env bash
 set -e
 
-current=$(dirname "$(realpath $0)")
-
-. "$current/provision-scripts/helper.bash"
+current=$(cd "$(dirname "$0")" && pwd)
+base_path="$current/.."
+devbox_template=$(cat << EOF
+{
+    "\$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.13.6/.schema/devbox.schema.json",
+    "packages": [],
+    "shell": {
+        "init_hook": [],
+        "scripts": {}
+    },
+    "op_secrets_tpl": {
+        "HARBOR_USERNAME": "op://Employee/Harbor/username",
+        "HARBOR_PASSWORD": "op://Employee/Harbor/password",
+        "NEXUS_BOT_TOKEN": "op://4kbrfouay733wowrd7fkpkcymq/Nexus - Bot Readonly/password",
+        "FONTAWESOME_NEXUS_AUTH_TOKEN": "op://Entwicklung/FONTAWESOME_NEXUS_AUTH_TOKEN/password",
+        "OBAN_AUTH_TOKEN": "op://Entwicklung/Oban Pro/credential",
+        "AZURE_TRANSLATE_ENDPOINT": "op://Entwicklung/Azure Translate/username",
+        "AZURE_TRANSLATE_API_KEY": "op://Entwicklung/Azure Translate/credential",
+        "TOLGEE_PROJECT_ID": "op://Entwicklung/Tolgee/text",
+        "TOLGEE_API_KEY": "op://Entwicklung/Tolgee/credential"
+    },
+    "env": {},
+    "env_from": "{env_path}",
+    "include": [
+        "path:{base_path}/plugins/modac/plugin.json"
+    ]
+}
+EOF
+)
 
 function add_init_hook() {
     local shell=$1
@@ -13,6 +39,13 @@ function add_init_hook() {
         echo 'eval "$(devbox global shellenv --init-hook)"' >> "$shell_path"
     fi
 }
+
+function notice_and_exit() {
+    echo -e "Please configure 1Password and ${BI_RED}connect to 1Password cli.$NC"
+    echo -e "Afterwards, run ${BI_RED}'source ~/.YOUR_SHELL_RC'$NC and trigger provisioning with ${BI_RED}'machine provision'$NC."
+    exit 1
+}
+
 
 if [[ "$(uname -s)" = "Linux"* ]]; then
     if [[ ! "$(command -v curl)" ]]; then
@@ -46,25 +79,17 @@ fi
 
 for shell in bash zsh; do
     add_init_hook "$shell"
-    install_completion "$shell" devbox 0_14_1
 done
 
-base_path=$( dirname $(realpath "$0") )
 default_devbox_dir="$HOME/.local/share/devbox/global/default"
 global_devbox="$default_devbox_dir/devbox.json"
 
-echo $base_path
+echo "$base_path"
 [ ! -d $default_devbox_dir ] && mkdir -p $default_devbox_dir
-[ ! -f $global_devbox ] && sed "s#{base_path}#$base_path#g;s#{env_path}#$env_path#" "$base_path/templates/devbox.json" > $global_devbox
+[ ! -f $global_devbox ] && echo "$devbox_template" | sed "s#{base_path}#$base_path#g;s#{env_path}#$env_path#" > $global_devbox
 
 devbox global update
 eval "$(devbox global shellenv --preserve-path-stack -r)" && hash -r
-
-function notice_and_exit() {
-    echo -e "Please configure 1Password and ${BI_RED}connect to 1Password cli.$NC"
-    echo -e "Afterwards, run ${BI_RED}'source ~/.YOUR_SHELL_RC'$NC and trigger provisioning with ${BI_RED}'machine provision'$NC."
-    exit 1
-}
 
 if [[ "$(uname -s)" = "Linux"* ]]; then
     op_keyring=/usr/share/keyrings/1password-archive-keyring.gpg

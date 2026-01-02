@@ -1,3 +1,6 @@
+#!/usr/bin/env bash
+set -e
+
 if [ -f "$HOME/.local/bin/poetry" ] && [[ "$($HOME/.local/bin/poetry --version)" == *"$POETRY_VERSION"* ]]; then
     echo "poetry in version $POETRY_VERSION is already installed"
 else

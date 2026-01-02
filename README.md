@@ -19,7 +19,7 @@ cd modac-dev-machine-setup
 
 ### Install provisioner and devbox packages
 ```BASH
-./devbox/provision
+wget -qO- https://raw.githubusercontent.com/modell-aachen/modac-dev-machine-setup/refs/heads/main/devbox/bin/modac-install | bash
 ```
 
 ### Login to 1Password
@@ -42,7 +42,7 @@ op vault list
 Then resume:
 ```BASH
  cd modac-dev-machine-setup/
-./devbox/provision
+./devbox/bin/modac-provision
 ```
 
 After that, you can always use the shortcut version `machine provision`

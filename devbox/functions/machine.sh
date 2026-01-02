@@ -51,7 +51,7 @@ USAGE
     case "$subcommand" in
         provision )
             pushd "$PROVISIONER_DIRECTORY" > /dev/null
-            ./devbox/provision $@
+            ./devbox/bin/modac-provision $@
             popd > /dev/null
             ;;
         backup )
