@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 set -e
 
-workingDir=$(pwd)
-qlone QwikiContrib
+if [ -z "$REPOS_DIRECTORY" ] || [ ! -d "$REPOS_DIRECTORY" ] ; then
+    echo "repos directory '$REPOS_DIRECTORY' does not exist!"
+    exit 1
+fi
+
+pushd "$REPOS_DIRECTORY/QwikiContrib"
 ./core/backend-test "$@"
-cd "$workingDir"
