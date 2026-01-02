@@ -2,7 +2,7 @@
 
 stdenv.mkDerivation {
   pname = "modac-provision";
-  version = "0.3.5";
+  version = "0.3.6";
 
   # The devbox directory (containing bin/modac-provision, provision-scripts, etc.)
   src = ./.;

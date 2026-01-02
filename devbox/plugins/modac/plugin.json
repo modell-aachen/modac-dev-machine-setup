@@ -1,6 +1,6 @@
 {
     "name": "MODAC",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "packages": {
         "age": { "version": "latest" },
         "asdf-vm": { "version": "latest" },
@@ -30,8 +30,7 @@
         "sops": { "version": "latest" },
         "wget": { "version": "latest" },
         "yq-go": { "version": "latest" },
-        "github:modell-aachen/modac-dev-machine-setup?dir=devbox#modac-provision": { "version": ""}
-
+        "github:modell-aachen/modac-dev-machine-setup?dir=devbox": {}
     },
     "env": {
         "DEVBOX_COREPACK_ENABLED": "true",

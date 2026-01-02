@@ -18,7 +18,7 @@ USAGE
 }
 
 OPTS=`getopt -o h --long help -o m --long multisite -o r --long remote -- "$@"`
-if [ $? != 0 ] ; then echo "Failed parsing options." >&2 ; return ; fi
+if [ $? != 0 ] ; then echo "Failed parsing options." >&2 ; exit 1 ; fi
 
 eval set -- "$OPTS"
 
@@ -30,7 +30,7 @@ while true; do
     case "$1" in
         -h | --help )
             usage
-            return
+            exit 0
             shift ;;
         -m | --multisite )
             organizationalUnit="true"
@@ -67,11 +67,11 @@ if [[ "$remote" == "true" ]];
 then
     if [ -z "$CYPRESS_RECORD_KEY" ]; then
         echo "Missing CYPRESS_RECORD_KEY environment variable"
-        return
+        exit 1
     fi
     if [ -z "$CYPRESS_PROJECT_ID" ]; then
         echo "Missing CYPRESS_PROJECT_ID environment variable"
-        return
+        exit 1
     fi
 
     mailPitUrl=$(sed "s/^https:\/\//http:\/\/mailpit./g" <<< $host)
