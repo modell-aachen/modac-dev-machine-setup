@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-current=$(cd "$(dirname "$0")" && pwd)
-base_path="$current/.."
+env_path="$HOME/.secrets/.env"
 devbox_template=$(cat << EOF
 {
     "\$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.13.6/.schema/devbox.schema.json",
@@ -23,9 +22,9 @@ devbox_template=$(cat << EOF
         "TOLGEE_API_KEY": "op://Entwicklung/Tolgee/credential"
     },
     "env": {},
-    "env_from": "{env_path}",
+    "env_from": "${env_path}",
     "include": [
-        "path:{base_path}/plugins/modac/plugin.json"
+        "github:modell-aachen/modac-dev-machine-setup?dir=devbox/plugins/modac"
     ]
 }
 EOF
@@ -71,7 +70,6 @@ if [ -z $( which devbox ) ]; then
     curl -fsSL https://get.jetify.com/devbox | bash
 fi
 
-env_path="$HOME/.secrets/.env"
 if [[ ! -f "$env_path" ]]; then
     mkdir -p "$HOME/.secrets"
     touch "$env_path"
@@ -84,9 +82,8 @@ done
 default_devbox_dir="$HOME/.local/share/devbox/global/default"
 global_devbox="$default_devbox_dir/devbox.json"
 
-echo "$base_path"
 [ ! -d $default_devbox_dir ] && mkdir -p $default_devbox_dir
-[ ! -f $global_devbox ] && echo "$devbox_template" | sed "s#{base_path}#$base_path#g;s#{env_path}#$env_path#" > $global_devbox
+[ ! -f $global_devbox ] && echo "$devbox_template" > $global_devbox
 
 devbox global update
 eval "$(devbox global shellenv --preserve-path-stack -r)" && hash -r

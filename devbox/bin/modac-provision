@@ -7,8 +7,7 @@ export NC='\033[0m'
 # renovate: datasource=github-releases depName=python-poetry/poetry
 export POETRY_VERSION=2.0.1
 
-current=$(cd "$(dirname "$0")" && pwd)
-base_path="$current/.."
+base_path="$(cd "$(dirname "$0")" && pwd)/.."
 
 if [[ "$(uname -s)" = "Linux"* ]]; then
     export ARCH="Ubuntu"
@@ -120,10 +119,8 @@ if [ -n "$filter_modules" ]; then
     echo "Filtering modules: ${filter_array[*]}"
 fi
 
-pushd "$current" > /dev/null
-
 if [ "$skip_install" = false ]; then
-    "$current/modac-install"
+    "$base_path/bin/modac-install"
     eval "$(devbox global shellenv --init-hook)"
     op signin
 else
@@ -147,5 +144,3 @@ for module in $modules; do
     fi
     run "$module"
 done
-
-popd > /dev/null

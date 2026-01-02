@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
+base_path="$(cd "$(dirname "$0")" && pwd)/.."
 config_file="$( devbox global path)/devbox.json"
 tmp_file="$( devbox global path)/tmp.json"
 
@@ -30,7 +31,7 @@ jq -c '
           | add // {}
         )
     )
-' "$config_file" "$PROVISIONER_DIRECTORY/devbox/templates/devbox.json" \
+' "$config_file" "$base_path/templates/devbox.json" \
   | jq . > "$tmp_file"
 
 mv "$tmp_file" "$config_file"
