@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 set -e
 
-usage() {
-    cat << USAGE
+machine() {
+
+    usage() {
+        cat << USAGE
 Usage:
   machine [command]
 
@@ -21,54 +23,59 @@ Available Commands:
 Flags:
   -h, --help     shows this help message
 USAGE
-}
+    }
 
-while [[ "$1" == * ]] ; do
-    case "$1" in
-        -h | --help )
-            usage
-            return
+    while [[ "$1" == * ]] ; do
+        case "$1" in
+            -h | --help )
+                usage
+                return
+                ;;
+            -- )
+                shift
+                break
+                ;;
+            -* )
+                echo "failed parsing option '$1'" >&2
+                return
+                ;;
+            * )
+                break
+                ;;
+        esac
+        shift
+    done
+
+    local subcommand=$1
+    if [ $# -gt 0 ]; then
+        shift
+    fi
+
+    case "$subcommand" in
+        provision )
+            pushd "$PROVISIONER_DIRECTORY" > /dev/null
+            ./devbox/bin/modac-provision $@
+            popd > /dev/null
             ;;
-        -- )
-            shift
-            break
+        backup )
+            pushd "$PROVISIONER_DIRECTORY" > /dev/null
+            ./devbox/backup $@
+            popd > /dev/null
             ;;
-        -* )
-            echo "failed parsing option '$1'" >&2
-            return
+        pull-changes )
+            pushd "$PROVISIONER_DIRECTORY" > /dev/null
+            echo "Pulling changes for dev machine provisioner ..."
+            git pull origin main
+            popd > /dev/null
             ;;
-        * )
-            break
+        edit-config )
+            editor "$(devbox global path)/devbox.json"
+            ;;
+        "" )
+            cd "$PROVISIONER_DIRECTORY"
             ;;
     esac
-    shift
-done
 
-subcommand=$1
-if [ $# -gt 0 ]; then
-    shift
-fi
+}
 
-case "$subcommand" in
-    provision )
-        modac-provision $@
-        ;;
-    backup )
-        pushd "$PROVISIONER_DIRECTORY" > /dev/null
-        ./devbox/backup $@
-        popd > /dev/null
-        ;;
-    pull-changes )
-        pushd "$PROVISIONER_DIRECTORY" > /dev/null
-        echo "Pulling changes for dev machine provisioner ..."
-        git pull origin main
-        popd > /dev/null
-        ;;
-    edit-config )
-        editor "$(devbox global path)/devbox.json"
-        ;;
-    "" )
-        cd "$PROVISIONER_DIRECTORY"
-        ;;
-esac
-
+machine "$@"
