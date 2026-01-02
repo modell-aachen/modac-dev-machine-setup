@@ -1,6 +1,6 @@
 {
     "name": "MODAC",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "packages": {
         "age": { "version": "latest" },
         "asdf-vm": { "version": "latest" },
@@ -29,7 +29,9 @@
         "socat": { "version": "latest" },
         "sops": { "version": "latest" },
         "wget": { "version": "latest" },
-        "yq-go": { "version": "latest" }
+        "yq-go": { "version": "latest" },
+        "github:modell-aachen/modac-dev-machine-setup?dir=devbox#modac-provision": { "version": ""}
+
     },
     "env": {
         "DEVBOX_COREPACK_ENABLED": "true",
@@ -44,7 +46,6 @@
     },
     "shell": {
         "init_hook": [
-            "[ -f $PROVISIONER_DIRECTORY/devbox/bashrc.sh ] && source $PROVISIONER_DIRECTORY/devbox/bashrc.sh",
             "SHELL=bash; [ -n \"$ZSH_VERSION\" ] && SHELL=zsh; source <(devbox completion $SHELL)",
             "SHELL=bash; [ -n \"$ZSH_VERSION\" ] && SHELL=zsh; [ -d $HOME/.${SHELL}_completions ] && for c in $(find $HOME/.${SHELL}_completions -type f); do source $c; done",
             "export PATH=\"${KREW_ROOT:-$HOME/.krew}/bin:$HOME/.local/bin:$ASDF_DATA_DIR/shims:$HOME/.pyenv/bin:$HOMEBREW_PREFIX/bin:$HOMEBREW_PREFIX/opt/gnu-getopt/bin:$HOMEBREW_PREFIX/opt/gnu-sed/libexec/gnubin:$PATH\""

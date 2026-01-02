@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -e
+
+workingDir=$(pwd)
+qlone QwikiContrib
+./core/backend-test "$@"
+cd "$workingDir"

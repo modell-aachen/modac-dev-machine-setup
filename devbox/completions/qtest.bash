@@ -1,10 +1,3 @@
-qtest() {
-    local workingDir=$(pwd)
-    qlone QwikiContrib
-    ./core/backend-test "$@"
-    cd "$workingDir"
-}
-
 _qtest-completion()
 {
     local cur="${COMP_WORDS[COMP_CWORD]}"

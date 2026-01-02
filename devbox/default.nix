@@ -2,7 +2,7 @@
 
 stdenv.mkDerivation {
   pname = "modac-provision";
-  version = "0.3.4";
+  version = "0.3.5";
 
   # The devbox directory (containing bin/modac-provision, provision-scripts, etc.)
   src = ./.;
@@ -15,6 +15,9 @@ stdenv.mkDerivation {
 
     mkdir -p "$out/templates"
     cp -r templates/* "$out/templates/"
+
+    mkdir -p "$out/share/bash-completion/completions"
+    cp -r completions/* "$out/share/bash-completion/completions"
 
     mkdir -p "$out/provision-scripts"
     cp -r provision-scripts/* "$out/provision-scripts/"
