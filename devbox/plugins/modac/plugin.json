@@ -1,6 +1,6 @@
 {
     "name": "MODAC",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "packages": {
         "age": { "version": "latest" },
         "asdf-vm": { "version": "latest" },
