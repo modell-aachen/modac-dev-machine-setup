@@ -120,8 +120,8 @@ if [ -n "$filter_modules" ]; then
 fi
 
 if [ "$skip_install" = false ]; then
-    "$base_path/bin/modac-install"
-    eval "$(devbox global shellenv --init-hook)"
+    "$base_path/bin/install"
+    eval "$(devbox global shellenv)"
     op signin
 else
     echo "Skipping install steps"

@@ -4,12 +4,12 @@ _machine-completion()
     local prev=${COMP_WORDS[COMP_CWORD-1]}
     case ${COMP_CWORD} in
         1)
-            COMPREPLY=($(compgen -W "--help provision edit-config pull-changes backup" -- $cur))
+            COMPREPLY=($(compgen -W "--help install provision edit-config backup" -- $cur))
             ;;
         *)
             case $prev in
                 provision )
-                    local local_tooling="--help --filter list-modules"
+                    local local_tooling="--help --filter --skip-install list-modules"
                     COMPREPLY=($(compgen -W "$local_tooling" -- $cur))
                     ;;
                 backup )

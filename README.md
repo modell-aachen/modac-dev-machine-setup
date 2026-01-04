@@ -10,16 +10,9 @@ All other operating systems don't have any further requirements
 
 ## Installation
 
-### Clone repo
-```
-cd ~
-git clone https://github.com/modell-aachen/modac-dev-machine-setup.git
-cd modac-dev-machine-setup
-```
-
 ### Install provisioner and devbox packages
 ```BASH
-wget -qO- https://raw.githubusercontent.com/modell-aachen/modac-dev-machine-setup/refs/heads/main/devbox/bin/modac-install | bash
+wget -qO- https://raw.githubusercontent.com/modell-aachen/modac-dev-machine-setup/refs/heads/main/devbox/share/modac-dev-provisioner/bin/install | bash; source ~/.bashrc
 ```
 
 ### Login to 1Password
@@ -32,20 +25,19 @@ wget -qO- https://raw.githubusercontent.com/modell-aachen/modac-dev-machine-setu
 1) Change `Login` title to `Harbor`
 1) set username to your modac email address
 1) set password (https://harbor.modac.cloud -> Login -> user profile [top right corner] -> User Profile -> CLI secret)
+1) enable cli integration
 
-
-### By `Please logout and login again to use docker without sudo` restart your laptop and then:
-check again that you can login to 1password:
+check that you can login to 1password:
 ```BASH
 op vault list
 ```
-Then resume:
+
+### Provision your system
+
 ```BASH
- cd modac-dev-machine-setup/
-./devbox/bin/modac-provision
+machine provision
 ```
 
-After that, you can always use the shortcut version `machine provision`
 
 Back to QwikiContrib: [QwikiContrib](https://github.com/modell-aachen/QwikiContrib/)
 
