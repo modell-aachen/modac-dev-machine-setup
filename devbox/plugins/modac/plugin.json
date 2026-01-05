@@ -30,7 +30,7 @@
         "sops": { "version": "latest" },
         "wget": { "version": "latest" },
         "yq-go": { "version": "latest" },
-        "github:modell-aachen/modac-dev-machine-setup?dir=devbox": {}
+        "github:modell-aachen/modac-dev-machine-setup?dir=devbox&rev=8c764e0652bc7ea5fd71c3b6f37efd4a7dca6ec2": {}
     },
     "env": {
         "DEVBOX_COREPACK_ENABLED": "true",
