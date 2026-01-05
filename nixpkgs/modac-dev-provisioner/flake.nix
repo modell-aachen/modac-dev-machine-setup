@@ -15,8 +15,8 @@
         );
     in {
       packages = forAllSystems ({ pkgs, system }: {
-        machine = pkgs.callPackage ./default.nix {};
-        default = self.packages.${system}.machine;
+        modac-dev-provisioner = pkgs.callPackage ./default.nix {};
+        default = self.packages.${system}.modac-dev-provisioner;
       });
     };
 }

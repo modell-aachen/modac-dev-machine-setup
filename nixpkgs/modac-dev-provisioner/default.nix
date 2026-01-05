@@ -1,7 +1,7 @@
 { stdenv, bash }:
 
 stdenv.mkDerivation {
-  pname = "modac-provision";
+  pname = "modac-dev-provisioner";
   version = "0.3.7";
 
   # The devbox directory (containing bin/modac-provision, provision-scripts, etc.)
