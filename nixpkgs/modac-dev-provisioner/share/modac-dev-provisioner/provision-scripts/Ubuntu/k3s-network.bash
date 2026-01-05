@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+# do not `set -e`! the command `nmcli connection show k3s-vr` may yield an error
 
 if [ -n "$CONTAINER_ID" ]; then
     echo "Running inside a distrobox, skipping k3s network setup"
