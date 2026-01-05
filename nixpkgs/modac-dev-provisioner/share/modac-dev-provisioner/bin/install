@@ -30,6 +30,40 @@ devbox_template=$(cat << EOF
 EOF
 )
 
+function install_devbox_for_distrobox() {
+    if [ -z "$DISTROBOX_ENTER_PATH" ]; then
+        return 0
+    fi
+
+    echo "Detected Distrobox container. Proceeding with Nix single-user install."
+
+
+    if command -v nix >/dev/null 2>&1; then
+        echo "Nix is already installed, skipping installer."
+    else
+        echo "Installing Nix (no-daemon) for user $USER..."
+        sh <(curl -L https://nixos.org/nix/install) --no-daemon
+    fi
+
+    . "$HOME/.nix-profile/etc/profile.d/nix.sh"
+
+    for rc in "$HOME/.bashrc" "$HOME/.zshrc"; do
+        [ -f "$rc" ] || continue
+
+        if ! grep -q 'nix/profile.d/nix.sh' "$rc"; then
+            echo "Adding Nix init to $rc"
+            echo '[ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ] && . "$HOME/.nix-profile/etc/profile.d/nix.sh"' >> "$rc"
+        fi
+    done
+
+    if [ -z $( which devbox ) ]; then
+        echo "Installing devbox"
+        nix-env -iA nixpkgs.devbox
+    fi
+
+    echo "devbox single-user installation finished."
+}
+
 function add_init_hook() {
     local shell=$1
     local shell_path="$HOME/.${shell}rc"
@@ -64,6 +98,8 @@ if [[ "$(uname -s)" = "Darwin" ]]; then
         eval "$(/opt/homebrew/bin/brew shellenv)"
     fi
 fi
+
+install_devbox_for_distrobox
 
 if [ -z $( which devbox ) ]; then
     echo "Installing devbox"
@@ -110,6 +146,8 @@ if [[ "$(uname -s)" = "Linux"* ]]; then
 
     if apt-cache policy 1password | grep -wq "Installed: (none)"; then
         sudo apt install -y 1password 1password-cli
+        [ ! -z "$DISTROBOX_ENTER_PATH" ] && distrobox-export --app 1password
+
         notice_and_exit
     fi
 else

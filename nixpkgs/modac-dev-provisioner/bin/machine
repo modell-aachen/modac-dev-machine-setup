@@ -11,6 +11,7 @@ Usage:
 
 Available Commands:
   edit-config    edit custom inventory file
+  install        runs script to install devbox, 1Password and machine provisioner
   provision      provision this machine
                    Options:
                      --filter <modules>    Comma-separated list of modules to run (implies --skip-install)
@@ -18,7 +19,6 @@ Available Commands:
                      --help                Show provision help
                    Subcommands:
                      list-modules       List all available modules
-  pull-changes   pull changes for dev machine provisioner
   backup         create / restore backup files to/from 1Password configured in devbox.json
 
 Flags:
