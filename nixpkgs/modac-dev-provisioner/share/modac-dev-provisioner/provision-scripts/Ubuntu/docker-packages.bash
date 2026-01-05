@@ -2,7 +2,12 @@
 set -e
 
 if [ -n "$CONTAINER_ID" ]; then
-    echo "Running inside a distrobox, skipping docker install"
+    if [ -z $( which docker ) ]; then
+        echo "Running inside a distrobox, linking docker"
+        sudo ln -s /usr/bin/distrobox-host-exec /usr/local/bin/docker
+    else
+        echo "Running inside a distrobox, skipping docker install"
+    fi
     exit 0
 fi
 
