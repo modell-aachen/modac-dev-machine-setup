@@ -1,6 +1,55 @@
 #!/usr/bin/env bash
 set -e
 
+alias_completion() {
+        cat << 'ALIASES'
+qlone() {
+    if [ "$#" -ne 1 ]; then
+      echo "Usage: qlone <modell-aachen repository>" >&2
+      exit 1
+    fi
+
+    local repo="$1"
+
+    if [ -z "$REPOS_DIRECTORY" ] || [ ! -d "$REPOS_DIRECTORY" ] ; then
+        echo "repos directory '$REPOS_DIRECTORY' does not exist!"
+        return
+    fi
+
+    local repo_path="$REPOS_DIRECTORY/$repo"
+
+    if [ ! -d "$repo_path" ] ; then
+        gh repo clone "modell-aachen/$repo" "$repo_path"
+    fi
+
+    cd "$repo_path"
+}
+
+_qlone-completion()
+{
+    COMPREPLY=()
+    local cur="${COMP_WORDS[COMP_CWORD]}"
+
+    local repos="
+        QwikiContrib
+        dotfiles
+        dotfiles-pandoc
+        latex-modac
+        qwiki-cli
+        qwiki-gitops
+        qwikinow-deployment
+    "
+
+    COMPREPLY=( $(compgen -W "$repos" -- ${cur}) )
+}
+
+complete -F _qlone-completion qlone
+
+alias k='kubectl'
+complete -o default -F __start_kubectl k
+ALIASES
+}
+
 machine() {
     local base_path="$(cd "$(dirname "$0")" && pwd)/.."
 
@@ -20,6 +69,7 @@ Available Commands:
                    Subcommands:
                      list-modules       List all available modules
   backup         create / restore backup files to/from 1Password configured in devbox.json
+  aliases        sets aliases and functions in shell like qlone, k
 
 Flags:
   -h, --help     shows this help message
@@ -53,6 +103,9 @@ USAGE
     fi
 
     case "$subcommand" in
+        aliases )
+            alias_completion
+            ;;
         install )
             "$base_path/share/modac-dev-provisioner/bin/install" "$@"
             ;;

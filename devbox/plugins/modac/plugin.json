@@ -49,6 +49,7 @@
         "init_hook": [
             "export PATH=\"${KREW_ROOT:-$HOME/.krew}/bin:$PATH\"",
             "SHELL=bash; [ -n \"$ZSH_VERSION\" ] && SHELL=zsh; source <(devbox completion $SHELL)",
+            "source <(machine aliases)",
             "SHELL=bash; [ -n \"$ZSH_VERSION\" ] && SHELL=zsh; [ -d $HOME/.${SHELL}_completions ] && for c in $(find $HOME/.${SHELL}_completions -type f); do source $c; done",
         ],
         "scripts": {}
