@@ -25,7 +25,7 @@ wget -qO- https://raw.githubusercontent.com/modell-aachen/modac-dev-machine-setu
 1) Change `Login` title to `Harbor`
 1) set username to your modac email address
 1) set password (https://harbor.modac.cloud -> Login -> user profile [top right corner] -> User Profile -> CLI secret)
-1) enable cli integration
+1) enable cli integration (1Password app > ... > Settings > Developer > Command-Line Interface)
 
 check that you can login to 1password:
 ```BASH
