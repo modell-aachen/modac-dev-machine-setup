@@ -30,7 +30,7 @@
         "sops": { "version": "latest" },
         "wget": { "version": "latest" },
         "yq-go": { "version": "latest" },
-        "github:modell-aachen/modac-dev-machine-setup?dir=nixpkgs/modac-dev-provisioner": {}
+        "github:modell-aachen/modac-dev-machine-setup?dir=nixpkgs/modac-dev-provisioner&rev=6303399e16716846375049fc351f3c9732e6a885": {}
     },
     "env": {
         "DEVBOX_COREPACK_ENABLED": "true",
