@@ -32,6 +32,7 @@ _qlone-completion()
 
     local repos="
         QwikiContrib
+        modac-dev-machine-setup
         dotfiles
         dotfiles-pandoc
         latex-modac

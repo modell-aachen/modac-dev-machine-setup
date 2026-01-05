@@ -4,7 +4,7 @@ _machine-completion()
     local prev=${COMP_WORDS[COMP_CWORD-1]}
     case ${COMP_CWORD} in
         1)
-            COMPREPLY=($(compgen -W "--help install provision edit-config backup" -- $cur))
+            COMPREPLY=($(compgen -W "--help install provision edit-config backup aliases" -- $cur))
             ;;
         *)
             case $prev in
