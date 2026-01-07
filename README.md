@@ -32,6 +32,18 @@ check that you can login to 1password:
 op vault list
 ```
 
+### [OPTIONAL] restore devbox.json
+
+If you want to restore other files than `devbox.json` you have to call the `backup restore` twice.
+The first time, the `devbox.json` is restored.
+The second command will restore the files defined in the restored `devbox.json`.
+
+```BASH
+eval "$(op signin)"
+machine backup restore
+machine backup restore
+```
+
 ### Provision your system
 
 ```BASH
