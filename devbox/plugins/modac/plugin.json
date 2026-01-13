@@ -2,35 +2,95 @@
     "name": "MODAC",
     "version": "0.0.5",
     "packages": {
-        "age": { "version": "latest" },
-        "asdf-vm": { "version": "latest" },
-        "claude-code": { "version": "latest" },
-        "crane": { "version": "latest" },
-        "devspace": { "version": "latest" },
-        "fluxcd": { "version": "latest" },
-        "fzf": { "version": "latest" },
-        "gh": { "version": "latest" },
-        "git": { "version": "latest" },
-        "go-task": { "version": "latest" },
-        "google-cloud-sdk": { "version": "latest" },
-        "htop": { "version": "latest" },
-        "jinja2-cli": { "version": "latest" },
-        "jq": { "version": "latest" },
-        "k3d": {"version": "latest", "platforms": ["x86_64-linux", "aarch64-linux"]},
-        "krew": { "version": "latest" },
-        "kube-linter": { "version": "latest" },
-        "kubectl": { "version": "latest" },
-        "kubernetes-helm": { "version": "latest" },
-        "kustomize_4": { "version": "latest" },
-        "mkcert": { "version": "latest" },
-        "nodejs": { "version": "22" },
-        "pyenv": { "version": "latest" },
-        "restic": { "version": "latest" },
-        "socat": { "version": "latest" },
-        "sops": { "version": "latest" },
-        "wget": { "version": "latest" },
-        "yq-go": { "version": "latest" },
-        "github:modell-aachen/modac-dev-machine-setup?dir=nixpkgs/modac-dev-provisioner&rev=4d13e43277764362ae590eaebb8eb9379b19292f": {}
+        "age": {
+            "version": "latest"
+        },
+        "asdf-vm": {
+            "version": "latest"
+        },
+        "claude-code": {
+            "version": "latest"
+        },
+        "crane": {
+            "version": "latest"
+        },
+        "devspace": {
+            "version": "latest"
+        },
+        "fluxcd": {
+            "version": "latest"
+        },
+        "fzf": {
+            "version": "latest"
+        },
+        "gh": {
+            "version": "latest"
+        },
+        "git": {
+            "version": "latest"
+        },
+        "go-task": {
+            "version": "latest"
+        },
+        "google-cloud-sdk": {
+            "version": "latest"
+        },
+        "htop": {
+            "version": "latest"
+        },
+        "jinja2-cli": {
+            "version": "latest"
+        },
+        "jq": {
+            "version": "latest"
+        },
+        "k3d": {
+            "version": "latest",
+            "platforms": [
+                "x86_64-linux",
+                "aarch64-linux"
+            ]
+        },
+        "krew": {
+            "version": "latest"
+        },
+        "kube-linter": {
+            "version": "latest"
+        },
+        "kubectl": {
+            "version": "latest"
+        },
+        "kubernetes-helm": {
+            "version": "latest"
+        },
+        "kustomize_4": {
+            "version": "latest"
+        },
+        "mkcert": {
+            "version": "latest"
+        },
+        "nodejs": {
+            "version": "22"
+        },
+        "pyenv": {
+            "version": "latest"
+        },
+        "restic": {
+            "version": "latest"
+        },
+        "socat": {
+            "version": "latest"
+        },
+        "sops": {
+            "version": "latest"
+        },
+        "wget": {
+            "version": "latest"
+        },
+        "yq-go": {
+            "version": "latest"
+        },
+        "github:modell-aachen/modac-dev-machine-setup?dir=nixpkgs/modac-dev-provisioner&rev=14ed314e102a71a0435c3107920c553825b86b1e": {}
     },
     "env": {
         "DEVBOX_COREPACK_ENABLED": "true",
