@@ -65,24 +65,22 @@ function run() {
 
 modules="
 packages
-python
 setup-envs
 asdf-packages
 asdf
 kubectl-krew
 setup-k8s-cluster
-poetry
 k3s-network
 node
 certificates
 setup-dev
 completions
 claude
+github-auth-login
 install-modac-shell-helper
 orbstack
 docker-packages
 docker
-github-auth-login
 "
 
 # Parse command line arguments

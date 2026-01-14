@@ -1,27 +1,16 @@
 #!/usr/bin/env bash
 set -e
 
-eval "$(devbox global shellenv --init-hook)"
-if [[ -z "$NEXUS_BOT_TOKEN" ]]; then
-    echo -e "You need to set ${BI_RED}NEXUS_BOT_TOKEN$NC environment variable in $HOME/.env"
-    exit 1
+if [  -z "$( uv tool list | grep modac-shell-helper )" ]; then
+    if [ -z "$(gh auth token)"  ]; then
+        echo -e "You need to setup ${BI_RED}gh auth login$NC!"
+    else
+        export GIT_USERNAME="x-access-token"
+        export GIT_PASSWORD="$(gh auth token)"
+        export GIT_ASKPASS=/usr/bin/printf
+        export GIT_TERMINAL_PROMPT=0
+        uv tool install "git+https://github.com/modell-aachen/modac-shell-helper.git@main" --force
+    fi
+else
+    uv tool upgrade modac-shell-helper
 fi
-
-dir=/tmp/modac-shell-helper
-pyproject="pyproject.toml"
-
-mkdir -p "$dir"
-pushd "$dir"
-
-curl -s -f -u "bot-ro:${NEXUS_BOT_TOKEN}" \
-    "https://nexus.modac.cloud/repository/modac-shell-helper/latest/pyproject.toml" \
-    --output "$pyproject"
-filename="modac_shell_helper-$(poetry version -s)-py3-none-any.whl"
-curl -s -f -u "bot-ro:${NEXUS_BOT_TOKEN}" \
-    "https://nexus.modac.cloud/repository/modac-shell-helper/latest/modac-shell-helper.whl" \
-    --output "$filename"
-echo "Installing $filename"
-pip3 install --break-system-packages --force-reinstall --user "$filename"
-
-popd
-rm -r "$dir"

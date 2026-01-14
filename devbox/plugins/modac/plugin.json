@@ -84,6 +84,9 @@
         "sops": {
             "version": "latest"
         },
+        "uv": {
+            "version": "latest"
+        },
         "wget": {
             "version": "latest"
         },
