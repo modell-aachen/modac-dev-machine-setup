@@ -93,7 +93,7 @@
         "yq-go": {
             "version": "latest"
         },
-        "github:modell-aachen/modac-dev-machine-setup?dir=nixpkgs/modac-dev-provisioner&rev=14ed314e102a71a0435c3107920c553825b86b1e": {}
+        "github:modell-aachen/modac-dev-machine-setup?dir=nixpkgs/modac-dev-provisioner&rev=361636bbecfe8b465560b14526d1599e32eaa94d": {}
     },
     "env": {
         "DEVBOX_COREPACK_ENABLED": "true",
@@ -113,7 +113,7 @@
             "export PATH=\"${KREW_ROOT:-$HOME/.krew}/bin:$PATH\"",
             "SHELL=bash; [ -n \"$ZSH_VERSION\" ] && SHELL=zsh; source <(devbox completion $SHELL)",
             "source <(machine aliases)",
-            "SHELL=bash; [ -n \"$ZSH_VERSION\" ] && SHELL=zsh; [ -d $HOME/.${SHELL}_completions ] && for c in $(find $HOME/.${SHELL}_completions -type f); do source $c; done",
+            "SHELL=bash; [ -n \"$ZSH_VERSION\" ] && SHELL=zsh; [ -d $HOME/.${SHELL}_completions ] && for c in $(find $HOME/.${SHELL}_completions -type f); do source $c; done"
         ],
         "scripts": {}
     },
