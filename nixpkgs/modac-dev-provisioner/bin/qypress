@@ -76,6 +76,7 @@ then
 
     mailPitUrl=$(sed "s/^https:\/\//http:\/\/mailpit./g" <<< $host)
 
+    LANG="en_EN.UTF-8" \
     CYPRESS_baseUrl=$host/ \
     CYPRESS_mailPitUrl=$mailPitUrl \
     CYPRESS_oidcMockAuthorizeUrl=$oidcMockAuthorizeUrl \
@@ -87,6 +88,7 @@ then
 
 else
 
+    LANG="en_EN.UTF-8" \
     CYPRESS_baseUrl=$host/ \
     CYPRESS_mailPitUrl=$mailPitUrl \
     CYPRESS_oidcMockAuthorizeUrl=$oidcMockAuthorizeUrl \
