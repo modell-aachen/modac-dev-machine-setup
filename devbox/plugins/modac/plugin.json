@@ -14,9 +14,6 @@
         "crane": {
             "version": "latest"
         },
-        "devspace": {
-            "version": "latest"
-        },
         "direnv": {
             "version": "latest"
         },
