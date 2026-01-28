@@ -107,7 +107,7 @@
         "ASDF_DATA_DIR": "$HOME/.asdf",
         "KREW_ROOT": "$HOME/.krew",
         "XDG_DATA_DIRS": "$HOME/.local/share/devbox/global/default/.devbox/nix/profile/default/share:$XDG_DATA_DIRS",
-        "PATH": "$KREW_ROOT/bin:$HOME/.local/bin:$ASDF_DATA_DIR/shims:$HOME/.pyenv/bin:$HOMEBREW_PREFIX/bin:$HOMEBREW_PREFIX/opt/gnu-getopt/bin:$HOMEBREW_PREFIX/opt/gnu-sed/libexec/gnubin:$PATH"
+        "PATH": "$KREW_ROOT/bin:$HOME/.local/bin:$HOME/.asdf/shims:$HOME/.pyenv/bin:$HOMEBREW_PREFIX/bin:$HOMEBREW_PREFIX/opt/gnu-getopt/bin:$HOMEBREW_PREFIX/opt/gnu-sed/libexec/gnubin:$PATH"
     },
     "shell": {
         "init_hook": [
