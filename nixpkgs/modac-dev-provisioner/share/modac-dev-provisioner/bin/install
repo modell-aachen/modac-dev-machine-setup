@@ -1,7 +1,75 @@
 #!/usr/bin/env bash
 set -e
 
+# Color definitions
+RESET='\033[0m'
+BOLD='\033[1m'
+DIM='\033[2m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+RED='\033[0;31m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+
+# OS detection
+OS="$(uname -s)"
+IS_LINUX=false
+IS_MACOS=false
+[[ "$OS" == Linux* ]] && IS_LINUX=true
+[[ "$OS" == "Darwin" ]] && IS_MACOS=true
+
+logfile="$HOME/.cache/modac-dev-provisioner/install.log"
+mkdir -p "$(dirname "$logfile")"
+echo "Installation started at $(date)" > "$logfile"
+
 env_path="$HOME/.secrets/.env"
+
+# Helper functions
+function is_distrobox() {
+    [ -n "$DISTROBOX_ENTER_PATH" ]
+}
+
+# Output formatting functions
+function section() {
+    echo -e "\n${BOLD}${BLUE}==>${RESET} ${BOLD}$1${RESET}"
+}
+
+function info() {
+    echo -e "${BLUE}  →${RESET} $1"
+}
+
+function success() {
+    echo -e "${GREEN}  ✓${RESET} $1"
+}
+
+function warning() {
+    echo -e "${YELLOW}  ⚠${RESET} $1"
+}
+
+function error() {
+    echo -e "${RED}  ✗${RESET} $1"
+}
+
+function skip() {
+    echo -e "${DIM}  ⊘ $1${RESET}"
+}
+
+function execute() {
+    local description="$1"
+    shift
+    info "$description"
+    echo "=== $description ($(date)) ===" >> "$logfile"
+    if "$@" >> "$logfile" 2>&1; then
+        success "Done"
+        return 0
+    else
+        local exit_code=$?
+        error "Failed (exit code: $exit_code)"
+        echo -e "${DIM}    Log: $logfile${RESET}"
+        return $exit_code
+    fi
+}
+
 devbox_template=$(cat << EOF
 {
     "\$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.13.6/.schema/devbox.schema.json",
@@ -30,19 +98,17 @@ devbox_template=$(cat << EOF
 EOF
 )
 
-function install_devbox_for_distrobox() {
-    if [ -z "$DISTROBOX_ENTER_PATH" ]; then
+function install_nix_for_distrobox() {
+    if ! is_distrobox; then
         return 0
     fi
 
-    echo "Detected Distrobox container. Proceeding with Nix single-user install."
-
+    info "Detected Distrobox container, using single-user Nix install"
 
     if command -v nix >/dev/null 2>&1; then
-        echo "Nix is already installed, skipping installer."
+        skip "Nix already installed"
     else
-        echo "Installing Nix (no-daemon) for user $USER..."
-        sh <(curl -L https://nixos.org/nix/install) --no-daemon
+        execute "Installing Nix (no-daemon) for user $USER" sh <(curl -sL https://nixos.org/nix/install) --no-daemon
     fi
 
     . "$HOME/.nix-profile/etc/profile.d/nix.sh"
@@ -50,65 +116,124 @@ function install_devbox_for_distrobox() {
     for rc in "$HOME/.bashrc" "$HOME/.zshrc"; do
         [ -f "$rc" ] || continue
 
-        if ! grep -q 'nix/profile.d/nix.sh' "$rc"; then
-            echo "Adding Nix init to $rc"
-            echo '[ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ] && . "$HOME/.nix-profile/etc/profile.d/nix.sh"' >> "$rc"
+        local nix_line='[ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ] && . "$HOME/.nix-profile/etc/profile.d/nix.sh"'
+        if ! grep -qF "$nix_line" "$rc"; then
+            info "Adding Nix initialization to $rc"
+            echo "$nix_line" >> "$rc"
+            success "Updated $rc"
+        else
+            skip "Nix already initialized in $rc"
         fi
     done
-
-    if [ -z $( which devbox ) ]; then
-        echo "Installing devbox"
-        nix-env -iA nixpkgs.devbox
-    fi
-
-    echo "devbox single-user installation finished."
 }
 
 function add_init_hook() {
     local shell=$1
     local shell_path="$HOME/.${shell}rc"
+    local hook_line='eval "$(devbox global shellenv --init-hook)"'
 
-    if [[ -f "$shell_path" && -z "$( cat "$shell_path" | grep 'devbox global shellenv --init-hook' )" ]]; then
-        echo 'eval "$(devbox global shellenv --init-hook)"' >> "$shell_path"
+    if [[ ! -f "$shell_path" ]]; then
+        return 0
+    fi
+
+    if ! grep -qF "$hook_line" "$shell_path"; then
+        info "Adding devbox init hook to $shell_path"
+        echo "$hook_line" >> "$shell_path"
+        success "Updated $shell_path"
+    else
+        skip "Devbox already initialized in $shell_path"
     fi
 }
 
-function notice_and_exit() {
-    echo -e "Please configure 1Password and ${BI_RED}connect to 1Password cli.$NC"
-    echo -e "Afterwards, run ${BI_RED}'source ~/.YOUR_SHELL_RC'$NC and trigger provisioning with ${BI_RED}'machine provision'$NC."
-    exit 1
+function show_next_steps() {
+    # Detect shell RC file
+    local shell_rc
+    case "$(basename "$SHELL")" in
+        bash)
+            shell_rc="~/.bashrc"
+            ;;
+        zsh)
+            shell_rc="~/.zshrc"
+            ;;
+        fish)
+            shell_rc="~/.config/fish/config.fish"
+            ;;
+        *)
+            shell_rc="~/.$(basename "$SHELL")rc"
+            ;;
+    esac
+
+    echo ""
+    echo -e "${BOLD}${CYAN}Next Steps:${RESET}"
+    echo -e "  ${CYAN}1.${RESET} Configure 1Password and connect to 1Password CLI"
+    echo -e "  ${CYAN}2.${RESET} Run: ${BOLD}source $shell_rc${RESET}"
+    echo -e "  ${CYAN}3.${RESET} Run: ${BOLD}machine provision${RESET}"
+    echo -e "\n${DIM}Installation log: $logfile${RESET}\n"
 }
 
 
-if [[ "$(uname -s)" = "Linux"* ]]; then
-    if [[ ! "$(command -v curl)" ]]; then
-        echo "Installing curl"
-        sudo apt update
-        sudo apt install -y curl
+echo -e "${BOLD}${CYAN}"
+echo "╔════════════════════════════════════════╗"
+echo "║   MODAC Development Provisioner        ║"
+echo "╚════════════════════════════════════════╝"
+echo -e "${RESET}"
+echo -e "${DIM}This installer sets up two main components:"
+echo -e "  1. Devbox - Development environment manager"
+echo -e "  2. 1Password - Secrets and credential management${RESET}\n"
+
+# Confirmation prompt
+echo -e "${BOLD}Proceed with installation?${RESET} ${DIM}[y/N]${RESET} "
+read -r response
+if [[ ! "$response" =~ ^[Yy]$ ]]; then
+    echo -e "${YELLOW}Installation cancelled.${RESET}"
+    exit 0
+fi
+echo ""
+
+# ============================================================================
+# PART 1: DEVBOX SETUP
+# ============================================================================
+section "Part 1/2: Devbox Setup"
+
+# Install system prerequisites
+if $IS_LINUX; then
+    if ! command -v curl >/dev/null 2>&1; then
+        execute "Updating apt package list" sudo apt update
+        execute "Installing curl" sudo apt install -y curl
     fi
 fi
 
-if [[ "$(uname -s)" = "Darwin" ]]; then
-    if [[ ! "$(command -v brew)" ]]; then
-        echo "Installing homebrew"
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+# Install package manager (macOS)
+if $IS_MACOS; then
+    if ! command -v brew >/dev/null 2>&1; then
+        execute "Installing Homebrew" /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-        echo >> $HOME/.profile
-        echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> $HOME/.profile
+        echo >> "$HOME/.profile"
+        echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> "$HOME/.profile"
         eval "$(/opt/homebrew/bin/brew shellenv)"
     fi
 fi
 
-install_devbox_for_distrobox
+# Install Nix for Distrobox if needed
+install_nix_for_distrobox
 
-if [ -z $( which devbox ) ]; then
-    echo "Installing devbox"
-    curl -fsSL https://get.jetify.com/devbox | bash
+# Install Devbox
+if ! command -v devbox >/dev/null 2>&1; then
+    if is_distrobox && command -v nix >/dev/null 2>&1; then
+        execute "Installing devbox via nix-env" nix-env -iA nixpkgs.devbox
+    else
+        execute "Installing Devbox" bash -c "curl -fsSL https://get.jetify.com/devbox | bash"
+    fi
 fi
 
+# Configure Devbox environment
+info "Configuring Devbox environment"
+
 if [[ ! -f "$env_path" ]]; then
+    info "Creating secrets directory"
     mkdir -p "$HOME/.secrets"
     touch "$env_path"
+    success "Created $env_path"
 fi
 
 for shell in bash zsh; do
@@ -118,49 +243,78 @@ done
 default_devbox_dir="$HOME/.local/share/devbox/global/default"
 global_devbox="$default_devbox_dir/devbox.json"
 
-[ ! -d $default_devbox_dir ] && mkdir -p $default_devbox_dir
-[ ! -f $global_devbox ] && echo "$devbox_template" > $global_devbox
+if [ ! -d "$default_devbox_dir" ]; then
+    info "Creating devbox global directory"
+    mkdir -p "$default_devbox_dir"
+fi
 
-devbox global update
-eval "$(devbox global shellenv --preserve-path-stack -r)" && hash -r
+if [ ! -f "$global_devbox" ]; then
+    info "Creating devbox global configuration"
+    echo "$devbox_template" > "$global_devbox"
+    success "Created $global_devbox"
+fi
 
-if [[ "$(uname -s)" = "Linux"* ]]; then
+execute "Updating devbox global environment (this might take a while)" devbox global update
+info "Loading devbox environment"
+eval "$(devbox global shellenv --preserve-path-stack -r 2>> "$logfile")" && hash -r 2>> "$logfile"
+success "Environment loaded"
+
+success "Devbox setup complete"
+
+# ============================================================================
+# PART 2: 1PASSWORD SETUP
+# ============================================================================
+section "Part 2/2: 1Password Setup"
+
+if $IS_LINUX; then
     op_keyring=/usr/share/keyrings/1password-archive-keyring.gpg
     if [ ! -f "$op_keyring" ]; then
-        curl -sS https://downloads.1password.com/linux/keys/1password.asc | sudo gpg --dearmor --output "$op_keyring"
+        execute "Adding 1Password GPG keyring" bash -c "curl -sS https://downloads.1password.com/linux/keys/1password.asc | sudo gpg --dearmor --output \"$op_keyring\""
     fi
 
     op_source_list=/etc/apt/sources.list.d/1password.list
     if [ ! -f "$op_source_list" ]; then
-        echo "deb [arch=amd64 signed-by=$op_keyring] https://downloads.1password.com/linux/debian/amd64 stable main" | sudo tee "$op_source_list"
+        execute "Adding 1Password apt repository" bash -c "echo 'deb [arch=amd64 signed-by=$op_keyring] https://downloads.1password.com/linux/debian/amd64 stable main' | sudo tee \"$op_source_list\""
     fi
 
     op_gpg=/usr/share/debsig/keyrings/AC2D62742012EA22/debsig.gpg
     if [ ! -f "$op_gpg" ]; then
+        info "Setting up 1Password package signing"
         sudo mkdir -p /etc/debsig/policies/AC2D62742012EA22
-        curl -sS https://downloads.1password.com/linux/debian/debsig/1password.pol | sudo tee /etc/debsig/policies/AC2D62742012EA22/1password.pol
+        execute "Adding debsig policy" bash -c "curl -sS https://downloads.1password.com/linux/debian/debsig/1password.pol | sudo tee /etc/debsig/policies/AC2D62742012EA22/1password.pol"
         sudo mkdir -p /usr/share/debsig/keyrings/AC2D62742012EA22
-        curl -sS https://downloads.1password.com/linux/keys/1password.asc | sudo gpg --dearmor --output "$op_gpg"
-        sudo apt update
+        execute "Adding debsig keyring" bash -c "curl -sS https://downloads.1password.com/linux/keys/1password.asc | sudo gpg --dearmor --output \"$op_gpg\""
+        execute "Updating apt package list" sudo apt update
     fi
 
-    if apt-cache policy 1password | grep -wq "Installed: (none)"; then
-        sudo apt install -y 1password 1password-cli
-        if [ ! -z "$DISTROBOX_ENTER_PATH" ]; then
-            sudo apt install -y libasound2t64
-            distrobox-export --app 1password
+    # Check if 1Password is not installed
+    if ! dpkg -l 1password 2>/dev/null | grep -q '^ii'; then
+        execute "Installing 1Password and CLI" sudo apt install -y 1password 1password-cli
+        if is_distrobox; then
+            execute "Installing audio libraries for Distrobox" sudo apt install -y libasound2t64
         fi
+    else
+        skip "1Password already installed"
+    fi
 
-        notice_and_exit
+    # Export to Distrobox if needed
+    if is_distrobox; then
+        execute "Exporting 1Password app" distrobox-export --app 1password
     fi
 else
-    if [[ ! $(brew list | grep -w 1password-cli) ]]; then
-        brew install --cask \
-            1password \
-            1password-cli
-        
-        notice_and_exit
+    if ! brew list 1password-cli >/dev/null 2>&1; then
+        execute "Installing 1Password and CLI via Homebrew" brew install --cask 1password 1password-cli
+    else
+        skip "1Password already installed"
     fi
 fi
 
+echo "Installation completed at $(date)" >> "$logfile"
 
+success "1Password setup complete"
+echo ""
+echo -e "${BOLD}${GREEN}✓ All components installed successfully!${RESET}"
+echo -e "${DIM}  • Devbox: Development environment ready"
+echo -e "${DIM}  • 1Password: Secrets management ready${RESET}\n"
+
+show_next_steps
