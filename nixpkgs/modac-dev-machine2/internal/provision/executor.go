@@ -6,15 +6,15 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/modell-aachen/machine/internal/platform"
-	"github.com/modell-aachen/machine/internal/provision/asdf"
-	"github.com/modell-aachen/machine/internal/provision/asdfpackages"
-	"github.com/modell-aachen/machine/internal/provision/certificates"
-	"github.com/modell-aachen/machine/internal/provision/kubectlkrew"
-	"github.com/modell-aachen/machine/internal/provision/node"
-	"github.com/modell-aachen/machine/internal/provision/packages"
-	"github.com/modell-aachen/machine/internal/provision/setupenvs"
-	"github.com/modell-aachen/machine/internal/provision/setupk8scluster"
+	"github.com/modell-aachen/machine2/internal/platform"
+	"github.com/modell-aachen/machine2/internal/provision/asdf"
+	"github.com/modell-aachen/machine2/internal/provision/asdfpackages"
+	"github.com/modell-aachen/machine2/internal/provision/certificates"
+	"github.com/modell-aachen/machine2/internal/provision/kubectlkrew"
+	"github.com/modell-aachen/machine2/internal/provision/node"
+	"github.com/modell-aachen/machine2/internal/provision/packages"
+	"github.com/modell-aachen/machine2/internal/provision/setupenvs"
+	"github.com/modell-aachen/machine2/internal/provision/setupk8scluster"
 )
 
 type Options struct {
@@ -123,9 +123,9 @@ func getScriptsDir() (string, error) {
 		return "", fmt.Errorf("failed to get executable path: %w", err)
 	}
 
-	// Binary is in bin/, scripts should be in ../share/machine/provision-scripts/
+	// Binary is in bin/, scripts should be in ../share/machine2/provision-scripts/
 	binDir := filepath.Dir(exePath)
-	shareDir := filepath.Join(binDir, "..", "share", "machine", "provision-scripts")
+	shareDir := filepath.Join(binDir, "..", "share", "machine2", "provision-scripts")
 
 	// Check if the share directory exists
 	if fileExists(shareDir) {

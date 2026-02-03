@@ -6,7 +6,7 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/modell-aachen/machine/internal/platform"
+	"github.com/modell-aachen/machine2/internal/platform"
 )
 
 // Run installs system packages based on the platform

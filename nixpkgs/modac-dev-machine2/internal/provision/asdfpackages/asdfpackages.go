@@ -5,7 +5,7 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/modell-aachen/machine/internal/platform"
+	"github.com/modell-aachen/machine2/internal/platform"
 )
 
 // Run installs packages required for asdf version manager

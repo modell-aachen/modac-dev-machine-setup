@@ -13,8 +13,8 @@ var (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "machine",
-	Short: "Modac development machine provisioner",
+	Use:   "machine2",
+	Short: "Modac development machine2 provisioner",
 	Long: `Machine is a CLI tool for provisioning and managing
 development environments for Modac projects.`,
 	Version: version,

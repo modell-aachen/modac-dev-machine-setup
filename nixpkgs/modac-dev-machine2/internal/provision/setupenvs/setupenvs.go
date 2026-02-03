@@ -144,9 +144,9 @@ func getTemplatesDir() (string, error) {
 		return "", fmt.Errorf("failed to get executable path: %w", err)
 	}
 
-	// Binary is in bin/, templates should be in ../share/machine/templates/
+	// Binary is in bin/, templates should be in ../share/machine2/templates/
 	binDir := filepath.Dir(exePath)
-	shareDir := filepath.Join(binDir, "..", "share", "machine", "templates")
+	shareDir := filepath.Join(binDir, "..", "share", "machine2", "templates")
 
 	// Check if the share directory exists
 	if fileExists(shareDir) {

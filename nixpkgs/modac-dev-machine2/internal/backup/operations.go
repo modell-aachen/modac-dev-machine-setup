@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/modell-aachen/machine/internal/config"
+	"github.com/modell-aachen/machine2/internal/config"
 )
 
 const (

@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/modell-aachen/machine/internal/backup"
+	"github.com/modell-aachen/machine2/internal/backup"
 )
 
 var backupCmd = &cobra.Command{

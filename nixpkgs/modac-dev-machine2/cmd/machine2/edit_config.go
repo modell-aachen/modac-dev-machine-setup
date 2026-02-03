@@ -7,7 +7,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/modell-aachen/machine/internal/config"
+	"github.com/modell-aachen/machine2/internal/config"
 )
 
 var editConfigCmd = &cobra.Command{

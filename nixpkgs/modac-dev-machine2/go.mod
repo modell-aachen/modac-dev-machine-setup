@@ -1,4 +1,4 @@
-module github.com/modell-aachen/machine
+module github.com/modell-aachen/machine2
 
 go 1.22
 

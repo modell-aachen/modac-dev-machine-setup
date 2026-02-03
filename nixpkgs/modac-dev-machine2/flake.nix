@@ -1,5 +1,5 @@
 {
-  description = "Modac development machine provisioner CLI";
+  description = "Modac development machine2 provisioner CLI";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
@@ -13,21 +13,21 @@
       in
       {
         packages = {
-          machine = pkgs.buildGoModule {
-            pname = "machine";
+          machine2 = pkgs.buildGoModule {
+            pname = "machine2";
             version = "1.0.0";
 
             src = ./.;
 
             # Go module vendoring hash
-            # Run: nix build .#machine 2>&1 | grep "got:" to get the actual hash
+            # Run: nix build .#machine2 2>&1 | grep "got:" to get the actual hash
             vendorHash = "sha256-hocnLCzWN8srQcO3BMNkd2lt0m54Qe7sqAhUxVZlz1k=";
 
             # Install provision scripts and templates alongside binary
             postInstall = ''
-              mkdir -p $out/share/machine
-              cp -r scripts/provision $out/share/machine/provision-scripts
-              cp -r scripts/templates $out/share/machine/templates
+              mkdir -p $out/share/machine2
+              cp -r scripts/provision $out/share/machine2/provision-scripts
+              cp -r scripts/templates $out/share/machine2/templates
             '';
 
             ldflags = [
@@ -38,15 +38,15 @@
             ];
 
             meta = with pkgs.lib; {
-              description = "Modac development machine provisioner CLI";
+              description = "Modac development machine2 provisioner CLI";
               homepage = "https://github.com/modell-aachen/modac-dev-machine-setup";
               license = licenses.mit;
               platforms = platforms.unix;
-              mainProgram = "machine";
+              mainProgram = "machine2";
             };
           };
 
-          default = self.packages.${system}.machine;
+          default = self.packages.${system}.machine2;
         };
 
         # Development shell with Go tooling
@@ -64,21 +64,21 @@
             echo "Go version: $(go version)"
             echo ""
             echo "Available commands:"
-            echo "  go build -o bin/machine ./cmd/machine  - Build binary"
+            echo "  go build -o bin/machine2 ./cmd/machine2  - Build binary"
             echo "  go test ./...                           - Run tests"
-            echo "  go run ./cmd/machine                    - Run CLI"
+            echo "  go run ./cmd/machine2                    - Run CLI"
             echo "  golangci-lint run                       - Lint code"
             echo ""
             echo "Nix commands:"
-            echo "  nix build .#machine                     - Build with Nix"
-            echo "  nix run .#machine -- --help             - Run with Nix"
+            echo "  nix build .#machine2                     - Build with Nix"
+            echo "  nix run .#machine2 -- --help             - Run with Nix"
           '';
         };
 
         # CLI app for running with nix run
         apps.default = {
           type = "app";
-          program = "${self.packages.${system}.machine}/bin/machine";
+          program = "${self.packages.${system}.machine2}/bin/machine2";
         };
       }
     );
