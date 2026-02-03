@@ -12,6 +12,7 @@ import (
 	"github.com/modell-aachen/machine/internal/provision/kubectlkrew"
 	"github.com/modell-aachen/machine/internal/provision/packages"
 	"github.com/modell-aachen/machine/internal/provision/setupenvs"
+	"github.com/modell-aachen/machine/internal/provision/setupk8scluster"
 )
 
 type Options struct {
@@ -69,6 +70,8 @@ func runModule(module string, plat platform.Platform, scriptsDir string) error {
 		return asdf.Run()
 	case "kubectl-krew":
 		return kubectlkrew.Run()
+	case "setup-k8s-cluster":
+		return setupk8scluster.Run()
 	}
 
 	// Fall back to bash script execution for other modules
