@@ -240,7 +240,20 @@ func runUbuntu() error {
 		}
 	}
 
+	// Check if docker can be run without sudo
+	if !canAccessDockerWithoutSudo() {
+		fmt.Println("\nPlease logout and login again to use docker without sudo")
+		return fmt.Errorf("logout required - please logout and login again")
+	}
+
 	return nil
+}
+
+func canAccessDockerWithoutSudo() bool {
+	// Try to run a simple docker command without sudo
+	cmd := exec.Command("docker", "ps")
+	err := cmd.Run()
+	return err == nil
 }
 
 func fileExists(path string) bool {

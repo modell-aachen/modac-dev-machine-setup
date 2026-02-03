@@ -23,7 +23,7 @@ func Run() error {
 
 	// Create buildx builder
 	fmt.Println("Creating docker buildx builder...")
-	cmd := exec.Command("sudo", "docker", "buildx", "create", "--use")
+	cmd := exec.Command("docker", "buildx", "create", "--use")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
@@ -35,8 +35,7 @@ func Run() error {
 		return fmt.Errorf("failed to create marker file: %w", err)
 	}
 
-	fmt.Println("Please logout and login again to use docker without sudo")
-	return fmt.Errorf("logout required - please logout and login again")
+	return nil
 }
 
 func fileExists(path string) bool {
