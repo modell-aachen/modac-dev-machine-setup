@@ -23,10 +23,9 @@
             # Run: nix build .#machine2 2>&1 | grep "got:" to get the actual hash
             vendorHash = "sha256-hocnLCzWN8srQcO3BMNkd2lt0m54Qe7sqAhUxVZlz1k=";
 
-            # Install provision scripts and templates alongside binary
+            # Install templates alongside binary (scripts are now in Go)
             postInstall = ''
               mkdir -p $out/share/machine2
-              cp -r scripts/provision $out/share/machine2/provision-scripts
               cp -r scripts/templates $out/share/machine2/templates
 
               mkdir -p $out/share/bash-completion/completions

@@ -2,9 +2,6 @@ package provision
 
 import (
 	"fmt"
-	"os"
-	"os/exec"
-	"path/filepath"
 
 	"github.com/modell-aachen/machine2/internal/platform"
 	"github.com/modell-aachen/machine2/internal/provision/asdf"
@@ -43,13 +40,8 @@ func Execute(opts *Options) error {
 		// Note: install command is excluded from this port
 	}
 
-	scriptsDir, err := getScriptsDir()
-	if err != nil {
-		return fmt.Errorf("failed to find scripts directory: %w", err)
-	}
-
 	for _, module := range modules {
-		if err := runModule(module, plat, scriptsDir); err != nil {
+		if err := runModule(module, plat); err != nil {
 			return fmt.Errorf("module %s failed: %w", module, err)
 		}
 	}
@@ -65,10 +57,10 @@ func ListModules() error {
 	return nil
 }
 
-func runModule(module string, plat platform.Platform, scriptsDir string) error {
+func runModule(module string, plat platform.Platform) error {
 	fmt.Printf("Running %s\n", module)
 
-	// Use Go implementations for ported modules
+	// All modules are now implemented in Go
 	switch module {
 	case "packages":
 		return packages.Run(plat)
@@ -102,70 +94,7 @@ func runModule(module string, plat platform.Platform, scriptsDir string) error {
 		return dockerpackages.Run(plat)
 	case "docker":
 		return docker.Run()
+	default:
+		return fmt.Errorf("unknown module: %s", module)
 	}
-
-	// Fall back to bash script execution for other modules
-	scriptPath := findScript(module, plat, scriptsDir)
-	if scriptPath == "" {
-		return fmt.Errorf("script not found for module: %s", module)
-	}
-
-	cmd := exec.Command("bash", scriptPath, scriptsDir)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	cmd.Stdin = os.Stdin
-
-	cmd.Env = append(os.Environ(),
-		fmt.Sprintf("ARCH=%s", plat),
-		"POETRY_VERSION=2.0.1",
-		fmt.Sprintf("IS_%s=true", plat),
-	)
-
-	return cmd.Run()
-}
-
-func findScript(module string, plat platform.Platform, scriptsDir string) string {
-	// Try platform-specific first
-	platformPath := filepath.Join(scriptsDir, plat.String(), module+".bash")
-	if fileExists(platformPath) {
-		return platformPath
-	}
-
-	// Try shared script
-	sharedPath := filepath.Join(scriptsDir, module+".bash")
-	if fileExists(sharedPath) {
-		return sharedPath
-	}
-
-	return ""
-}
-
-func getScriptsDir() (string, error) {
-	// Get the directory of the currently running binary
-	exePath, err := os.Executable()
-	if err != nil {
-		return "", fmt.Errorf("failed to get executable path: %w", err)
-	}
-
-	// Binary is in bin/, scripts should be in ../share/machine2/provision-scripts/
-	binDir := filepath.Dir(exePath)
-	shareDir := filepath.Join(binDir, "..", "share", "machine2", "provision-scripts")
-
-	// Check if the share directory exists
-	if fileExists(shareDir) {
-		return shareDir, nil
-	}
-
-	// Fallback: check if we're running from the repo (development mode)
-	repoScriptsDir := filepath.Join(binDir, "..", "scripts", "provision")
-	if fileExists(repoScriptsDir) {
-		return repoScriptsDir, nil
-	}
-
-	return "", fmt.Errorf("scripts directory not found")
-}
-
-func fileExists(path string) bool {
-	_, err := os.Stat(path)
-	return err == nil
 }
