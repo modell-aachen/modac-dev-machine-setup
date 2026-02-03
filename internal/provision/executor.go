@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 
 	"github.com/modell-aachen/machine/internal/platform"
+	"github.com/modell-aachen/machine/internal/provision/packages"
 )
 
 type Options struct {
@@ -50,12 +51,18 @@ func ListModules() error {
 }
 
 func runModule(module string, plat platform.Platform, scriptsDir string) error {
+	fmt.Printf("Running %s\n", module)
+
+	// Use Go implementation for packages module
+	if module == "packages" {
+		return packages.Run(plat)
+	}
+
+	// Fall back to bash script execution for other modules
 	scriptPath := findScript(module, plat, scriptsDir)
 	if scriptPath == "" {
 		return fmt.Errorf("script not found for module: %s", module)
 	}
-
-	fmt.Printf("Running %s\n", module)
 
 	cmd := exec.Command("bash", scriptPath, scriptsDir)
 	cmd.Stdout = os.Stdout

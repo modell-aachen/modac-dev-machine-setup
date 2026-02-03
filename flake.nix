@@ -57,7 +57,6 @@
             gotools
             golangci-lint
             jq
-            _1password
           ];
 
           shellHook = ''
