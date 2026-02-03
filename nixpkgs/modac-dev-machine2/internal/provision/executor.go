@@ -10,6 +10,7 @@ import (
 	"github.com/modell-aachen/machine2/internal/provision/asdf"
 	"github.com/modell-aachen/machine2/internal/provision/asdfpackages"
 	"github.com/modell-aachen/machine2/internal/provision/certificates"
+	"github.com/modell-aachen/machine2/internal/provision/claude"
 	"github.com/modell-aachen/machine2/internal/provision/completions"
 	"github.com/modell-aachen/machine2/internal/provision/kubectlkrew"
 	"github.com/modell-aachen/machine2/internal/provision/node"
@@ -84,6 +85,8 @@ func runModule(module string, plat platform.Platform, scriptsDir string) error {
 		return setupdev.Run()
 	case "completions":
 		return completions.Run()
+	case "claude":
+		return claude.Run()
 	}
 
 	// Fall back to bash script execution for other modules
