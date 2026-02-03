@@ -9,6 +9,7 @@ import (
 	"github.com/modell-aachen/machine/internal/platform"
 	"github.com/modell-aachen/machine/internal/provision/asdf"
 	"github.com/modell-aachen/machine/internal/provision/asdfpackages"
+	"github.com/modell-aachen/machine/internal/provision/kubectlkrew"
 	"github.com/modell-aachen/machine/internal/provision/packages"
 	"github.com/modell-aachen/machine/internal/provision/setupenvs"
 )
@@ -66,6 +67,8 @@ func runModule(module string, plat platform.Platform, scriptsDir string) error {
 		return asdfpackages.Run(plat)
 	case "asdf":
 		return asdf.Run()
+	case "kubectl-krew":
+		return kubectlkrew.Run()
 	}
 
 	// Fall back to bash script execution for other modules
