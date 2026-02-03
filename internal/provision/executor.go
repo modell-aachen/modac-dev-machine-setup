@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 
 	"github.com/modell-aachen/machine/internal/platform"
+	"github.com/modell-aachen/machine/internal/provision/asdfpackages"
 	"github.com/modell-aachen/machine/internal/provision/packages"
 	"github.com/modell-aachen/machine/internal/provision/setupenvs"
 )
@@ -60,6 +61,8 @@ func runModule(module string, plat platform.Platform, scriptsDir string) error {
 		return packages.Run(plat)
 	case "setup-envs":
 		return setupenvs.Run()
+	case "asdf-packages":
+		return asdfpackages.Run(plat)
 	}
 
 	// Fall back to bash script execution for other modules
