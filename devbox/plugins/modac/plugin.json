@@ -94,6 +94,7 @@
             "version": "latest"
         },
         "github:modell-aachen/modac-dev-machine-setup?dir=nixpkgs/modac-dev-provisioner&rev=39269f5d923f2a2464d14b89656de9d4c277bc96": {}
+        "github:modell-aachen/modac-dev-machine-setup?dir=nixpkgs/modac-dev-machine2&rev=c2eaea388757f2ce764e7b1afe1a51aa95590524": {}
     },
     "env": {
         "DEVBOX_COREPACK_ENABLED": "true",
