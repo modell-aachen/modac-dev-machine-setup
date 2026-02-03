@@ -16,6 +16,7 @@ import (
 	"github.com/modell-aachen/machine2/internal/provision/installmodacshellhelper"
 	"github.com/modell-aachen/machine2/internal/provision/kubectlkrew"
 	"github.com/modell-aachen/machine2/internal/provision/node"
+	"github.com/modell-aachen/machine2/internal/provision/orbstack"
 	"github.com/modell-aachen/machine2/internal/provision/packages"
 	"github.com/modell-aachen/machine2/internal/provision/setupdev"
 	"github.com/modell-aachen/machine2/internal/provision/setupenvs"
@@ -93,6 +94,8 @@ func runModule(module string, plat platform.Platform, scriptsDir string) error {
 		return githubauthlogin.Run()
 	case "install-modac-shell-helper":
 		return installmodacshellhelper.Run()
+	case "orbstack":
+		return orbstack.Run(plat)
 	}
 
 	// Fall back to bash script execution for other modules
