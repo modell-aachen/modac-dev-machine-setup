@@ -13,6 +13,7 @@ import (
 	"github.com/modell-aachen/machine2/internal/provision/claude"
 	"github.com/modell-aachen/machine2/internal/provision/completions"
 	"github.com/modell-aachen/machine2/internal/provision/githubauthlogin"
+	"github.com/modell-aachen/machine2/internal/provision/installmodacshellhelper"
 	"github.com/modell-aachen/machine2/internal/provision/kubectlkrew"
 	"github.com/modell-aachen/machine2/internal/provision/node"
 	"github.com/modell-aachen/machine2/internal/provision/packages"
@@ -90,6 +91,8 @@ func runModule(module string, plat platform.Platform, scriptsDir string) error {
 		return claude.Run()
 	case "github-auth-login":
 		return githubauthlogin.Run()
+	case "install-modac-shell-helper":
+		return installmodacshellhelper.Run()
 	}
 
 	// Fall back to bash script execution for other modules
