@@ -9,6 +9,7 @@ import (
 	"github.com/modell-aachen/machine/internal/platform"
 	"github.com/modell-aachen/machine/internal/provision/asdf"
 	"github.com/modell-aachen/machine/internal/provision/asdfpackages"
+	"github.com/modell-aachen/machine/internal/provision/certificates"
 	"github.com/modell-aachen/machine/internal/provision/kubectlkrew"
 	"github.com/modell-aachen/machine/internal/provision/node"
 	"github.com/modell-aachen/machine/internal/provision/packages"
@@ -75,6 +76,8 @@ func runModule(module string, plat platform.Platform, scriptsDir string) error {
 		return setupk8scluster.Run()
 	case "node":
 		return node.Run()
+	case "certificates":
+		return certificates.Run()
 	}
 
 	// Fall back to bash script execution for other modules
