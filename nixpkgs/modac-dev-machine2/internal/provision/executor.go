@@ -13,6 +13,7 @@ import (
 	"github.com/modell-aachen/machine2/internal/provision/kubectlkrew"
 	"github.com/modell-aachen/machine2/internal/provision/node"
 	"github.com/modell-aachen/machine2/internal/provision/packages"
+	"github.com/modell-aachen/machine2/internal/provision/setupdev"
 	"github.com/modell-aachen/machine2/internal/provision/setupenvs"
 	"github.com/modell-aachen/machine2/internal/provision/setupk8scluster"
 )
@@ -78,6 +79,8 @@ func runModule(module string, plat platform.Platform, scriptsDir string) error {
 		return node.Run()
 	case "certificates":
 		return certificates.Run()
+	case "setup-dev":
+		return setupdev.Run()
 	}
 
 	// Fall back to bash script execution for other modules
