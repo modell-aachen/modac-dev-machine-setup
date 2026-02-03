@@ -8,6 +8,7 @@ import (
 
 	"github.com/modell-aachen/machine/internal/platform"
 	"github.com/modell-aachen/machine/internal/provision/packages"
+	"github.com/modell-aachen/machine/internal/provision/setupenvs"
 )
 
 type Options struct {
@@ -53,9 +54,12 @@ func ListModules() error {
 func runModule(module string, plat platform.Platform, scriptsDir string) error {
 	fmt.Printf("Running %s\n", module)
 
-	// Use Go implementation for packages module
-	if module == "packages" {
+	// Use Go implementations for ported modules
+	switch module {
+	case "packages":
 		return packages.Run(plat)
+	case "setup-envs":
+		return setupenvs.Run()
 	}
 
 	// Fall back to bash script execution for other modules
