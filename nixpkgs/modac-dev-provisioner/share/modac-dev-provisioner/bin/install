@@ -26,7 +26,7 @@ env_path="$HOME/.secrets/.env"
 
 # Helper functions
 function is_distrobox() {
-    [ -n "$DISTROBOX_ENTER_PATH" ]
+    [ -n "$CONTAINER_ID" ]
 }
 
 # Output formatting functions
@@ -67,6 +67,47 @@ function execute() {
         error "Failed (exit code: $exit_code)"
         echo -e "${DIM}    Log: $logfile${RESET}"
         return $exit_code
+    fi
+}
+
+function check_prerequisites() {
+    section "Checking Prerequisites"
+
+    # Check if running inside a distrobox container
+    if is_distrobox; then
+        info "Detected running inside a container"
+
+        # Test if distrobox-host-exec actually works
+        if ! distrobox-host-exec echo "test" &> /dev/null; then
+            error "distrobox-host-exec is not working properly"
+            echo "The command exists but failed to execute on the host system."
+            echo "One reason might be that flatpak is not installed on the host."
+            echo "Please ensure your distrobox installation is configured correctly."
+            exit 1
+        fi
+
+        success "distrobox-host-exec is working correctly"
+
+        # Check if docker is installed on the host
+        if ! distrobox-host-exec docker --version &> /dev/null; then
+            error "docker is not installed on the host system"
+            echo "This script requires docker to be available on the host."
+            echo "Please install docker on your host system before running this script."
+            exit 1
+        fi
+
+        success "docker is available on host"
+
+        if [ ! -r /var/run/docker.sock ] || [ ! -w /var/run/docker.sock ]; then
+            error "Insufficient permissions for /var/run/docker.sock"
+            echo "Current user does not have read/write access to the Docker socket."
+            echo "Please add your user to the docker group or adjust socket permissions."
+            exit 1
+        fi
+
+        success "docker socket is accessible (read/write)"
+    else
+        skip "Not running in a container, skipping container-specific checks"
     fi
 }
 
@@ -174,7 +215,7 @@ function show_next_steps() {
 
 echo -e "${BOLD}${CYAN}"
 echo "╔════════════════════════════════════════╗"
-echo "║   MODAC Development Provisioner        ║"
+echo "║   MODAC Development Bootstrap          ║"
 echo "╚════════════════════════════════════════╝"
 echo -e "${RESET}"
 echo -e "${DIM}This installer sets up two main components:"
@@ -189,6 +230,9 @@ if [[ ! "$response" =~ ^[Yy]$ ]]; then
     exit 0
 fi
 echo ""
+
+# Run prerequisite checks
+check_prerequisites
 
 # ============================================================================
 # PART 1: DEVBOX SETUP

@@ -5,6 +5,7 @@ if [ -n "$CONTAINER_ID" ]; then
     if [ -z $( which docker ) ]; then
         echo "Running inside a distrobox, linking docker"
         sudo ln -s /usr/bin/distrobox-host-exec /usr/local/bin/docker
+        ln -s "/run/host/home/$USER/.docker" ~/.docker
     else
         echo "Running inside a distrobox, skipping docker install"
     fi
