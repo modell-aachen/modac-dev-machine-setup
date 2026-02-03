@@ -30,7 +30,7 @@
               cp -r scripts/templates $out/share/machine2/templates
 
               mkdir -p $out/share/bash-completion/completions
-              $out/bin/machine2 completion bash > $out/share/bash-completion/completions/machine2
+              $out/bin/machine2 completion bash > $out/share/bash-completion/completions/machine2.bash
             '';
 
             ldflags = [
