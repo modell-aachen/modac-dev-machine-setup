@@ -7,7 +7,6 @@ var allModules = []string{
 	"asdf",
 	"kubectl-krew",
 	"setup-k8s-cluster",
-	"k3s-network",
 	"node",
 	"certificates",
 	"setup-dev",
