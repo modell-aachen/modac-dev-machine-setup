@@ -1,0 +1,118 @@
+package provision
+
+import (
+	"fmt"
+	"os"
+	"os/exec"
+	"path/filepath"
+
+	"github.com/modell-aachen/machine/internal/platform"
+)
+
+type Options struct {
+	Filter      string
+	SkipInstall bool
+}
+
+func Execute(opts *Options) error {
+	plat, err := platform.Detect()
+	if err != nil {
+		return fmt.Errorf("platform detection failed: %w", err)
+	}
+
+	modules := FilterModules(opts.Filter)
+
+	if !opts.SkipInstall {
+		fmt.Println("Skipping install step (not implemented in Go CLI)")
+		// Note: install command is excluded from this port
+	}
+
+	scriptsDir, err := getScriptsDir()
+	if err != nil {
+		return fmt.Errorf("failed to find scripts directory: %w", err)
+	}
+
+	for _, module := range modules {
+		if err := runModule(module, plat, scriptsDir); err != nil {
+			return fmt.Errorf("module %s failed: %w", module, err)
+		}
+	}
+
+	return nil
+}
+
+func ListModules() error {
+	fmt.Println("Available modules:")
+	for _, module := range GetAllModules() {
+		fmt.Printf("  - %s\n", module)
+	}
+	return nil
+}
+
+func runModule(module string, plat platform.Platform, scriptsDir string) error {
+	scriptPath := findScript(module, plat, scriptsDir)
+	if scriptPath == "" {
+		return fmt.Errorf("script not found for module: %s", module)
+	}
+
+	fmt.Printf("Running %s\n", module)
+
+	cmd := exec.Command("bash", scriptPath, scriptsDir)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Stdin = os.Stdin
+
+	cmd.Env = append(os.Environ(),
+		fmt.Sprintf("ARCH=%s", plat),
+		"POETRY_VERSION=2.0.1",
+		fmt.Sprintf("IS_%s=true", plat),
+	)
+
+	return cmd.Run()
+}
+
+func findScript(module string, plat platform.Platform, scriptsDir string) string {
+	// Try platform-specific first
+	platformPath := filepath.Join(scriptsDir, plat.String(), module+".bash")
+	if fileExists(platformPath) {
+		return platformPath
+	}
+
+	// Try shared script
+	sharedPath := filepath.Join(scriptsDir, module+".bash")
+	if fileExists(sharedPath) {
+		return sharedPath
+	}
+
+	return ""
+}
+
+func getScriptsDir() (string, error) {
+	// Get the directory of the currently running binary
+	exePath, err := os.Executable()
+	if err != nil {
+		return "", fmt.Errorf("failed to get executable path: %w", err)
+	}
+
+	// Binary is in bin/, scripts should be in ../share/machine/provision-scripts/
+	binDir := filepath.Dir(exePath)
+	shareDir := filepath.Join(binDir, "..", "share", "machine", "provision-scripts")
+
+	// Check if the share directory exists
+	if fileExists(shareDir) {
+		return shareDir, nil
+	}
+
+	// Fallback: check if we're running from the repo (development mode)
+	repoScriptsDir := filepath.Join(binDir, "..", "scripts", "provision")
+	if fileExists(repoScriptsDir) {
+		return repoScriptsDir, nil
+	}
+
+	return "", fmt.Errorf("scripts directory not found")
+}
+
+func fileExists(path string) bool {
+	_, err := os.Stat(path)
+	return err == nil
+}

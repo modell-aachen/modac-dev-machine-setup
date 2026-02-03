@@ -4,3 +4,28 @@ collections
 README.html
 README.pdf
 result
+result-*
+
+# Go build artifacts
+bin/
+/machine
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+go.work
+vendor/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
