@@ -10,6 +10,7 @@ import (
 	"github.com/modell-aachen/machine/internal/provision/asdf"
 	"github.com/modell-aachen/machine/internal/provision/asdfpackages"
 	"github.com/modell-aachen/machine/internal/provision/kubectlkrew"
+	"github.com/modell-aachen/machine/internal/provision/node"
 	"github.com/modell-aachen/machine/internal/provision/packages"
 	"github.com/modell-aachen/machine/internal/provision/setupenvs"
 	"github.com/modell-aachen/machine/internal/provision/setupk8scluster"
@@ -72,6 +73,8 @@ func runModule(module string, plat platform.Platform, scriptsDir string) error {
 		return kubectlkrew.Run()
 	case "setup-k8s-cluster":
 		return setupk8scluster.Run()
+	case "node":
+		return node.Run()
 	}
 
 	// Fall back to bash script execution for other modules
