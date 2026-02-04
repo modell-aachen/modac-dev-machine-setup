@@ -4,10 +4,13 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+
+	"github.com/modell-aachen/machine2/internal/platform"
 )
 
 // Run installs kubectl krew plugins
-func Run() error {
+func Run(plat platform.Platform) error {
+	_ = plat
 	plugins := []string{"ctx", "ns", "konfig", "oidc-login"}
 
 	for _, plugin := range plugins {

@@ -4,10 +4,13 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+
+	"github.com/modell-aachen/machine2/internal/platform"
 )
 
 // Run authenticates GitHub CLI
-func Run() error {
+func Run(plat platform.Platform) error {
+	_ = plat
 	// Check if already authenticated
 	cmd := exec.Command("gh", "auth", "status")
 	if err := cmd.Run(); err == nil {

@@ -7,6 +7,8 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+
+	"github.com/modell-aachen/machine2/internal/platform"
 )
 
 type DevboxConfig struct {
@@ -15,7 +17,8 @@ type DevboxConfig struct {
 }
 
 // Run configures asdf version manager
-func Run() error {
+func Run(plat platform.Platform) error {
+	_ = plat
 	// Add asdf plugins
 	if err := addPlugin("erlang"); err != nil {
 		return fmt.Errorf("failed to add erlang plugin: %w", err)

@@ -3,10 +3,13 @@ package setupdev
 import (
 	"fmt"
 	"os"
+
+	"github.com/modell-aachen/machine2/internal/platform"
 )
 
 // Run sets up development directory
-func Run() error {
+func Run(plat platform.Platform) error {
+	_ = plat
 	reposDir := os.Getenv("REPOS_DIRECTORY")
 	if reposDir == "" {
 		return fmt.Errorf("REPOS_DIRECTORY environment variable not set")

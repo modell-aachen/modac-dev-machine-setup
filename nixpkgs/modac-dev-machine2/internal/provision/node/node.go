@@ -7,11 +7,13 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/modell-aachen/machine2/internal/platform"
 	"github.com/modell-aachen/machine2/internal/util"
 )
 
 // Run sets up Node.js tooling (yarn via corepack)
-func Run() error {
+func Run(plat platform.Platform) error {
+	_ = plat
 	// Get devbox global path
 	devboxPath, err := getDevboxGlobalPath()
 	if err != nil {

@@ -5,10 +5,13 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+
+	"github.com/modell-aachen/machine2/internal/platform"
 )
 
 // Run installs or upgrades modac-shell-helper
-func Run() error {
+func Run(plat platform.Platform) error {
+	_ = plat
 	// Check if modac-shell-helper is installed
 	installed, err := isInstalled()
 	if err != nil {

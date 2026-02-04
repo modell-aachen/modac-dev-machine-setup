@@ -27,6 +27,27 @@ type Options struct {
 	SkipInstall bool
 }
 
+type moduleRunner func(platform.Platform) error
+
+var moduleRegistry = map[string]moduleRunner{
+	"packages":                   packages.Run,
+	"setup-envs":                 setupenvs.Run,
+	"asdf-packages":              asdfpackages.Run,
+	"asdf":                       asdf.Run,
+	"kubectl-krew":               kubectlkrew.Run,
+	"setup-k8s-cluster":          setupk8scluster.Run,
+	"node":                       node.Run,
+	"certificates":               certificates.Run,
+	"setup-dev":                  setupdev.Run,
+	"completions":                completions.Run,
+	"claude":                     claude.Run,
+	"github-auth-login":          githubauthlogin.Run,
+	"install-modac-shell-helper": installmodacshellhelper.Run,
+	"orbstack":                   orbstack.Run,
+	"docker-packages":            dockerpackages.Run,
+	"docker":                     docker.Run,
+}
+
 func Execute(opts *Options) error {
 	plat, err := platform.Detect()
 	if err != nil {
@@ -60,41 +81,10 @@ func ListModules() error {
 func runModule(module string, plat platform.Platform) error {
 	fmt.Printf("Running %s\n", module)
 
-	// All modules are now implemented in Go
-	switch module {
-	case "packages":
-		return packages.Run(plat)
-	case "setup-envs":
-		return setupenvs.Run()
-	case "asdf-packages":
-		return asdfpackages.Run(plat)
-	case "asdf":
-		return asdf.Run()
-	case "kubectl-krew":
-		return kubectlkrew.Run()
-	case "setup-k8s-cluster":
-		return setupk8scluster.Run()
-	case "node":
-		return node.Run()
-	case "certificates":
-		return certificates.Run()
-	case "setup-dev":
-		return setupdev.Run()
-	case "completions":
-		return completions.Run()
-	case "claude":
-		return claude.Run()
-	case "github-auth-login":
-		return githubauthlogin.Run()
-	case "install-modac-shell-helper":
-		return installmodacshellhelper.Run()
-	case "orbstack":
-		return orbstack.Run(plat)
-	case "docker-packages":
-		return dockerpackages.Run(plat)
-	case "docker":
-		return docker.Run()
-	default:
+	runner, ok := moduleRegistry[module]
+	if !ok {
 		return fmt.Errorf("unknown module: %s", module)
 	}
+
+	return runner(plat)
 }

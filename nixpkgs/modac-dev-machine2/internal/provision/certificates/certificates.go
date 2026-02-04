@@ -6,11 +6,13 @@ import (
 	"os/exec"
 	"path/filepath"
 
+	"github.com/modell-aachen/machine2/internal/platform"
 	"github.com/modell-aachen/machine2/internal/util"
 )
 
 // Run sets up development certificates using mkcert
-func Run() error {
+func Run(plat platform.Platform) error {
+	_ = plat
 	// Get QWIKI_DEVELOPMENT_ROOT_CA from environment
 	rootCADir := os.Getenv("QWIKI_DEVELOPMENT_ROOT_CA")
 	if rootCADir == "" {

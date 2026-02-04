@@ -8,10 +8,13 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/modell-aachen/machine2/internal/platform"
 )
 
 // Run sets up Kubernetes cluster configuration
-func Run() error {
+func Run(plat platform.Platform) error {
+	_ = plat
 	// Check if signed into 1Password CLI
 	if err := checkOpSignIn(); err != nil {
 		return err

@@ -6,11 +6,13 @@ import (
 	"os/exec"
 	"path/filepath"
 
+	"github.com/modell-aachen/machine2/internal/platform"
 	"github.com/modell-aachen/machine2/internal/util"
 )
 
 // Run sets up Docker buildx
-func Run() error {
+func Run(plat platform.Platform) error {
+	_ = plat
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		return fmt.Errorf("failed to get home directory: %w", err)
