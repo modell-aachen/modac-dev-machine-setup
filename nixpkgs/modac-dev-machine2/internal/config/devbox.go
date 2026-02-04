@@ -51,14 +51,20 @@ func LoadDevbox() (*DevboxConfig, error) {
 	return &config, nil
 }
 
-func ExpandPath(path string) string {
+func ExpandPath(path string) (string, error) {
 	if strings.HasPrefix(path, "$HOME/") {
-		homeDir, _ := os.UserHomeDir()
-		return filepath.Join(homeDir, path[6:])
+		homeDir, err := os.UserHomeDir()
+		if err != nil {
+			return "", fmt.Errorf("failed to get home directory: %w", err)
+		}
+		return filepath.Join(homeDir, path[6:]), nil
 	}
 	if strings.HasPrefix(path, "~/") {
-		homeDir, _ := os.UserHomeDir()
-		return filepath.Join(homeDir, path[2:])
+		homeDir, err := os.UserHomeDir()
+		if err != nil {
+			return "", fmt.Errorf("failed to get home directory: %w", err)
+		}
+		return filepath.Join(homeDir, path[2:]), nil
 	}
-	return path
+	return path, nil
 }

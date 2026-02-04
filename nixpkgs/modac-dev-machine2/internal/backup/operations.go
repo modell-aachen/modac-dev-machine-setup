@@ -141,7 +141,10 @@ func buildEffectiveBackupsForRestore() ([]config.BackupConfig, error) {
 }
 
 func createBackup(client *OpClient, backup config.BackupConfig) error {
-	path := config.ExpandPath(backup.Path)
+	path, err := config.ExpandPath(backup.Path)
+	if err != nil {
+		return fmt.Errorf("failed to expand path for backup '%s': %w", backup.Name, err)
+	}
 	title := ItemTitlePrefix + backup.Name
 	vault := backup.Vault
 	if vault == "" {
@@ -211,7 +214,10 @@ func createBackup(client *OpClient, backup config.BackupConfig) error {
 }
 
 func restoreBackup(client *OpClient, backup config.BackupConfig) error {
-	path := config.ExpandPath(backup.Path)
+	path, err := config.ExpandPath(backup.Path)
+	if err != nil {
+		return fmt.Errorf("failed to expand path for backup '%s': %w", backup.Name, err)
+	}
 	title := ItemTitlePrefix + backup.Name
 	vault := backup.Vault
 	if vault == "" {

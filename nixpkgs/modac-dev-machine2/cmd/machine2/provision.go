@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/spf13/cobra"
 
 	"github.com/modell-aachen/machine2/internal/provision"
@@ -11,8 +13,15 @@ var provisionCmd = &cobra.Command{
 	Short: "Provision this machine2",
 	Long:  "Provision a development machine2 with required tools and configurations.",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		filter, _ := cmd.Flags().GetString("filter")
-		skipInstall, _ := cmd.Flags().GetBool("skip-install")
+		filter, err := cmd.Flags().GetString("filter")
+		if err != nil {
+			return fmt.Errorf("failed to get filter flag: %w", err)
+		}
+
+		skipInstall, err := cmd.Flags().GetBool("skip-install")
+		if err != nil {
+			return fmt.Errorf("failed to get skip-install flag: %w", err)
+		}
 
 		opts := &provision.Options{
 			Filter:      filter,
