@@ -47,14 +47,19 @@ func CreateTarGz(srcDir, destPath string) error {
 		}
 
 		if !info.IsDir() {
-			file, err := os.Open(path)
+			f, err := os.Open(path)
 			if err != nil {
 				return fmt.Errorf("failed to open file: %w", err)
 			}
-			defer file.Close()
 
-			if _, err := io.Copy(tarWriter, file); err != nil {
-				return fmt.Errorf("failed to write file to archive: %w", err)
+			_, copyErr := io.Copy(tarWriter, f)
+			closeErr := f.Close()
+
+			if copyErr != nil {
+				return fmt.Errorf("failed to write file to archive: %w", copyErr)
+			}
+			if closeErr != nil {
+				return fmt.Errorf("failed to close file: %w", closeErr)
 			}
 		}
 
