@@ -6,12 +6,13 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/modell-aachen/machine2/internal/output"
 	"github.com/modell-aachen/machine2/internal/platform"
 	"github.com/modell-aachen/machine2/internal/util"
 )
 
 // Run sets up Claude configuration
-func Run(plat platform.Platform) error {
+func Run(out *output.Context, plat platform.Platform) error {
 	_ = plat
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
@@ -29,6 +30,7 @@ func Run(plat platform.Platform) error {
 
 	// Check if CLAUDE.md already exists
 	if util.FileExists(claudeMdPath) {
+		out.Skipped("CLAUDE.md already exists")
 		return nil
 	}
 
@@ -39,6 +41,7 @@ func Run(plat platform.Platform) error {
 	}
 
 	// Copy template
+	out.Step("Creating CLAUDE.md from template")
 	templatePath := filepath.Join(templatesDir, "team-claude.md")
 	if err := copyFile(templatePath, claudeMdPath); err != nil {
 		return fmt.Errorf("failed to copy template: %w", err)
@@ -49,7 +52,6 @@ func Run(plat platform.Platform) error {
 		return fmt.Errorf("failed to set permissions: %w", err)
 	}
 
-	fmt.Printf("Created %s\n", claudeMdPath)
 	return nil
 }
 

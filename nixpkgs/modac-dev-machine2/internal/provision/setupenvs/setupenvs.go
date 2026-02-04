@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/modell-aachen/machine2/internal/output"
 	"github.com/modell-aachen/machine2/internal/platform"
 	"github.com/modell-aachen/machine2/internal/util"
 )
@@ -20,7 +21,7 @@ type DevboxConfig struct {
 }
 
 // Run sets up environment variables and secrets integration
-func Run(plat platform.Platform) error {
+func Run(out *output.Context, plat platform.Platform) error {
 	_ = plat
 	// Get devbox global path
 	devboxPath, err := getDevboxGlobalPath()
@@ -52,11 +53,13 @@ func Run(plat platform.Platform) error {
 
 	envFromPath := filepath.Join(homeDir, ".secrets", ".env")
 	if config.EnvFrom != envFromPath {
-		fmt.Println("Adding env_from to", configPath)
+		out.Step("Adding env_from to devbox config")
 		config.EnvFrom = envFromPath
 		if err := writeDevboxConfig(configPath, config); err != nil {
 			return fmt.Errorf("failed to write env_from: %w", err)
 		}
+	} else {
+		out.Skipped("env_from already configured")
 	}
 
 	// Get templates directory
@@ -66,7 +69,7 @@ func Run(plat platform.Platform) error {
 	}
 
 	// Merge op_secrets_tpl from template
-	fmt.Println("Merging op_secrets_tpl in", configPath, "with template")
+	out.Step("Merging op_secrets_tpl with template")
 	templatePath := filepath.Join(templatesDir, "devbox.json")
 	template, err := readDevboxConfig(templatePath)
 	if err != nil {
@@ -96,7 +99,7 @@ func Run(plat platform.Platform) error {
 		}
 
 		if bytes.Contains(content, []byte("export ")) {
-			fmt.Println("Removing export from", envFile)
+			out.Step("Removing export from .env file")
 			modified := bytes.ReplaceAll(content, []byte("\nexport "), []byte("\n"))
 			modified = bytes.TrimPrefix(modified, []byte("export "))
 			if err := os.WriteFile(envFile, modified, 0644); err != nil {
@@ -112,20 +115,16 @@ func Run(plat platform.Platform) error {
 	}
 
 	// Generate env.tpl from op_secrets_tpl
+	out.Step("Generating env template")
 	envTplPath := filepath.Join(secretsDir, "env.tpl")
 	if err := generateEnvTemplate(config.OpSecretsTpl, envTplPath); err != nil {
 		return fmt.Errorf("failed to generate env template: %w", err)
 	}
 
 	// Inject secrets using 1Password CLI
+	out.Step("Injecting secrets from 1Password")
 	envPath := filepath.Join(secretsDir, ".env")
-	cmd := exec.Command("op", "inject",
-		"--in-file", envTplPath,
-		"--out-file", envPath,
-		"--force")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	if err := cmd.Run(); err != nil {
+	if err := out.RunCommand("op", "inject", "--in-file", envTplPath, "--out-file", envPath, "--force"); err != nil {
 		return fmt.Errorf("failed to inject secrets: %w", err)
 	}
 

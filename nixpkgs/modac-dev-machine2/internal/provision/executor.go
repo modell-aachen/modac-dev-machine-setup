@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/modell-aachen/machine2/internal/output"
 	"github.com/modell-aachen/machine2/internal/platform"
 	"github.com/modell-aachen/machine2/internal/provision/asdf"
 	"github.com/modell-aachen/machine2/internal/provision/asdfpackages"
@@ -31,7 +32,7 @@ type Options struct {
 // ModuleEntry represents a provisioning module with its name and runner function
 type ModuleEntry struct {
 	Name   string
-	Runner func(platform.Platform) error
+	Runner func(*output.Context, platform.Platform) error
 }
 
 // allModules defines the ordered list of all provisioning modules
@@ -85,6 +86,16 @@ func FilterModules(filter string) []ModuleEntry {
 }
 
 func Execute(opts *Options) error {
+	// Create output context for nice formatting and logging
+	out, err := output.New()
+	if err != nil {
+		return fmt.Errorf("failed to initialize output: %w", err)
+	}
+	defer out.Close()
+
+	fmt.Printf("Machine2 Provisioning\n")
+	fmt.Printf("Log file: %s\n\n", out.LogPath())
+
 	plat, err := platform.Detect()
 	if err != nil {
 		return fmt.Errorf("platform detection failed: %w", err)
@@ -93,16 +104,18 @@ func Execute(opts *Options) error {
 	modules := FilterModules(opts.Filter)
 
 	if !opts.SkipInstall {
-		fmt.Println("Skipping install step (not implemented in Go CLI)")
-		// Note: install command is excluded from this port
+		out.Info("Skipping install step (not implemented in Go CLI)")
 	}
 
+	// Run all modules
 	for _, module := range modules {
-		if err := runModule(module, plat); err != nil {
+		if err := runModule(out, module, plat); err != nil {
+			out.PrintError(fmt.Errorf("module %s failed: %w", module.Name, err))
 			return fmt.Errorf("module %s failed: %w", module.Name, err)
 		}
 	}
 
+	out.PrintSummary()
 	return nil
 }
 
@@ -114,9 +127,14 @@ func ListModules() error {
 	return nil
 }
 
-func runModule(module ModuleEntry, plat platform.Platform) error {
-	fmt.Printf("Running %s\n", module.Name)
-	return module.Runner(plat)
+func runModule(out *output.Context, module ModuleEntry, plat platform.Platform) error {
+	out.StartModule(module.Name)
+	if err := module.Runner(out, plat); err != nil {
+		out.Failure(fmt.Sprintf("Module failed: %v", err))
+		return err
+	}
+	out.Success("Module completed")
+	return nil
 }
 
 func splitCSV(s string) []string {

@@ -8,31 +8,32 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/modell-aachen/machine2/internal/output"
 	"github.com/modell-aachen/machine2/internal/platform"
 	"github.com/modell-aachen/machine2/internal/util"
 )
 
 // Run installs Docker packages
-func Run(plat platform.Platform) error {
+func Run(out *output.Context, plat platform.Platform) error {
 	switch plat {
 	case platform.Darwin:
-		return runDarwin()
+		return runDarwin(out)
 	case platform.Ubuntu:
-		return runUbuntu()
+		return runUbuntu(out)
 	default:
 		return fmt.Errorf("unsupported platform: %s", plat)
 	}
 }
 
-func runDarwin() error {
+func runDarwin(out *output.Context) error {
 	// Check if docker is installed via brew
 	brewListCmd := exec.Command("brew", "list")
-	output, err := brewListCmd.Output()
+	brewOutput, err := brewListCmd.Output()
 	if err != nil {
 		return fmt.Errorf("failed to list brew packages: %w", err)
 	}
 
-	lines := strings.Split(string(output), "\n")
+	lines := strings.Split(string(brewOutput), "\n")
 	dockerInstalled := false
 	for _, line := range lines {
 		if strings.TrimSpace(line) == "docker" {
@@ -43,26 +44,18 @@ func runDarwin() error {
 
 	if !dockerInstalled {
 		// Install docker packages
-		fmt.Println("Installing Docker packages...")
-		installCmd := exec.Command("brew", "install",
-			"docker",
-			"docker-buildx",
-			"docker-compose",
-			"docker-completion")
-		installCmd.Stdout = os.Stdout
-		installCmd.Stderr = os.Stderr
-		if err := installCmd.Run(); err != nil {
+		out.Step("Installing Docker packages")
+		if err := out.RunCommand("brew", "install", "docker", "docker-buildx", "docker-compose", "docker-completion"); err != nil {
 			return fmt.Errorf("failed to install docker packages: %w", err)
 		}
 
 		// Set docker context to orbstack
-		fmt.Println("Setting docker context to orbstack...")
-		contextCmd := exec.Command("docker", "context", "use", "orbstack")
-		contextCmd.Stdout = os.Stdout
-		contextCmd.Stderr = os.Stderr
-		if err := contextCmd.Run(); err != nil {
+		out.Step("Setting docker context to orbstack")
+		if err := out.RunCommand("docker", "context", "use", "orbstack"); err != nil {
 			return fmt.Errorf("failed to set docker context: %w", err)
 		}
+	} else {
+		out.Skipped("Docker packages already installed")
 	}
 
 	// Setup docker config
@@ -87,6 +80,7 @@ func runDarwin() error {
 	}
 
 	if needsConfig {
+		out.Step("Setting up Docker config")
 		homebrewPrefix := os.Getenv("HOMEBREW_PREFIX")
 		if homebrewPrefix == "" {
 			homebrewPrefix = "/opt/homebrew" // Default for Apple Silicon
@@ -102,12 +96,14 @@ func runDarwin() error {
 		if err := os.WriteFile(dockerConfigPath, []byte(configContent), 0644); err != nil {
 			return fmt.Errorf("failed to write docker config: %w", err)
 		}
+	} else {
+		out.Skipped("Docker config already set up")
 	}
 
 	return nil
 }
 
-func runUbuntu() error {
+func runUbuntu(out *output.Context) error {
 	// Check if running in distrobox
 	containerID := os.Getenv("CONTAINER_ID")
 	if containerID != "" {
@@ -115,13 +111,10 @@ func runUbuntu() error {
 		_, err := exec.LookPath("docker")
 		if err != nil {
 			// Docker not found, create symlinks
-			fmt.Println("Running inside a distrobox, linking docker")
+			out.Step("Running inside a distrobox, linking docker")
 
 			// Create symlink for docker
-			symlinkCmd := exec.Command("sudo", "ln", "-s", "/usr/bin/distrobox-host-exec", "/usr/local/bin/docker")
-			symlinkCmd.Stdout = os.Stdout
-			symlinkCmd.Stderr = os.Stderr
-			if err := symlinkCmd.Run(); err != nil {
+			if err := out.RunCommand("sudo", "ln", "-s", "/usr/bin/distrobox-host-exec", "/usr/local/bin/docker"); err != nil {
 				return fmt.Errorf("failed to create docker symlink: %w", err)
 			}
 
@@ -135,14 +128,12 @@ func runUbuntu() error {
 			hostDockerDir := fmt.Sprintf("/run/host/home/%s/.docker", user)
 			localDockerDir := filepath.Join(homeDir, ".docker")
 
-			linkCmd := exec.Command("ln", "-s", hostDockerDir, localDockerDir)
-			linkCmd.Stdout = os.Stdout
-			linkCmd.Stderr = os.Stderr
-			if err := linkCmd.Run(); err != nil {
+			out.Step("Linking .docker directory")
+			if err := out.RunCommand("ln", "-s", hostDockerDir, localDockerDir); err != nil {
 				return fmt.Errorf("failed to link .docker directory: %w", err)
 			}
 		} else {
-			fmt.Println("Running inside a distrobox, skipping docker install")
+			out.Skipped("Running inside a distrobox, docker already available")
 		}
 		return nil
 	}
@@ -151,12 +142,9 @@ func runUbuntu() error {
 
 	// Check and install GPG key
 	if !util.FileExists("/etc/apt/keyrings/docker.asc") {
-		fmt.Println("Installing docker GPG key...")
+		out.Step("Installing docker GPG key")
 
-		installCmd := exec.Command("sudo", "apt-get", "install", "-y", "ca-certificates", "curl")
-		installCmd.Stdout = os.Stdout
-		installCmd.Stderr = os.Stderr
-		if err := installCmd.Run(); err != nil {
+		if err := out.RunCommand("sudo", "apt-get", "install", "-y", "ca-certificates", "curl"); err != nil {
 			return fmt.Errorf("failed to install prerequisites: %w", err)
 		}
 
@@ -165,12 +153,7 @@ func runUbuntu() error {
 			return fmt.Errorf("failed to create keyrings directory: %w", err)
 		}
 
-		curlCmd := exec.Command("sudo", "curl", "-fsSL",
-			"https://download.docker.com/linux/ubuntu/gpg",
-			"-o", "/etc/apt/keyrings/docker.asc")
-		curlCmd.Stdout = os.Stdout
-		curlCmd.Stderr = os.Stderr
-		if err := curlCmd.Run(); err != nil {
+		if err := out.RunCommand("sudo", "curl", "-fsSL", "https://download.docker.com/linux/ubuntu/gpg", "-o", "/etc/apt/keyrings/docker.asc"); err != nil {
 			return fmt.Errorf("failed to download docker GPG key: %w", err)
 		}
 
@@ -178,11 +161,13 @@ func runUbuntu() error {
 		if err := chmodCmd.Run(); err != nil {
 			return fmt.Errorf("failed to set key permissions: %w", err)
 		}
+	} else {
+		out.Skipped("Docker GPG key already installed")
 	}
 
 	// Check and add docker repository
 	if !util.FileExists("/etc/apt/sources.list.d/docker.list") {
-		fmt.Println("Adding docker repository...")
+		out.Step("Adding docker repository")
 
 		// Get Ubuntu codename
 		lsbCmd := exec.Command("lsb_release", "-cs")
@@ -201,25 +186,19 @@ func runUbuntu() error {
 			return fmt.Errorf("failed to add docker repository: %w", err)
 		}
 
-		updateCmd := exec.Command("sudo", "apt", "update")
-		updateCmd.Stdout = os.Stdout
-		updateCmd.Stderr = os.Stderr
-		if err := updateCmd.Run(); err != nil {
+		out.Step("Updating apt")
+		if err := out.RunCommand("sudo", "apt", "update"); err != nil {
 			return fmt.Errorf("failed to update apt: %w", err)
 		}
+	} else {
+		out.Skipped("Docker repository already added")
 	}
 
 	// Install docker packages
-	fmt.Println("Installing Docker packages...")
-	installCmd := exec.Command("sudo", "apt-get", "install", "-y",
-		"docker-ce",
-		"docker-ce-cli",
-		"containerd.io",
-		"docker-buildx-plugin",
-		"docker-compose-plugin")
-	installCmd.Stdout = os.Stdout
-	installCmd.Stderr = os.Stderr
-	if err := installCmd.Run(); err != nil {
+	out.Step("Installing Docker packages")
+	if err := out.RunCommand("sudo", "apt-get", "install", "-y",
+		"docker-ce", "docker-ce-cli", "containerd.io",
+		"docker-buildx-plugin", "docker-compose-plugin"); err != nil {
 		return fmt.Errorf("failed to install docker packages: %w", err)
 	}
 
@@ -232,18 +211,17 @@ func runUbuntu() error {
 	}
 
 	if !strings.Contains(string(groups), "docker") {
-		fmt.Printf("Adding user %s to docker group...\n", user)
-		usermodCmd := exec.Command("sudo", "usermod", "-aG", "docker", user)
-		usermodCmd.Stdout = os.Stdout
-		usermodCmd.Stderr = os.Stderr
-		if err := usermodCmd.Run(); err != nil {
+		out.Step(fmt.Sprintf("Adding user %s to docker group", user))
+		if err := out.RunCommand("sudo", "usermod", "-aG", "docker", user); err != nil {
 			return fmt.Errorf("failed to add user to docker group: %w", err)
 		}
+	} else {
+		out.Skipped("User already in docker group")
 	}
 
 	// Check if docker can be run without sudo
 	if !canAccessDockerWithoutSudo() {
-		fmt.Println("\nPlease logout and login again to use docker without sudo")
+		out.Info("Please logout and login again to use docker without sudo")
 		return fmt.Errorf("logout required - please logout and login again")
 	}
 

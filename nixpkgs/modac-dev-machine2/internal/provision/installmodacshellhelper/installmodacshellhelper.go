@@ -6,11 +6,12 @@ import (
 	"os"
 	"os/exec"
 
+	"github.com/modell-aachen/machine2/internal/output"
 	"github.com/modell-aachen/machine2/internal/platform"
 )
 
 // Run installs or upgrades modac-shell-helper
-func Run(plat platform.Platform) error {
+func Run(out *output.Context, plat platform.Platform) error {
 	_ = plat
 	// Check if modac-shell-helper is installed
 	installed, err := isInstalled()
@@ -30,32 +31,24 @@ func Run(plat platform.Platform) error {
 		}
 
 		// Setup git authentication
-		fmt.Println("Setting up git authentication...")
-		setupCmd := exec.Command("gh", "auth", "setup-git")
-		setupCmd.Stdout = os.Stdout
-		setupCmd.Stderr = os.Stderr
-		if err := setupCmd.Run(); err != nil {
+		out.Step("Setting up git authentication")
+		if err := out.RunCommand("gh", "auth", "setup-git"); err != nil {
 			return fmt.Errorf("failed to setup git authentication: %w", err)
 		}
 
 		// Install modac-shell-helper
-		fmt.Println("Installing modac-shell-helper...")
+		out.Step("Installing modac-shell-helper")
 		installCmd := exec.Command("uv", "tool", "install",
 			"git+https://github.com/modell-aachen/modac-shell-helper.git@main",
 			"--force")
 		installCmd.Env = append(os.Environ(), "GIT_TERMINAL_PROMPT=0")
-		installCmd.Stdout = os.Stdout
-		installCmd.Stderr = os.Stderr
-		if err := installCmd.Run(); err != nil {
+		if err := out.RunCommand(installCmd.Path, installCmd.Args[1:]...); err != nil {
 			return fmt.Errorf("failed to install modac-shell-helper: %w", err)
 		}
 	} else {
 		// Upgrade modac-shell-helper
-		fmt.Println("Upgrading modac-shell-helper...")
-		upgradeCmd := exec.Command("uv", "tool", "upgrade", "modac-shell-helper")
-		upgradeCmd.Stdout = os.Stdout
-		upgradeCmd.Stderr = os.Stderr
-		if err := upgradeCmd.Run(); err != nil {
+		out.Step("Upgrading modac-shell-helper")
+		if err := out.RunCommand("uv", "tool", "upgrade", "modac-shell-helper"); err != nil {
 			return fmt.Errorf("failed to upgrade modac-shell-helper: %w", err)
 		}
 	}

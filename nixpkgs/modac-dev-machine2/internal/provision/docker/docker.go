@@ -3,15 +3,14 @@ package docker
 import (
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 
+	"github.com/modell-aachen/machine2/internal/output"
 	"github.com/modell-aachen/machine2/internal/platform"
-	"github.com/modell-aachen/machine2/internal/util"
 )
 
 // Run sets up Docker buildx
-func Run(plat platform.Platform) error {
+func Run(out *output.Context, plat platform.Platform) error {
 	_ = plat
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
@@ -20,24 +19,12 @@ func Run(plat platform.Platform) error {
 
 	markerFile := filepath.Join(homeDir, ".docker_buildx_builder_created")
 
-	// Check if buildx builder already created
-	if util.FileExists(markerFile) {
+	// Use CheckAndRun to handle marker file logic
+	return out.CheckAndRun(markerFile, "Docker buildx builder already created", func() error {
+		out.Step("Creating docker buildx builder")
+		if err := out.RunCommand("docker", "buildx", "create", "--use"); err != nil {
+			return fmt.Errorf("failed to create buildx builder: %w", err)
+		}
 		return nil
-	}
-
-	// Create buildx builder
-	fmt.Println("Creating docker buildx builder...")
-	cmd := exec.Command("docker", "buildx", "create", "--use")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("failed to create buildx builder: %w", err)
-	}
-
-	// Create marker file
-	if err := os.WriteFile(markerFile, []byte(""), 0644); err != nil {
-		return fmt.Errorf("failed to create marker file: %w", err)
-	}
-
-	return nil
+	})
 }

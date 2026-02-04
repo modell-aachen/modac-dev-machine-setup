@@ -2,28 +2,25 @@ package asdfpackages
 
 import (
 	"fmt"
-	"os"
-	"os/exec"
 
+	"github.com/modell-aachen/machine2/internal/output"
 	"github.com/modell-aachen/machine2/internal/platform"
 )
 
 // Run installs packages required for asdf version manager
-func Run(plat platform.Platform) error {
+func Run(out *output.Context, plat platform.Platform) error {
 	switch plat {
 	case platform.Darwin:
-		// No packages needed on Darwin
+		out.Skipped("No packages needed on Darwin")
 		return nil
 	case platform.Ubuntu:
-		return runUbuntu()
+		return runUbuntu(out)
 	default:
 		return fmt.Errorf("unsupported platform: %s", plat)
 	}
 }
 
-func runUbuntu() error {
-	fmt.Println("Installing asdf dependencies...")
-
+func runUbuntu(out *output.Context) error {
 	asdfDeps := []string{
 		"automake",
 		"autoconf",
@@ -31,11 +28,9 @@ func runUbuntu() error {
 		"libssl-dev",
 	}
 
+	out.Step("Installing asdf dependencies")
 	args := append([]string{"apt", "install", "-y"}, asdfDeps...)
-	cmd := exec.Command("sudo", args...)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	if err := cmd.Run(); err != nil {
+	if err := out.RunCommand("sudo", args...); err != nil {
 		return fmt.Errorf("failed to install asdf dependencies: %w", err)
 	}
 

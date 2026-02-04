@@ -2,17 +2,17 @@ package node
 
 import (
 	"fmt"
-	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
 
+	"github.com/modell-aachen/machine2/internal/output"
 	"github.com/modell-aachen/machine2/internal/platform"
 	"github.com/modell-aachen/machine2/internal/util"
 )
 
 // Run sets up Node.js tooling (yarn via corepack)
-func Run(plat platform.Platform) error {
+func Run(out *output.Context, plat platform.Platform) error {
 	_ = plat
 	// Get devbox global path
 	devboxPath, err := getDevboxGlobalPath()
@@ -23,16 +23,13 @@ func Run(plat platform.Platform) error {
 	// Check if yarn is already installed
 	yarnPath := filepath.Join(devboxPath, ".devbox", "virtenv", "nodejs", "corepack-bin", "yarn")
 	if util.FileExists(yarnPath) {
-		fmt.Println("Yarn is already installed")
+		out.Skipped("Yarn is already installed")
 		return nil
 	}
 
 	// Install yarn globally via corepack
-	fmt.Println("Installing yarn via corepack...")
-	cmd := exec.Command("corepack", "install", "-g", "yarn@latest")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	if err := cmd.Run(); err != nil {
+	out.Step("Installing yarn via corepack")
+	if err := out.RunCommand("corepack", "install", "-g", "yarn@latest"); err != nil {
 		return fmt.Errorf("failed to install yarn: %w", err)
 	}
 

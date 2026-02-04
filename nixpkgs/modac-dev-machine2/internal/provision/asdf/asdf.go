@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/modell-aachen/machine2/internal/output"
 	"github.com/modell-aachen/machine2/internal/platform"
 )
 
@@ -17,14 +18,14 @@ type DevboxConfig struct {
 }
 
 // Run configures asdf version manager
-func Run(plat platform.Platform) error {
+func Run(out *output.Context, plat platform.Platform) error {
 	_ = plat
 	// Add asdf plugins
-	if err := addPlugin("erlang"); err != nil {
+	if err := addPlugin(out, "erlang"); err != nil {
 		return fmt.Errorf("failed to add erlang plugin: %w", err)
 	}
 
-	if err := addPlugin("elixir"); err != nil {
+	if err := addPlugin(out, "elixir"); err != nil {
 		return fmt.Errorf("failed to add elixir plugin: %w", err)
 	}
 
@@ -51,13 +52,13 @@ func Run(plat platform.Platform) error {
 	// Check if ASDF_DIR is already set
 	if config.Env != nil {
 		if existingDir, exists := config.Env["ASDF_DIR"]; exists && existingDir == asdfDir {
-			// Already configured
+			out.Skipped("ASDF_DIR already configured in devbox")
 			return nil
 		}
 	}
 
 	// Add ASDF_DIR to env
-	fmt.Println("Adding ASDF_DIR to devbox config")
+	out.Step("Adding ASDF_DIR to devbox config")
 	if config.Env == nil {
 		config.Env = make(map[string]string)
 	}
@@ -71,8 +72,8 @@ func Run(plat platform.Platform) error {
 	return nil
 }
 
-func addPlugin(name string) error {
-	fmt.Printf("Adding asdf plugin: %s\n", name)
+func addPlugin(out *output.Context, name string) error {
+	out.Step(fmt.Sprintf("Adding asdf plugin: %s", name))
 	cmd := exec.Command("asdf", "plugin", "add", name)
 	// Ignore errors - plugin might already be added
 	_ = cmd.Run()

@@ -6,25 +6,24 @@ import (
 	"os/exec"
 	"path/filepath"
 
+	"github.com/modell-aachen/machine2/internal/output"
 	"github.com/modell-aachen/machine2/internal/platform"
 	"github.com/modell-aachen/machine2/internal/util"
 )
 
 // Run installs system packages based on the platform
-func Run(plat platform.Platform) error {
+func Run(out *output.Context, plat platform.Platform) error {
 	switch plat {
 	case platform.Darwin:
-		return runDarwin()
+		return runDarwin(out)
 	case platform.Ubuntu:
-		return runUbuntu()
+		return runUbuntu(out)
 	default:
 		return fmt.Errorf("unsupported platform: %s", plat)
 	}
 }
 
-func runDarwin() error {
-	fmt.Println("Installing brew packages...")
-
+func runDarwin(out *output.Context) error {
 	brewPackages := []string{
 		"bash",
 		"gettext",
@@ -46,21 +45,16 @@ func runDarwin() error {
 	}
 
 	// Install brew packages
+	out.Step("Installing brew packages")
 	args := append([]string{"install"}, brewPackages...)
-	cmd := exec.Command("brew", args...)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	if err := cmd.Run(); err != nil {
+	if err := out.RunCommand("brew", args...); err != nil {
 		return fmt.Errorf("failed to install brew packages: %w", err)
 	}
 
 	// Install brew casks
-	fmt.Println("Installing brew casks...")
+	out.Step("Installing brew casks")
 	args = append([]string{"install", "--cask"}, brewCasks...)
-	cmd = exec.Command("brew", args...)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	if err := cmd.Run(); err != nil {
+	if err := out.RunCommand("brew", args...); err != nil {
 		return fmt.Errorf("failed to install brew casks: %w", err)
 	}
 
@@ -72,36 +66,29 @@ func runDarwin() error {
 
 	brewfilePath := filepath.Join(homeDir, "Brewfile")
 	if util.FileExists(brewfilePath) {
-		fmt.Println("Found Brewfile, processing...")
+		out.Step("Processing Brewfile")
 
 		// Check if bundle needs to be run
 		checkCmd := exec.Command("brew", "bundle", "check", "--file="+brewfilePath)
 		if err := checkCmd.Run(); err != nil {
 			// Bundle check failed, run bundle
-			bundleCmd := exec.Command("brew", "bundle", "--file="+brewfilePath)
-			bundleCmd.Stdout = os.Stdout
-			bundleCmd.Stderr = os.Stderr
-			if err := bundleCmd.Run(); err != nil {
+			if err := out.RunCommand("brew", "bundle", "--file="+brewfilePath); err != nil {
 				return fmt.Errorf("failed to run brew bundle: %w", err)
 			}
+		} else {
+			out.Skipped("Brewfile already satisfied")
 		}
 	}
 
 	return nil
 }
 
-func runUbuntu() error {
-	fmt.Println("Updating apt package lists...")
-
+func runUbuntu(out *output.Context) error {
 	// Update apt
-	cmd := exec.Command("sudo", "apt", "update")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	if err := cmd.Run(); err != nil {
+	out.Step("Updating apt package lists")
+	if err := out.RunCommand("sudo", "apt", "update"); err != nil {
 		return fmt.Errorf("failed to update apt: %w", err)
 	}
-
-	fmt.Println("Installing apt packages...")
 
 	aptPackages := []string{
 		"python3-pip",
@@ -139,21 +126,16 @@ func runUbuntu() error {
 	}
 
 	// Install base packages
+	out.Step("Installing apt packages")
 	args := append([]string{"apt", "install", "-y"}, aptPackages...)
-	cmd = exec.Command("sudo", args...)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	if err := cmd.Run(); err != nil {
+	if err := out.RunCommand("sudo", args...); err != nil {
 		return fmt.Errorf("failed to install apt packages: %w", err)
 	}
 
 	// Install python build dependencies
-	fmt.Println("Installing python build dependencies...")
+	out.Step("Installing python build dependencies")
 	args = append([]string{"apt", "install", "-y"}, pythonBuildDeps...)
-	cmd = exec.Command("sudo", args...)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	if err := cmd.Run(); err != nil {
+	if err := out.RunCommand("sudo", args...); err != nil {
 		return fmt.Errorf("failed to install python build dependencies: %w", err)
 	}
 

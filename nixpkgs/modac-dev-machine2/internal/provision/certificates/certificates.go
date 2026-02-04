@@ -6,12 +6,13 @@ import (
 	"os/exec"
 	"path/filepath"
 
+	"github.com/modell-aachen/machine2/internal/output"
 	"github.com/modell-aachen/machine2/internal/platform"
 	"github.com/modell-aachen/machine2/internal/util"
 )
 
 // Run sets up development certificates using mkcert
-func Run(plat platform.Platform) error {
+func Run(out *output.Context, plat platform.Platform) error {
 	_ = plat
 	// Get QWIKI_DEVELOPMENT_ROOT_CA from environment
 	rootCADir := os.Getenv("QWIKI_DEVELOPMENT_ROOT_CA")
@@ -22,14 +23,14 @@ func Run(plat platform.Platform) error {
 	// Check if root CA exists
 	rootCAPem := filepath.Join(rootCADir, "rootCA.pem")
 	if !util.FileExists(rootCAPem) {
-		fmt.Printf("Generating root CA in '%s'\n", rootCADir)
+		out.Step(fmt.Sprintf("Generating root CA in '%s'", rootCADir))
 		cmd := exec.Command("mkcert", "-install")
 		cmd.Env = append(os.Environ(), fmt.Sprintf("CAROOT=%s", rootCADir))
-		cmd.Stdout = os.Stdout
-		cmd.Stderr = os.Stderr
-		if err := cmd.Run(); err != nil {
+		if err := out.RunCommand(cmd.Path, cmd.Args[1:]...); err != nil {
 			return fmt.Errorf("failed to generate root CA: %w", err)
 		}
+	} else {
+		out.Skipped("Root CA already exists")
 	}
 
 	// Generate localhost certificate
@@ -43,7 +44,7 @@ func Run(plat platform.Platform) error {
 	certPath := filepath.Join(location, host+".pem")
 
 	if !util.FileExists(certPath) {
-		fmt.Printf("Generating certificate for '%s' in '%s'\n", host, location)
+		out.Step(fmt.Sprintf("Generating certificate for '%s'", host))
 
 		// Create directory
 		if err := os.MkdirAll(location, 0755); err != nil {
@@ -54,11 +55,11 @@ func Run(plat platform.Platform) error {
 		cmd := exec.Command("mkcert", host)
 		cmd.Dir = location
 		cmd.Env = append(os.Environ(), fmt.Sprintf("CAROOT=%s", rootCADir))
-		cmd.Stdout = os.Stdout
-		cmd.Stderr = os.Stderr
-		if err := cmd.Run(); err != nil {
+		if err := out.RunCommand(cmd.Path, cmd.Args[1:]...); err != nil {
 			return fmt.Errorf("failed to generate certificate for %s: %w", host, err)
 		}
+	} else {
+		out.Skipped("Certificate for localhost already exists")
 	}
 
 	return nil

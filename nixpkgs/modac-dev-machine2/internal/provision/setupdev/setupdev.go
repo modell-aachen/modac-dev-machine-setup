@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/modell-aachen/machine2/internal/output"
 	"github.com/modell-aachen/machine2/internal/platform"
 )
 
 // Run sets up development directory
-func Run(plat platform.Platform) error {
+func Run(out *output.Context, plat platform.Platform) error {
 	_ = plat
 	reposDir := os.Getenv("REPOS_DIRECTORY")
 	if reposDir == "" {
@@ -16,10 +17,12 @@ func Run(plat platform.Platform) error {
 	}
 
 	if !dirExists(reposDir) {
-		fmt.Printf("Creating REPOS_DIRECTORY: %s\n", reposDir)
+		out.Step(fmt.Sprintf("Creating REPOS_DIRECTORY: %s", reposDir))
 		if err := os.MkdirAll(reposDir, 0755); err != nil {
 			return fmt.Errorf("failed to create REPOS_DIRECTORY: %w", err)
 		}
+	} else {
+		out.Skipped("REPOS_DIRECTORY already exists")
 	}
 
 	return nil

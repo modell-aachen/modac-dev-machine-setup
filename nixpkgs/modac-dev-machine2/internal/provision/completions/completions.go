@@ -6,6 +6,7 @@ import (
 	"os/exec"
 	"path/filepath"
 
+	"github.com/modell-aachen/machine2/internal/output"
 	"github.com/modell-aachen/machine2/internal/platform"
 	"github.com/modell-aachen/machine2/internal/util"
 )
@@ -16,7 +17,7 @@ type completion struct {
 }
 
 // Run installs shell completions for various tools
-func Run(plat platform.Platform) error {
+func Run(out *output.Context, plat platform.Platform) error {
 	_ = plat
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
@@ -33,9 +34,9 @@ func Run(plat platform.Platform) error {
 
 	for _, shell := range shells {
 		for _, comp := range completions {
-			if err := installCompletion(homeDir, shell, comp.cmd, comp.version); err != nil {
+			if err := installCompletion(out, homeDir, shell, comp.cmd, comp.version); err != nil {
 				// Log error but continue with other completions
-				fmt.Printf("Warning: failed to install %s completion for %s: %v\n", comp.cmd, shell, err)
+				out.Info(fmt.Sprintf("Warning: failed to install %s completion for %s: %v", comp.cmd, shell, err))
 			}
 		}
 	}
@@ -43,7 +44,7 @@ func Run(plat platform.Platform) error {
 	return nil
 }
 
-func installCompletion(homeDir, shell, cmd, version string) error {
+func installCompletion(out *output.Context, homeDir, shell, cmd, version string) error {
 	shellPath := filepath.Join(homeDir, fmt.Sprintf(".%src", shell))
 	completionsPath := filepath.Join(homeDir, fmt.Sprintf(".%s_completions", shell))
 	cmdCompletionPath := filepath.Join(completionsPath, fmt.Sprintf("%s_%s.sh", cmd, version))
@@ -54,7 +55,8 @@ func installCompletion(homeDir, shell, cmd, version string) error {
 	}
 
 	if util.FileExists(cmdCompletionPath) {
-		return nil // Already installed
+		out.Skipped(fmt.Sprintf("%s completion for %s already installed", cmd, shell))
+		return nil
 	}
 
 	// Create completions directory
@@ -72,15 +74,15 @@ func installCompletion(homeDir, shell, cmd, version string) error {
 	}
 
 	// Generate completion
-	fmt.Printf("Installing %s completion for %s under %s\n", cmd, shell, cmdCompletionPath)
+	out.Step(fmt.Sprintf("Installing %s completion for %s", cmd, shell))
 	completionCmd := exec.Command(cmd, "completion", shell)
-	output, err := completionCmd.Output()
+	completionOutput, err := completionCmd.Output()
 	if err != nil {
 		return fmt.Errorf("failed to generate completion: %w", err)
 	}
 
 	// Write completion to file
-	if err := os.WriteFile(cmdCompletionPath, output, 0644); err != nil {
+	if err := os.WriteFile(cmdCompletionPath, completionOutput, 0644); err != nil {
 		return fmt.Errorf("failed to write completion file: %w", err)
 	}
 
