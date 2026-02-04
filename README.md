@@ -12,7 +12,7 @@ All other operating systems don't have any further requirements
 
 ### Install provisioner and devbox packages
 ```BASH
-wget -qO- https://raw.githubusercontent.com/modell-aachen/modac-dev-machine-setup/refs/heads/main/nixpkgs/modac-dev-provisioner/share/modac-dev-provisioner/bin/install | bash; source ~/.bashrc
+wget -qO- https://raw.githubusercontent.com/modell-aachen/modac-dev-machine-setup/refs/heads/main/install | bash; source ~/.bashrc
 ```
 
 ### Login to 1Password

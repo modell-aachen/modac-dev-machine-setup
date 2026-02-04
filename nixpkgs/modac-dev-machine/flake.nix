@@ -30,6 +30,9 @@
 
               mkdir -p $out/share/bash-completion/completions
               $out/bin/machine completion bash > $out/share/bash-completion/completions/machine.bash
+
+              cp -r scripts/bash/* $out/bin
+              cp -r scripts/completions/* $out/share/bash-completion/completions
             '';
 
             ldflags = [
