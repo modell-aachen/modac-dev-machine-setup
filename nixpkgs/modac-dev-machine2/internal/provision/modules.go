@@ -1,5 +1,7 @@
 package provision
 
+import "strings"
+
 var allModules = []string{
 	"packages",
 	"setup-envs",
@@ -48,47 +50,11 @@ func splitCSV(s string) []string {
 		return nil
 	}
 	result := []string{}
-	for _, part := range splitString(s, ',') {
-		trimmed := trimSpace(part)
+	for _, part := range strings.Split(s, ",") {
+		trimmed := strings.TrimSpace(part)
 		if trimmed != "" {
 			result = append(result, trimmed)
 		}
 	}
 	return result
-}
-
-func splitString(s string, sep rune) []string {
-	result := []string{}
-	current := ""
-	for _, ch := range s {
-		if ch == sep {
-			result = append(result, current)
-			current = ""
-		} else {
-			current += string(ch)
-		}
-	}
-	if current != "" || len(result) > 0 {
-		result = append(result, current)
-	}
-	return result
-}
-
-func trimSpace(s string) string {
-	start := 0
-	end := len(s)
-
-	for start < end && isSpace(s[start]) {
-		start++
-	}
-
-	for end > start && isSpace(s[end-1]) {
-		end--
-	}
-
-	return s[start:end]
-}
-
-func isSpace(ch byte) bool {
-	return ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r'
 }
