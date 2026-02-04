@@ -5,6 +5,8 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+
+	"github.com/modell-aachen/machine2/internal/util"
 )
 
 // Run sets up Docker buildx
@@ -17,7 +19,7 @@ func Run() error {
 	markerFile := filepath.Join(homeDir, ".docker_buildx_builder_created")
 
 	// Check if buildx builder already created
-	if fileExists(markerFile) {
+	if util.FileExists(markerFile) {
 		return nil
 	}
 
@@ -36,9 +38,4 @@ func Run() error {
 	}
 
 	return nil
-}
-
-func fileExists(path string) bool {
-	_, err := os.Stat(path)
-	return err == nil
 }

@@ -5,6 +5,8 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+
+	"github.com/modell-aachen/machine2/internal/util"
 )
 
 type completion struct {
@@ -45,11 +47,11 @@ func installCompletion(homeDir, shell, cmd, version string) error {
 	cmdCompletionPath := filepath.Join(completionsPath, fmt.Sprintf("%s_%s.sh", cmd, version))
 
 	// Check if shell rc file exists and completion doesn't exist yet
-	if !fileExists(shellPath) {
+	if !util.FileExists(shellPath) {
 		return nil // Skip if shell rc doesn't exist
 	}
 
-	if fileExists(cmdCompletionPath) {
+	if util.FileExists(cmdCompletionPath) {
 		return nil // Already installed
 	}
 
@@ -81,9 +83,4 @@ func installCompletion(homeDir, shell, cmd, version string) error {
 	}
 
 	return nil
-}
-
-func fileExists(path string) bool {
-	_, err := os.Stat(path)
-	return err == nil
 }

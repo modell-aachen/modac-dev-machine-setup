@@ -5,6 +5,8 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+
+	"github.com/modell-aachen/machine2/internal/util"
 )
 
 // Run sets up Claude configuration
@@ -24,7 +26,7 @@ func Run() error {
 	claudeMdPath := filepath.Join(claudeDir, "CLAUDE.md")
 
 	// Check if CLAUDE.md already exists
-	if fileExists(claudeMdPath) {
+	if util.FileExists(claudeMdPath) {
 		return nil
 	}
 
@@ -61,13 +63,13 @@ func getTemplatesDir() (string, error) {
 	shareDir := filepath.Join(binDir, "..", "share", "machine2", "templates")
 
 	// Check if the share directory exists
-	if fileExists(shareDir) {
+	if util.FileExists(shareDir) {
 		return shareDir, nil
 	}
 
 	// Fallback: check if we're running from the repo (development mode)
 	repoTemplatesDir := filepath.Join(binDir, "..", "scripts", "templates")
-	if fileExists(repoTemplatesDir) {
+	if util.FileExists(repoTemplatesDir) {
 		return repoTemplatesDir, nil
 	}
 
@@ -89,9 +91,4 @@ func copyFile(src, dst string) error {
 
 	_, err = io.Copy(destFile, sourceFile)
 	return err
-}
-
-func fileExists(path string) bool {
-	_, err := os.Stat(path)
-	return err == nil
 }

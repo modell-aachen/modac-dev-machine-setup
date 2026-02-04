@@ -5,6 +5,8 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+
+	"github.com/modell-aachen/machine2/internal/util"
 )
 
 // Run sets up development certificates using mkcert
@@ -17,7 +19,7 @@ func Run() error {
 
 	// Check if root CA exists
 	rootCAPem := filepath.Join(rootCADir, "rootCA.pem")
-	if !fileExists(rootCAPem) {
+	if !util.FileExists(rootCAPem) {
 		fmt.Printf("Generating root CA in '%s'\n", rootCADir)
 		cmd := exec.Command("mkcert", "-install")
 		cmd.Env = append(os.Environ(), fmt.Sprintf("CAROOT=%s", rootCADir))
@@ -38,7 +40,7 @@ func Run() error {
 	location := filepath.Join(homeDir, "certs", host)
 	certPath := filepath.Join(location, host+".pem")
 
-	if !fileExists(certPath) {
+	if !util.FileExists(certPath) {
 		fmt.Printf("Generating certificate for '%s' in '%s'\n", host, location)
 
 		// Create directory
@@ -58,9 +60,4 @@ func Run() error {
 	}
 
 	return nil
-}
-
-func fileExists(path string) bool {
-	_, err := os.Stat(path)
-	return err == nil
 }

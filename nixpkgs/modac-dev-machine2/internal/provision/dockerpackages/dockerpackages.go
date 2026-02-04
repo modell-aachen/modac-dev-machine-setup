@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/modell-aachen/machine2/internal/platform"
+	"github.com/modell-aachen/machine2/internal/util"
 )
 
 // Run installs Docker packages
@@ -73,7 +74,7 @@ func runDarwin() error {
 	dockerConfigPath := filepath.Join(homeDir, ".docker", "config.json")
 	needsConfig := false
 
-	if !fileExists(dockerConfigPath) {
+	if !util.FileExists(dockerConfigPath) {
 		needsConfig = true
 	} else {
 		content, err := os.ReadFile(dockerConfigPath)
@@ -149,7 +150,7 @@ func runUbuntu() error {
 	// Not in distrobox, install docker normally
 
 	// Check and install GPG key
-	if !fileExists("/etc/apt/keyrings/docker.asc") {
+	if !util.FileExists("/etc/apt/keyrings/docker.asc") {
 		fmt.Println("Installing docker GPG key...")
 
 		installCmd := exec.Command("sudo", "apt-get", "install", "-y", "ca-certificates", "curl")
@@ -180,7 +181,7 @@ func runUbuntu() error {
 	}
 
 	// Check and add docker repository
-	if !fileExists("/etc/apt/sources.list.d/docker.list") {
+	if !util.FileExists("/etc/apt/sources.list.d/docker.list") {
 		fmt.Println("Adding docker repository...")
 
 		// Get Ubuntu codename
@@ -253,10 +254,5 @@ func canAccessDockerWithoutSudo() bool {
 	// Try to run a simple docker command without sudo
 	cmd := exec.Command("docker", "ps")
 	err := cmd.Run()
-	return err == nil
-}
-
-func fileExists(path string) bool {
-	_, err := os.Stat(path)
 	return err == nil
 }

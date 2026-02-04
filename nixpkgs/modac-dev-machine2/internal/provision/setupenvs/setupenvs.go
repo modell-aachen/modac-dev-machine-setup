@@ -8,6 +8,8 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+
+	"github.com/modell-aachen/machine2/internal/util"
 )
 
 type DevboxConfig struct {
@@ -28,7 +30,7 @@ func Run() error {
 	tmpPath := filepath.Join(devboxPath, "tmp.json")
 
 	// Remove tmp file if it exists
-	if fileExists(tmpPath) {
+	if util.FileExists(tmpPath) {
 		if err := os.Remove(tmpPath); err != nil {
 			return fmt.Errorf("failed to remove tmp file: %w", err)
 		}
@@ -85,7 +87,7 @@ func Run() error {
 
 	// Remove "export " from $HOME/.env if present
 	envFile := filepath.Join(homeDir, ".env")
-	if fileExists(envFile) {
+	if util.FileExists(envFile) {
 		content, err := os.ReadFile(envFile)
 		if err != nil {
 			return fmt.Errorf("failed to read .env file: %w", err)
@@ -149,13 +151,13 @@ func getTemplatesDir() (string, error) {
 	shareDir := filepath.Join(binDir, "..", "share", "machine2", "templates")
 
 	// Check if the share directory exists
-	if fileExists(shareDir) {
+	if util.FileExists(shareDir) {
 		return shareDir, nil
 	}
 
 	// Fallback: check if we're running from the repo (development mode)
 	repoTemplatesDir := filepath.Join(binDir, "..", "scripts", "templates")
-	if fileExists(repoTemplatesDir) {
+	if util.FileExists(repoTemplatesDir) {
 		return repoTemplatesDir, nil
 	}
 
@@ -241,9 +243,4 @@ func shellQuote(s string) string {
 	// Simple shell quoting: wrap in single quotes and escape single quotes
 	s = strings.ReplaceAll(s, "'", "'\"'\"'")
 	return "'" + s + "'"
-}
-
-func fileExists(path string) bool {
-	_, err := os.Stat(path)
-	return err == nil
 }

@@ -6,6 +6,8 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+
+	"github.com/modell-aachen/machine2/internal/util"
 )
 
 // Run sets up Node.js tooling (yarn via corepack)
@@ -18,7 +20,7 @@ func Run() error {
 
 	// Check if yarn is already installed
 	yarnPath := filepath.Join(devboxPath, ".devbox", "virtenv", "nodejs", "corepack-bin", "yarn")
-	if fileExists(yarnPath) {
+	if util.FileExists(yarnPath) {
 		fmt.Println("Yarn is already installed")
 		return nil
 	}
@@ -42,9 +44,4 @@ func getDevboxGlobalPath() (string, error) {
 		return "", err
 	}
 	return strings.TrimSpace(string(output)), nil
-}
-
-func fileExists(path string) bool {
-	_, err := os.Stat(path)
-	return err == nil
 }

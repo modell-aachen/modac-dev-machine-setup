@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 
 	"github.com/modell-aachen/machine2/internal/platform"
+	"github.com/modell-aachen/machine2/internal/util"
 )
 
 // Run installs system packages based on the platform
@@ -70,7 +71,7 @@ func runDarwin() error {
 	}
 
 	brewfilePath := filepath.Join(homeDir, "Brewfile")
-	if fileExists(brewfilePath) {
+	if util.FileExists(brewfilePath) {
 		fmt.Println("Found Brewfile, processing...")
 
 		// Check if bundle needs to be run
@@ -157,9 +158,4 @@ func runUbuntu() error {
 	}
 
 	return nil
-}
-
-func fileExists(path string) bool {
-	_, err := os.Stat(path)
-	return err == nil
 }
