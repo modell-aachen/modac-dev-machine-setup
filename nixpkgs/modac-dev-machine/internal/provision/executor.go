@@ -11,12 +11,14 @@ import (
 	"github.com/modell-aachen/machine/internal/provision/certificates"
 	"github.com/modell-aachen/machine/internal/provision/claude"
 	"github.com/modell-aachen/machine/internal/provision/completions"
+	"github.com/modell-aachen/machine/internal/provision/devboxupdate"
 	"github.com/modell-aachen/machine/internal/provision/docker"
 	"github.com/modell-aachen/machine/internal/provision/dockerpackages"
 	"github.com/modell-aachen/machine/internal/provision/githubauthlogin"
 	"github.com/modell-aachen/machine/internal/provision/installmodacshellhelper"
 	"github.com/modell-aachen/machine/internal/provision/kubectlkrew"
 	"github.com/modell-aachen/machine/internal/provision/node"
+	"github.com/modell-aachen/machine/internal/provision/onepassword"
 	"github.com/modell-aachen/machine/internal/provision/orbstack"
 	"github.com/modell-aachen/machine/internal/provision/packages"
 	"github.com/modell-aachen/machine/internal/provision/setupdev"
@@ -25,8 +27,7 @@ import (
 )
 
 type Options struct {
-	Filter      string
-	SkipInstall bool
+	Filter string
 }
 
 // ModuleEntry represents a provisioning module with its name and runner function
@@ -37,6 +38,8 @@ type ModuleEntry struct {
 
 // allModules defines the ordered list of all provisioning modules
 var allModules = []ModuleEntry{
+	{"devbox-update", devboxupdate.Run},
+	{"onepassword", onepassword.Run},
 	{"packages", packages.Run},
 	{"setup-envs", setupenvs.Run},
 	{"asdf-packages", asdfpackages.Run},
@@ -102,10 +105,6 @@ func Execute(opts *Options) error {
 	}
 
 	modules := FilterModules(opts.Filter)
-
-	if !opts.SkipInstall {
-		out.Info("Skipping install step (not implemented in Go CLI)")
-	}
 
 	// Run all modules
 	for _, module := range modules {

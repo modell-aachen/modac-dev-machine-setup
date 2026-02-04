@@ -18,14 +18,8 @@ var provisionCmd = &cobra.Command{
 			return fmt.Errorf("failed to get filter flag: %w", err)
 		}
 
-		skipInstall, err := cmd.Flags().GetBool("skip-install")
-		if err != nil {
-			return fmt.Errorf("failed to get skip-install flag: %w", err)
-		}
-
 		opts := &provision.Options{
-			Filter:      filter,
-			SkipInstall: skipInstall,
+			Filter: filter,
 		}
 
 		return provision.Execute(opts)
@@ -41,7 +35,6 @@ var listModulesCmd = &cobra.Command{
 }
 
 func init() {
-	provisionCmd.Flags().StringP("filter", "f", "", "Comma-separated list of modules to run (implies --skip-install)")
-	provisionCmd.Flags().Bool("skip-install", false, "Skip running install, devbox shellenv, and op signin")
+	provisionCmd.Flags().StringP("filter", "f", "", "Comma-separated list of modules to run")
 	provisionCmd.AddCommand(listModulesCmd)
 }

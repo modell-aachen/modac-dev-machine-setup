@@ -22,8 +22,6 @@ logfile="$HOME/.cache/modac-dev-provisioner/install.log"
 mkdir -p "$(dirname "$logfile")"
 echo "Installation started at $(date)" > "$logfile"
 
-env_path="$HOME/.secrets/.env"
-
 # Helper functions
 function is_distrobox() {
     [ -n "$CONTAINER_ID" ]
@@ -40,10 +38,6 @@ function info() {
 
 function success() {
     echo -e "${GREEN}  ✓${RESET} $1"
-}
-
-function warning() {
-    echo -e "${YELLOW}  ⚠${RESET} $1"
 }
 
 function error() {
@@ -111,27 +105,15 @@ function check_prerequisites() {
     fi
 }
 
-devbox_template=$(cat << EOF
+# Minimal devbox configuration - just includes the modac plugin
+devbox_template=$(cat << 'EOF'
 {
-    "\$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.13.6/.schema/devbox.schema.json",
+    "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.13.6/.schema/devbox.schema.json",
     "packages": [],
     "shell": {
         "init_hook": [],
         "scripts": {}
     },
-    "op_secrets_tpl": {
-        "HARBOR_USERNAME": "op://Employee/Harbor/username",
-        "HARBOR_PASSWORD": "op://Employee/Harbor/password",
-        "NEXUS_BOT_TOKEN": "op://4kbrfouay733wowrd7fkpkcymq/Nexus - Bot Readonly/password",
-        "FONTAWESOME_NEXUS_AUTH_TOKEN": "op://Entwicklung/FONTAWESOME_NEXUS_AUTH_TOKEN/password",
-        "OBAN_AUTH_TOKEN": "op://Entwicklung/Oban Pro/credential",
-        "AZURE_TRANSLATE_ENDPOINT": "op://Entwicklung/Azure Translate/username",
-        "AZURE_TRANSLATE_API_KEY": "op://Entwicklung/Azure Translate/credential",
-        "TOLGEE_PROJECT_ID": "op://Entwicklung/Tolgee/text",
-        "TOLGEE_API_KEY": "op://Entwicklung/Tolgee/credential"
-    },
-    "env": {},
-    "env_from": "${env_path}",
     "include": [
         "github:modell-aachen/modac-dev-machine-setup?dir=devbox/plugins/modac"
     ]
@@ -206,9 +188,8 @@ function show_next_steps() {
 
     echo ""
     echo -e "${BOLD}${CYAN}Next Steps:${RESET}"
-    echo -e "  ${CYAN}1.${RESET} Configure 1Password and connect to 1Password CLI"
-    echo -e "  ${CYAN}2.${RESET} Run: ${BOLD}source $shell_rc${RESET}"
-    echo -e "  ${CYAN}3.${RESET} Run: ${BOLD}machine provision${RESET}"
+    echo -e "  ${CYAN}1.${RESET} Run: ${BOLD}source $shell_rc${RESET}"
+    echo -e "  ${CYAN}2.${RESET} Run: ${BOLD}machine provision${RESET}"
     echo -e "\n${DIM}Installation log: $logfile${RESET}\n"
 }
 
@@ -218,9 +199,9 @@ echo "╔═══════════════════════�
 echo "║   MODAC Development Bootstrap          ║"
 echo "╚════════════════════════════════════════╝"
 echo -e "${RESET}"
-echo -e "${DIM}This installer sets up two main components:"
-echo -e "  1. Devbox - Development environment manager"
-echo -e "  2. 1Password - Secrets and credential management${RESET}\n"
+echo -e "${DIM}This installer bootstraps the minimum required to run 'machine provision':"
+echo -e "  • Devbox - Development environment manager"
+echo -e "  • Machine CLI - Provisioning tool${RESET}\n"
 
 # Confirmation prompt
 echo -e "${BOLD}Proceed with installation?${RESET} ${DIM}[y/N]${RESET} "
@@ -235,9 +216,9 @@ echo ""
 check_prerequisites
 
 # ============================================================================
-# PART 1: DEVBOX SETUP
+# DEVBOX SETUP
 # ============================================================================
-section "Part 1/2: Devbox Setup"
+section "Devbox Setup"
 
 # Install system prerequisites
 if $IS_LINUX; then
@@ -270,20 +251,12 @@ if ! command -v devbox >/dev/null 2>&1; then
     fi
 fi
 
-# Configure Devbox environment
-info "Configuring Devbox environment"
-
-if [[ ! -f "$env_path" ]]; then
-    info "Creating secrets directory"
-    mkdir -p "$HOME/.secrets"
-    touch "$env_path"
-    success "Created $env_path"
-fi
-
+# Configure shell hooks
 for shell in bash zsh; do
     add_init_hook "$shell"
 done
 
+# Create devbox global configuration
 default_devbox_dir="$HOME/.local/share/devbox/global/default"
 global_devbox="$default_devbox_dir/devbox.json"
 
@@ -298,67 +271,17 @@ if [ ! -f "$global_devbox" ]; then
     success "Created $global_devbox"
 fi
 
-execute "Updating devbox global environment (this might take a while)" devbox global update
+execute "Installing machine CLI via devbox" devbox global update
 info "Loading devbox environment"
 eval "$(devbox global shellenv --preserve-path-stack -r 2>> "$logfile")" && hash -r 2>> "$logfile"
 success "Environment loaded"
 
-success "Devbox setup complete"
-
-# ============================================================================
-# PART 2: 1PASSWORD SETUP
-# ============================================================================
-section "Part 2/2: 1Password Setup"
-
-if $IS_LINUX; then
-    op_keyring=/usr/share/keyrings/1password-archive-keyring.gpg
-    if [ ! -f "$op_keyring" ]; then
-        execute "Adding 1Password GPG keyring" bash -c "curl -sS https://downloads.1password.com/linux/keys/1password.asc | sudo gpg --dearmor --output \"$op_keyring\""
-    fi
-
-    op_source_list=/etc/apt/sources.list.d/1password.list
-    if [ ! -f "$op_source_list" ]; then
-        execute "Adding 1Password apt repository" bash -c "echo 'deb [arch=amd64 signed-by=$op_keyring] https://downloads.1password.com/linux/debian/amd64 stable main' | sudo tee \"$op_source_list\""
-    fi
-
-    op_gpg=/usr/share/debsig/keyrings/AC2D62742012EA22/debsig.gpg
-    if [ ! -f "$op_gpg" ]; then
-        info "Setting up 1Password package signing"
-        sudo mkdir -p /etc/debsig/policies/AC2D62742012EA22
-        execute "Adding debsig policy" bash -c "curl -sS https://downloads.1password.com/linux/debian/debsig/1password.pol | sudo tee /etc/debsig/policies/AC2D62742012EA22/1password.pol"
-        sudo mkdir -p /usr/share/debsig/keyrings/AC2D62742012EA22
-        execute "Adding debsig keyring" bash -c "curl -sS https://downloads.1password.com/linux/keys/1password.asc | sudo gpg --dearmor --output \"$op_gpg\""
-        execute "Updating apt package list" sudo apt update
-    fi
-
-    # Check if 1Password is not installed
-    if ! dpkg -l 1password 2>/dev/null | grep -q '^ii'; then
-        execute "Installing 1Password and CLI" sudo apt install -y 1password 1password-cli
-        if is_distrobox; then
-            execute "Installing audio libraries for Distrobox" sudo apt install -y libasound2t64
-        fi
-    else
-        skip "1Password already installed"
-    fi
-
-    # Export to Distrobox if needed
-    if is_distrobox; then
-        execute "Exporting 1Password app" distrobox-export --app 1password
-    fi
-else
-    if ! brew list 1password-cli >/dev/null 2>&1; then
-        execute "Installing 1Password and CLI via Homebrew" brew install --cask 1password 1password-cli
-    else
-        skip "1Password already installed"
-    fi
-fi
-
 echo "Installation completed at $(date)" >> "$logfile"
 
-success "1Password setup complete"
+success "Bootstrap complete"
 echo ""
-echo -e "${BOLD}${GREEN}✓ All components installed successfully!${RESET}"
-echo -e "${DIM}  • Devbox: Development environment ready"
-echo -e "${DIM}  • 1Password: Secrets management ready${RESET}\n"
+echo -e "${BOLD}${GREEN}✓ Bootstrap successful!${RESET}"
+echo -e "${DIM}  • Devbox: Installed and configured"
+echo -e "${DIM}  • Machine CLI: Ready to use${RESET}\n"
 
 show_next_steps
