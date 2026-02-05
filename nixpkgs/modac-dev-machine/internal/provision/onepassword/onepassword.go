@@ -1,9 +1,12 @@
 package onepassword
 
 import (
+	"bufio"
+	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
+	"time"
 
 	"github.com/modell-aachen/machine/internal/output"
 	"github.com/modell-aachen/machine/internal/platform"
@@ -26,7 +29,7 @@ func runDarwin(out *output.Context) error {
 	cmd := exec.Command("brew", "list", "1password-cli")
 	if err := cmd.Run(); err == nil {
 		out.Skipped("1Password already installed")
-		return nil
+		return postInstallSetup(out, platform.Darwin)
 	}
 
 	out.Step("Installing 1Password and CLI via Homebrew")
@@ -34,7 +37,7 @@ func runDarwin(out *output.Context) error {
 		return fmt.Errorf("failed to install 1Password: %w", err)
 	}
 
-	return nil
+	return postInstallSetup(out, platform.Darwin)
 }
 
 func runUbuntu(out *output.Context) error {
@@ -45,7 +48,10 @@ func runUbuntu(out *output.Context) error {
 		// Check if package is actually installed (starts with 'ii')
 		if len(output) > 2 && output[0] == 'i' && output[1] == 'i' {
 			out.Skipped("1Password already installed")
-			return exportToDistroboxIfNeeded(out)
+			if err := exportToDistroboxIfNeeded(out); err != nil {
+				return err
+			}
+			return postInstallSetup(out, platform.Ubuntu)
 		}
 	}
 
@@ -105,7 +111,11 @@ func runUbuntu(out *output.Context) error {
 		}
 	}
 
-	return exportToDistroboxIfNeeded(out)
+	if err := exportToDistroboxIfNeeded(out); err != nil {
+		return err
+	}
+
+	return postInstallSetup(out, platform.Ubuntu)
 }
 
 func isDistrobox() bool {
@@ -122,5 +132,120 @@ func exportToDistroboxIfNeeded(out *output.Context) error {
 		return fmt.Errorf("failed to export 1Password app: %w", err)
 	}
 
+	return nil
+}
+
+func postInstallSetup(out *output.Context, plat platform.Platform) error {
+	// Step 1: Open the 1Password app
+	if err := openOnePasswordApp(out, plat); err != nil {
+		return err
+	}
+
+	// Step 2: Ensure CLI integration is enabled
+	if err := ensureCLIIntegration(out); err != nil {
+		return err
+	}
+
+	// Step 3: Sign in the user
+	if err := signInUser(out); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func openOnePasswordApp(out *output.Context, plat platform.Platform) error {
+	out.Step("Opening 1Password app")
+
+	var cmd *exec.Cmd
+	switch plat {
+	case platform.Darwin:
+		cmd = exec.Command("open", "-a", "1Password", "--args", "--silent")
+	case platform.Ubuntu:
+		cmd = exec.Command("1password", "--silent")
+	default:
+		return fmt.Errorf("unsupported platform for opening 1Password: %s", plat)
+	}
+
+	if err := cmd.Start(); err != nil {
+		return fmt.Errorf("failed to open 1Password app: %w", err)
+	}
+
+	out.Success("1Password app opened")
+	out.Step("Waiting for 1Password app to be ready")
+
+	// Poll until the app is ready (max 60 seconds)
+	timeout := time.After(60 * time.Second)
+	ticker := time.NewTicker(2 * time.Second)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-timeout:
+			return fmt.Errorf("timeout waiting for 1Password app to be ready. Please ensure the app is unlocked and try again")
+		case <-ticker.C:
+			// Check if the CLI can connect to the app
+			checkCmd := exec.Command("op", "account", "list")
+			if err := checkCmd.Run(); err == nil {
+				out.Success("1Password app is ready")
+				return nil
+			}
+			// If error contains "cannot connect", app is still starting up - keep polling
+		}
+	}
+}
+
+func ensureCLIIntegration(out *output.Context) error {
+	out.Step("Checking 1Password CLI integration")
+
+	reader := bufio.NewReader(os.Stdin)
+
+	for {
+		cmd := exec.Command("op", "--format", "json", "account", "list")
+		output, err := cmd.CombinedOutput()
+
+		if err == nil && len(output) > 0 {
+			// Try to parse as JSON array to confirm it's valid
+			var accounts []interface{}
+			if err := json.Unmarshal(output, &accounts); err == nil && len(accounts) > 0 {
+				out.Success("1Password CLI integration is enabled")
+				return nil
+			}
+		}
+
+		// CLI integration is not enabled
+		fmt.Println("\n⚠️  1Password CLI integration is not enabled.")
+		fmt.Println("To enable CLI integration:")
+		fmt.Println("  1. Open the 1Password app")
+		fmt.Println("  2. Go to Settings → Developer")
+		fmt.Println("  3. Enable 'Connect with 1Password CLI'")
+		fmt.Println("\nPress Enter once you've enabled CLI integration to continue...")
+
+		_, err = reader.ReadString('\n')
+		if err != nil {
+			return fmt.Errorf("failed to read user input: %w", err)
+		}
+	}
+}
+
+func signInUser(out *output.Context) error {
+	out.Step("Signing in to 1Password")
+
+	cmd := exec.Command("op", "signin")
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	if err := cmd.Run(); err != nil {
+		// Check if already signed in
+		checkCmd := exec.Command("op", "account", "get")
+		if checkErr := checkCmd.Run(); checkErr == nil {
+			out.Success("Already signed in to 1Password")
+			return nil
+		}
+		return fmt.Errorf("failed to sign in to 1Password: %w", err)
+	}
+
+	out.Success("Successfully signed in to 1Password")
 	return nil
 }
