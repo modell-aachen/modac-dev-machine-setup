@@ -271,7 +271,7 @@ if [ ! -f "$global_devbox" ]; then
     success "Created $global_devbox"
 fi
 
-execute "Installing machine CLI via devbox" devbox global update
+execute "Installing machine CLI via devbox ${BOLD}(this might take a while)${RESET}" devbox global update
 info "Loading devbox environment"
 eval "$(devbox global shellenv --preserve-path-stack -r 2>> "$logfile")" && hash -r 2>> "$logfile"
 success "Environment loaded"
