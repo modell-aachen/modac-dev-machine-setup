@@ -203,14 +203,24 @@ echo -e "${DIM}This installer bootstraps the minimum required to run 'machine pr
 echo -e "  • Devbox - Development environment manager"
 echo -e "  • Machine CLI - Provisioning tool${RESET}\n"
 
-# Confirmation prompt
-echo -e "${BOLD}Proceed with installation?${RESET} ${DIM}[y/N]${RESET} "
-read -r response
-if [[ ! "$response" =~ ^[Yy]$ ]]; then
-    echo -e "${YELLOW}Installation cancelled.${RESET}"
-    exit 0
+# Confirmation prompt (allow NONINTERACTIVE=1 to skip)
+if [[ "${NONINTERACTIVE}" == "1" ]]; then
+    info "Running in non-interactive mode (NONINTERACTIVE=1), proceeding automatically..."
+    echo ""
+elif [ -r /dev/tty ]; then
+    echo -e "${BOLD}Proceed with installation?${RESET} ${DIM}[y/N]${RESET} "
+    read -r response < /dev/tty
+    if [[ ! "$response" =~ ^[Yy]$ ]]; then
+        echo -e "${YELLOW}Installation cancelled.${RESET}"
+        exit 0
+    fi
+    echo ""
+else
+    error "No terminal available for confirmation and NONINTERACTIVE not set"
+    echo "To proceed automatically, run with: NONINTERACTIVE=1 bash install"
+    echo "Or use: wget -qO- <url> | NONINTERACTIVE=1 bash"
+    exit 1
 fi
-echo ""
 
 # Run prerequisite checks
 check_prerequisites
