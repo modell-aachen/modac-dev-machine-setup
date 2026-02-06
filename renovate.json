@@ -5,6 +5,14 @@
   ],
   "prHourlyLimit": 0,
   "prConcurrentLimit": 0,
+  "packageRules": [
+    {
+      "matchManagers": ["gomod"],
+      "matchFileNames": ["nixpkgs/modac-dev-machine/**"],
+      "enabled": false,
+      "description": "Disable Go module updates for modac-dev-machine (requires manual vendorHash update in flake.nix)"
+    }
+  ],
   "regexManagers": [
     {
       "fileMatch": ["^provisioning/vars/tooling_version.yml$", "^devbox/provision$"],

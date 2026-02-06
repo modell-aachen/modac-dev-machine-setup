@@ -20,8 +20,7 @@
             src = ./.;
 
             # Go module vendoring hash
-            # Run: nix build .#machine 2>&1 | grep "got:" to get the actual hash
-            vendorHash = "sha256-hocnLCzWN8srQcO3BMNkd2lt0m54Qe7sqAhUxVZlz1k=";
+            vendorHash = "sha256-7K17JaXFsjf163g5PXCb5ng2gYdotnZ2IDKk8KFjNj0=";
 
             # Install templates alongside binary (scripts are now in Go)
             postInstall = ''
