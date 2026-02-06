@@ -21,6 +21,7 @@ import (
 	"github.com/modell-aachen/machine/internal/provision/onepassword"
 	"github.com/modell-aachen/machine/internal/provision/orbstack"
 	"github.com/modell-aachen/machine/internal/provision/packages"
+	"github.com/modell-aachen/machine/internal/provision/restorebackup"
 	"github.com/modell-aachen/machine/internal/provision/setupdev"
 	"github.com/modell-aachen/machine/internal/provision/setupenvs"
 	"github.com/modell-aachen/machine/internal/provision/setupk8scluster"
@@ -40,6 +41,7 @@ type ModuleEntry struct {
 var allModules = []ModuleEntry{
 	{"devbox-update", devboxupdate.Run},
 	{"onepassword", onepassword.Run},
+	{"restore-backup", restorebackup.Run},
 	{"packages", packages.Run},
 	{"setup-envs", setupenvs.Run},
 	{"asdf-packages", asdfpackages.Run},
