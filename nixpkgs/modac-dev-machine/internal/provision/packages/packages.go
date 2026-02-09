@@ -11,6 +11,8 @@ import (
 	"github.com/modell-aachen/machine/internal/util"
 )
 
+const distroboxScriptName = "distrobox-host-exec-with-env"
+
 // Run installs system packages based on the platform
 func Run(out *output.Context, plat platform.Platform) error {
 	switch plat {
@@ -84,6 +86,10 @@ func runDarwin(out *output.Context) error {
 }
 
 func runUbuntu(out *output.Context) error {
+	if err := installDistroboxScript(out); err != nil {
+		return err
+	}
+
 	// Update apt
 	out.Step("Updating apt package lists")
 	if err := out.RunCommand("sudo", "apt", "update"); err != nil {
@@ -141,3 +147,37 @@ func runUbuntu(out *output.Context) error {
 
 	return nil
 }
+
+func installDistroboxScript(out *output.Context) error {
+	if os.Getenv("CONTAINER_ID") == "" {
+		return nil
+	}
+
+	destPath := filepath.Join("/usr/local/bin", distroboxScriptName)
+	if util.FileExists(destPath) {
+		out.Skipped(distroboxScriptName + " already installed")
+		return nil
+	}
+
+	templatesDir, err := util.GetTemplatesDir()
+	if err != nil {
+		return fmt.Errorf("failed to find templates directory: %w", err)
+	}
+
+	srcPath := filepath.Join(templatesDir, distroboxScriptName)
+	if !util.FileExists(srcPath) {
+		return fmt.Errorf("template %s not found in %s", distroboxScriptName, templatesDir)
+	}
+
+	out.Step("Installing " + distroboxScriptName)
+	if err := out.RunCommand("sudo", "cp", srcPath, destPath); err != nil {
+		return fmt.Errorf("failed to copy %s: %w", distroboxScriptName, err)
+	}
+
+	if err := out.RunCommand("sudo", "chmod", "755", destPath); err != nil {
+		return fmt.Errorf("failed to set permissions on %s: %w", distroboxScriptName, err)
+	}
+
+	return nil
+}
+
