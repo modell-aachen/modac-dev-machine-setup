@@ -20,16 +20,11 @@ type DevboxConfig struct {
 }
 
 func DevboxPath() (string, error) {
-	devboxRoot := os.Getenv("DEVBOX_PROJECT_ROOT")
-	if devboxRoot == "" {
-		homeDir, err := os.UserHomeDir()
-		if err != nil {
-			return "", fmt.Errorf("failed to get home directory: %w", err)
-		}
-		devboxRoot = filepath.Join(homeDir, ".local", "share", "devbox", "global", "default")
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return "", fmt.Errorf("failed to get home directory: %w", err)
 	}
-
-	return filepath.Join(devboxRoot, "devbox.json"), nil
+	return filepath.Join(homeDir, ".local", "share", "devbox", "global", "default", "devbox.json"), nil
 }
 
 func LoadDevbox() (*DevboxConfig, error) {
