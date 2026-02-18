@@ -114,7 +114,7 @@ func runUbuntu(out *output.Context) error {
 			out.Step("Running inside a distrobox, linking docker")
 
 			// Create symlink for docker
-			if err := out.RunCommand("sudo", "ln", "-s", "/usr/bin/distrobox-host-exec", "/usr/local/bin/docker"); err != nil {
+			if err := out.RunCommand("sudo", "ln", "-s", "/usr/local/bin/distrobox-host-exec-with-env", "/usr/local/bin/docker"); err != nil {
 				return fmt.Errorf("failed to create docker symlink: %w", err)
 			}
 

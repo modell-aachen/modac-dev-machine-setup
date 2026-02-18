@@ -1,0 +1,35 @@
+#!/bin/bash
+# Wrapper to pass all container environment variables to distrobox-host-exec
+
+# Detect if we're called via symlink
+SCRIPT_NAME="$(basename "$0")"
+if [[ "$SCRIPT_NAME" != "distrobox-host-exec-with-env" ]]; then
+    COMMAND="$SCRIPT_NAME"
+    ARGS=("$@")
+else
+    COMMAND="$1"
+    shift
+    ARGS=("$@")
+fi
+
+# Create a temporary script that exports all variables
+TEMP_SCRIPT=$(mktemp)
+trap "rm -f $TEMP_SCRIPT" EXIT
+
+# Write export statements to temp script with proper quoting
+while IFS='=' read -r name value; do
+    if [[ "$name" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]] && [[ ! "$name" =~ ^BASH_FUNC_ ]]; then
+        # Use declare to properly handle special characters including trailing =
+        declare -p "$name" 2>/dev/null >> "$TEMP_SCRIPT" || true
+    fi
+done < <(env)
+
+# Add the command to execute
+printf '%q' "$COMMAND" >> "$TEMP_SCRIPT"
+for arg in "${ARGS[@]}"; do
+    printf ' %q' "$arg" >> "$TEMP_SCRIPT"
+done
+echo "" >> "$TEMP_SCRIPT"
+
+# Execute via distrobox-host-exec
+distrobox-host-exec bash "$TEMP_SCRIPT"

@@ -35,7 +35,7 @@ func Run(out *output.Context, plat platform.Platform) error {
 	}
 
 	// Get templates directory
-	templatesDir, err := getTemplatesDir()
+	templatesDir, err := util.GetTemplatesDir()
 	if err != nil {
 		return fmt.Errorf("failed to find templates directory: %w", err)
 	}
@@ -55,30 +55,6 @@ func Run(out *output.Context, plat platform.Platform) error {
 	return nil
 }
 
-func getTemplatesDir() (string, error) {
-	// Get the directory of the currently running binary
-	exePath, err := os.Executable()
-	if err != nil {
-		return "", fmt.Errorf("failed to get executable path: %w", err)
-	}
-
-	// Binary is in bin/, templates should be in ../share/machine/templates/
-	binDir := filepath.Dir(exePath)
-	shareDir := filepath.Join(binDir, "..", "share", "machine", "templates")
-
-	// Check if the share directory exists
-	if util.FileExists(shareDir) {
-		return shareDir, nil
-	}
-
-	// Fallback: check if we're running from the repo (development mode)
-	repoTemplatesDir := filepath.Join(binDir, "..", "scripts", "templates")
-	if util.FileExists(repoTemplatesDir) {
-		return repoTemplatesDir, nil
-	}
-
-	return "", fmt.Errorf("templates directory not found")
-}
 
 func copyFile(src, dst string) error {
 	sourceFile, err := os.Open(src)
