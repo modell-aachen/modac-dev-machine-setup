@@ -124,14 +124,18 @@ func (c *Context) Step(message string) {
 // All command output is written to the log file only
 func (c *Context) RunCommand(name string, arg ...string) error {
 	cmd := exec.Command(name, arg...)
+	return c.RunCmd(cmd)
+}
 
+// RunCmd executes a pre-built command, preserving its Dir and Env settings
+func (c *Context) RunCmd(cmd *exec.Cmd) error {
 	// Create a multi-writer that writes to both log file and captures output
 	logWriter := &logWriter{ctx: c, prefix: ""}
 
 	cmd.Stdout = logWriter
 	cmd.Stderr = logWriter
 
-	c.writeLog("\n$ %s %s\n", name, strings.Join(arg, " "))
+	c.writeLog("\n$ %s %s\n", cmd.Path, strings.Join(cmd.Args[1:], " "))
 
 	err := cmd.Run()
 

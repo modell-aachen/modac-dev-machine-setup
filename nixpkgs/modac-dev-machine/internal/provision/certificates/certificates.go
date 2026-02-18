@@ -26,7 +26,7 @@ func Run(out *output.Context, plat platform.Platform) error {
 		out.Step(fmt.Sprintf("Generating root CA in '%s'", rootCADir))
 		cmd := exec.Command("mkcert", "-install")
 		cmd.Env = append(os.Environ(), fmt.Sprintf("CAROOT=%s", rootCADir))
-		if err := out.RunCommand(cmd.Path, cmd.Args[1:]...); err != nil {
+		if err := out.RunCmd(cmd); err != nil {
 			return fmt.Errorf("failed to generate root CA: %w", err)
 		}
 	} else {
@@ -55,7 +55,7 @@ func Run(out *output.Context, plat platform.Platform) error {
 		cmd := exec.Command("mkcert", host)
 		cmd.Dir = location
 		cmd.Env = append(os.Environ(), fmt.Sprintf("CAROOT=%s", rootCADir))
-		if err := out.RunCommand(cmd.Path, cmd.Args[1:]...); err != nil {
+		if err := out.RunCmd(cmd); err != nil {
 			return fmt.Errorf("failed to generate certificate for %s: %w", host, err)
 		}
 	} else {
