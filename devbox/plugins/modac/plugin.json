@@ -111,10 +111,10 @@
     },
     "shell": {
         "init_hook": [
-            "SHELL=bash; [ -n \"$ZSH_VERSION\" ] && SHELL=zsh; source <(devbox completion $SHELL)",
-            "SHELL=bash; [ -n \"$ZSH_VERSION\" ] && SHELL=zsh; eval \"$(direnv hook $SHELL)\"",
+            "_DEVBOX_SHELL=bash; [ -n \"$ZSH_VERSION\" ] && _DEVBOX_SHELL=zsh; type complete &>/dev/null && source <(devbox completion $_DEVBOX_SHELL)",
+            "_DEVBOX_SHELL=bash; [ -n \"$ZSH_VERSION\" ] && _DEVBOX_SHELL=zsh; eval \"$(direnv hook $_DEVBOX_SHELL)\"",
             "source <(machine aliases)",
-            "SHELL=bash; [ -n \"$ZSH_VERSION\" ] && SHELL=zsh; [ -d $HOME/.${SHELL}_completions ] && for c in $(find $HOME/.${SHELL}_completions -type f); do source $c; done"
+            "_DEVBOX_SHELL=bash; [ -n \"$ZSH_VERSION\" ] && _DEVBOX_SHELL=zsh; type complete &>/dev/null && [ -d $HOME/.${_DEVBOX_SHELL}_completions ] && for c in $(find $HOME/.${_DEVBOX_SHELL}_completions -type f); do source $c; done"
         ],
         "scripts": {}
     },
