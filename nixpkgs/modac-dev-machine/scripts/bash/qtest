@@ -7,4 +7,4 @@ if [ -z "$REPOS_DIRECTORY" ] || [ ! -d "$REPOS_DIRECTORY" ] ; then
 fi
 
 pushd "$REPOS_DIRECTORY/QwikiContrib"
-./core/backend-test "$@"
+./perl/backend-test "$@"
