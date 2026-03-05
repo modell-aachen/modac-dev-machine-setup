@@ -87,22 +87,23 @@ func setupMcpConfig(out *output.Context, claudeDir string) error {
 		return nil
 	}
 
-	mcpPath := filepath.Join(claudeDir, ".mcp.json")
+	homeDir := filepath.Dir(claudeDir)
+	settingsPath := filepath.Join(homeDir, ".claude.json")
 
-	var existing map[string]any
-	if util.FileExists(mcpPath) {
-		data, err := os.ReadFile(mcpPath)
+	var settings map[string]any
+	if util.FileExists(settingsPath) {
+		data, err := os.ReadFile(settingsPath)
 		if err != nil {
-			return fmt.Errorf("failed to read existing MCP config: %w", err)
+			return fmt.Errorf("failed to read claude settings: %w", err)
 		}
-		if err := json.Unmarshal(data, &existing); err != nil {
-			return fmt.Errorf("failed to parse existing MCP config: %w", err)
+		if err := json.Unmarshal(data, &settings); err != nil {
+			return fmt.Errorf("failed to parse claude settings: %w", err)
 		}
 	} else {
-		existing = map[string]any{}
+		settings = map[string]any{}
 	}
 
-	existingServers, ok := existing["mcpServers"].(map[string]any)
+	existingServers, ok := settings["mcpServers"].(map[string]any)
 	if !ok {
 		existingServers = map[string]any{}
 	}
@@ -120,16 +121,16 @@ func setupMcpConfig(out *output.Context, claudeDir string) error {
 		return nil
 	}
 
-	existing["mcpServers"] = existingServers
+	settings["mcpServers"] = existingServers
 
-	data, err := json.MarshalIndent(existing, "", "  ")
+	data, err := json.MarshalIndent(settings, "", "  ")
 	if err != nil {
-		return fmt.Errorf("failed to marshal MCP config: %w", err)
+		return fmt.Errorf("failed to marshal claude settings: %w", err)
 	}
 
-	out.Step(fmt.Sprintf("Adding %d MCP server(s) to .mcp.json", added))
-	if err := os.WriteFile(mcpPath, append(data, '\n'), 0644); err != nil {
-		return fmt.Errorf("failed to write MCP config: %w", err)
+	out.Step(fmt.Sprintf("Adding %d MCP server(s) to ~/.claude.json", added))
+	if err := os.WriteFile(settingsPath, append(data, '\n'), 0644); err != nil {
+		return fmt.Errorf("failed to write claude settings: %w", err)
 	}
 
 	return nil
