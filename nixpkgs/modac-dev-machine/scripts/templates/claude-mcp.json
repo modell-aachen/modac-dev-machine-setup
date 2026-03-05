@@ -1,0 +1,23 @@
+{
+  "mcpServers": {
+    "grafana": {
+      "command": "uvx",
+      "args": [
+        "mcp-grafana",
+        "--disable-incident",
+        "--disable-write",
+        "--disable-alerting",
+        "--disable-oncall",
+        "--disable-asserts",
+        "--disable-sift",
+        "--disable-admin",
+        "--disable-pyroscope",
+        "--disable-rendering"
+      ],
+      "env": {
+        "GRAFANA_URL": "https://qwikinow.grafana.net/",
+        "GRAFANA_SERVICE_ACCOUNT_TOKEN": "${GRAFANA_SERVICE_ACCOUNT_TOKEN}"
+      }
+    }
+  }
+}

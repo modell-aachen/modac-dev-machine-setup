@@ -11,6 +11,7 @@
         "NEXUS_BOT_TOKEN": "op://4kbrfouay733wowrd7fkpkcymq/Nexus - Bot Readonly/password",
         "FONTAWESOME_NEXUS_AUTH_TOKEN": "op://Entwicklung/FONTAWESOME_NEXUS_AUTH_TOKEN/password",
         "NPM_MODAC_CLOUD_AUTH_TOKEN": "op://Entwicklung/npm-bot auth token - npm.modac.cloud/password",
+        "GRAFANA_SERVICE_ACCOUNT_TOKEN": "op://Entwicklung/qwikinow.grafana.net MCP - modac-dev-mcp/password",
         "OBAN_AUTH_TOKEN": "op://Entwicklung/Oban Pro/credential",
         "AZURE_TRANSLATE_ENDPOINT": "op://Entwicklung/Azure Translate/username",
         "AZURE_TRANSLATE_API_KEY": "op://Entwicklung/Azure Translate/credential",
