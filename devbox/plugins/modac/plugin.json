@@ -8,9 +8,7 @@
         "asdf-vm": {
             "version": "latest"
         },
-        "claude-code": {
-            "version": "latest"
-        },
+        "github:sadjow/claude-code-nix#claude-code": {},
         "crane": {
             "version": "latest"
         },
