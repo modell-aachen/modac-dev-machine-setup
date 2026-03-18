@@ -218,7 +218,7 @@ elif [ -r /dev/tty ]; then
 else
     error "No terminal available for confirmation and NONINTERACTIVE not set"
     echo "To proceed automatically, run with: NONINTERACTIVE=1 bash install"
-    echo "Or use: wget -qO- <url> | NONINTERACTIVE=1 bash"
+    echo "Or use: curl -fsSL <url> | NONINTERACTIVE=1 bash"
     exit 1
 fi
 

@@ -12,7 +12,8 @@ All other operating systems don't have any further requirements
 
 ### Install provisioner and devbox packages
 ```BASH
-wget -qO- https://raw.githubusercontent.com/modell-aachen/modac-dev-machine-setup/refs/heads/main/install | bash; source ~/.bashrc
+curl -fsSL https://raw.githubusercontent.com/modell-aachen/modac-dev-machine-setup/refs/heads/main/install | "$SHELL"
+source ~/."$(basename $SHELL)"rc
 ```
 
 ### Login to 1Password
