@@ -96,6 +96,20 @@ Use the printed version (e.g. 5:24.0.7-1~ubuntu.22.04~jammy) to ...
 sudo apt install docker-ce=*VERSION*
 ```
 
+## Erlang build fails with "No curses library functions found" or "CFLAGS must contain a -O flag" (macOS)
+
+When building Erlang via `asdf install erlang <version>` inside the nix-shell/devbox environment on macOS, the nix-shell can hide Homebrew's ncurses from the build system. Set these env vars before installing:
+
+```bash
+brew install ncurses
+export KERL_CONFIGURE_OPTIONS="--with-ssl=$(brew --prefix openssl@3) --without-javac"
+export LDFLAGS="-L$(brew --prefix ncurses)/lib -L/opt/homebrew/opt/unixodbc/lib"
+export CFLAGS="-O2 -g -I$(brew --prefix ncurses)/include"
+asdf install erlang 28.2
+```
+
+**Important:** `CFLAGS` must include `-O2 -g` — Erlang's configure requires an optimization flag.
+
 ## CLAUDE.md: How to add personal preferences
 
 The team's CLAUDE.md contains what we all can agree on. But everyone works differently. So feel free to enter your personal preferences to ~/.claude/personal-CLAUDE.md.
