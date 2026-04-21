@@ -16,7 +16,8 @@
         "AZURE_TRANSLATE_ENDPOINT": "op://Entwicklung/Azure Translate/username",
         "AZURE_TRANSLATE_API_KEY": "op://Entwicklung/Azure Translate/credential",
         "TOLGEE_PROJECT_ID": "op://Entwicklung/Tolgee/text",
-        "TOLGEE_API_KEY": "op://Entwicklung/Tolgee/credential"
+        "TOLGEE_API_KEY": "op://Entwicklung/Tolgee/credential",
+        "MIXPANEL_CLAUDE_EVENTS_TOKEN": "op://Entwicklung/Mixpanel Claude Events/credential"
     },
     "env": {},
     "env_from": "{env_path}"
