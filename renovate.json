@@ -11,6 +11,13 @@
       "matchFileNames": ["nixpkgs/modac-dev-machine/**"],
       "enabled": false,
       "description": "Disable Go module updates for modac-dev-machine (requires manual vendorHash update in flake.nix)"
+    },
+    {
+      "matchDepNames": ["sadjow/claude-code-nix"],
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true,
+      "description": "Auto-merge claude-code-nix tag/digest bumps"
     }
   ],
   "regexManagers": [
@@ -20,6 +27,16 @@
         "datasource=(?<datasource>.*?) depName=(?<depName>.*?)( versioning=(?<versioning>.*?))?\\n.*?:\\s\"(?<currentValue>.*)\"\\s"
       ],
       "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+    },
+    {
+      "fileMatch": ["^devbox/plugins/modac/plugin\\.json$"],
+      "matchStrings": [
+        "github:sadjow/claude-code-nix\\?ref=(?<currentValue>v[0-9.]+)&rev=(?<currentDigest>[a-f0-9]{40})#claude-code"
+      ],
+      "depNameTemplate": "sadjow/claude-code-nix",
+      "packageNameTemplate": "https://github.com/sadjow/claude-code-nix",
+      "datasourceTemplate": "github-tags",
+      "versioningTemplate": "semver"
     }
   ]
 }
