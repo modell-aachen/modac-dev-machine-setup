@@ -14,7 +14,7 @@ All other operating systems don't have any further requirements
 
 Linux
 ```BASH
--wget -qO- https://raw.githubusercontent.com/modell-aachen/modac-dev-machine-setup/refs/heads/main/install | bash; source ~/.bashrc
+wget -qO- https://raw.githubusercontent.com/modell-aachen/modac-dev-machine-setup/refs/heads/main/install | bash; source ~/.bashrc
 ```
 
 MacOs
