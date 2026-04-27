@@ -16,7 +16,7 @@
       "matchDepNames": ["sadjow/claude-code-nix"],
       "automerge": true,
       "automergeType": "pr",
-      "platformAutomerge": true,
+      "platformAutomerge": false,
       "description": "Auto-merge claude-code-nix tag/digest bumps"
     }
   ],
