@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/modell-aachen/machine/internal/backup"
+	"github.com/modell-aachen/machine/internal/devbox"
 	"github.com/modell-aachen/machine/internal/output"
 	"github.com/modell-aachen/machine/internal/platform"
 )
@@ -43,12 +44,6 @@ func Run(out *output.Context, plat platform.Platform) error {
 			out.Success("Backup restored successfully (second pass)")
 		}
 
-		// Run devbox global update
-		out.Step("Updating devbox global environment")
-		if err := out.RunCommand("devbox", "global", "update"); err != nil {
-			return fmt.Errorf("failed to update devbox: %w", err)
-		}
-
-		return nil
+		return devbox.GlobalUpdate(out)
 	})
 }
