@@ -11,6 +11,13 @@ All other operating systems don't have any further requirements
 ## Installation
 
 ### Install provisioner and devbox packages
+
+Linux
+```BASH
+-wget -qO- https://raw.githubusercontent.com/modell-aachen/modac-dev-machine-setup/refs/heads/main/install | bash; source ~/.bashrc
+```
+
+MacOs
 ```BASH
 curl -fsSL https://raw.githubusercontent.com/modell-aachen/modac-dev-machine-setup/refs/heads/main/install | "$SHELL"
 source ~/."$(basename $SHELL)"rc
