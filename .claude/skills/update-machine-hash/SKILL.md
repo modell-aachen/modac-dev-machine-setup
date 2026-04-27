@@ -7,5 +7,5 @@ allowed-tools: Bash(bash *)
 Run the update script and report the result:
 
 ```bash
-bash .claude/skills/update-machine-hash/scripts/update-machine-hash.sh
+bash "$(git rev-parse --show-toplevel)/.claude/skills/update-machine-hash/scripts/update-machine-hash.sh"
 ```
