@@ -34,7 +34,6 @@
         "github:sadjow/claude-code-nix/(?<currentValue>v[0-9.]+)#claude-code"
       ],
       "depNameTemplate": "sadjow/claude-code-nix",
-      "packageNameTemplate": "https://github.com/sadjow/claude-code-nix",
       "datasourceTemplate": "github-tags",
       "versioningTemplate": "semver"
     }
