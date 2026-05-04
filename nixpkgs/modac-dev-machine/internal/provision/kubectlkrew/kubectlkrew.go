@@ -10,7 +10,15 @@ import (
 // Run installs kubectl krew plugins
 func Run(out *output.Context, plat platform.Platform) error {
 	_ = plat
-	plugins := []string{"ctx", "ns", "konfig", "oidc-login"}
+	plugins := []string{"konfig", "oidc-login"}
+
+	// Remove plugins that have been replaced by other tools (e.g. ctx/ns -> kubie).
+	// Errors are tolerated because the plugin may not be installed on fresh machines.
+	obsolete := []string{"ctx", "ns"}
+	for _, plugin := range obsolete {
+		out.Step(fmt.Sprintf("Removing obsolete krew plugin: %s", plugin))
+		_ = out.RunCommand("krew", "uninstall", plugin)
+	}
 
 	for _, plugin := range plugins {
 		out.Step(fmt.Sprintf("Installing krew plugin: %s", plugin))
