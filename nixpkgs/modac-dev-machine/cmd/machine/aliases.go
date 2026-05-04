@@ -52,6 +52,18 @@ complete -F _qlone-completion qlone
 
 alias k='kubectl'
 complete -o default -F __start_kubectl k
+
+alias kctx='kubie ctx'
+alias kns='kubie ns'
+
+# kubie-only: current-context in ~/.kube/config entfernen, damit kubectl
+# ausserhalb einer kubie-Subshell keinen impliziten Context hat.
+# Nur wenn KUBECONFIG leer ist (sonst wuerden wir die temp-Config von kubie zerschiessen).
+if [ -z "$KUBECONFIG" ] && [ -f "$HOME/.kube/config" ] && command -v kubectl >/dev/null; then
+    if kubectl --kubeconfig="$HOME/.kube/config" config current-context >/dev/null 2>&1; then
+        kubectl --kubeconfig="$HOME/.kube/config" config unset current-context >/dev/null
+    fi
+fi
 `
 
 var aliasesCmd = &cobra.Command{

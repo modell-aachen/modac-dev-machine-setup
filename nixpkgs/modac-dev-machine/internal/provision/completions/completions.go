@@ -30,6 +30,7 @@ func Run(out *output.Context, plat platform.Platform) error {
 		{"op", "2_30_3"},
 		{"helm", "3_17_3"},
 		{"kubectl", "1_32_3"},
+		{"kubie", "0_25_4"},
 	}
 
 	for _, shell := range shells {
