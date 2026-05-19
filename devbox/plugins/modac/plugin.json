@@ -8,6 +8,9 @@
         "asdf-vm": {
             "version": "latest"
         },
+        "bashInteractive": {
+            "version": "latest"
+        },
         "github:sadjow/claude-code-nix/v2.1.145#claude-code": {},
         "crane": {
             "version": "latest"
