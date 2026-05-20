@@ -73,12 +73,22 @@ if [ -n "$ZSH_VERSION" ]; then
     _modac_kctx_zsh() {
         local -a items
         items=(${(f)"$(kubectl config get-contexts -o name 2>/dev/null)"})
-        _describe -t contexts 'kube context' items
+        if (( ${#items} == 0 )); then
+            _message 'no kube contexts'
+            return 1
+        fi
+        local expl
+        _wanted contexts expl 'kube context' compadd -a items
     }
     _modac_kns_zsh() {
         local -a items
         items=(${(f)"$(kubectl get namespaces -o name 2>/dev/null | sed 's|^namespace/||')"})
-        _describe -t namespaces 'kube namespace' items
+        if (( ${#items} == 0 )); then
+            _message 'no namespaces — enter a kubie context first (kctx)'
+            return 1
+        fi
+        local expl
+        _wanted namespaces expl 'kube namespace' compadd -a items
     }
     (( $+functions[compdef] )) || { autoload -Uz compinit && compinit -u 2>/dev/null; }
     compdef _modac_kctx_zsh kctx
