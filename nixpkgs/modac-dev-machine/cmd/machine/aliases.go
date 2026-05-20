@@ -53,8 +53,17 @@ complete -F _qlone-completion qlone
 alias k='kubectl'
 complete -o default -F __start_kubectl k
 
-alias kctx='kubie ctx'
-alias kns='kubie ns'
+# Kubie spawnt seine Subshell ueber bare 'bash' PATH-Lookup. Wenn irgendwo
+# ein bash-minimal (kein progcomp, keine readline) vor dem devbox-Profil im
+# PATH liegt, ist die Subshell unbrauchbar (shopt/complete-Fehler, keine
+# Pfeiltasten). Wir ziehen das devbox-Profil-bin gezielt fuer den kubie-Call
+# nach vorne, damit unsere bashInteractive zuerst gefunden wird.
+__modac_kubie() {
+    local devbox_bin="$HOME/.local/share/devbox/global/default/.devbox/nix/profile/default/bin"
+    PATH="$devbox_bin:$PATH" command kubie "$@"
+}
+kctx() { __modac_kubie ctx "$@"; }
+kns()  { __modac_kubie ns  "$@"; }
 
 # kubie-only: current-context in ~/.kube/config entfernen, damit kubectl
 # ausserhalb einer kubie-Subshell keinen impliziten Context hat.
