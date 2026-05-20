@@ -8,6 +8,9 @@
         "asdf-vm": {
             "version": "latest"
         },
+        "bashInteractive": {
+            "version": "latest"
+        },
         "github:sadjow/claude-code-nix/v2.1.145#claude-code": {},
         "crane": {
             "version": "latest"
@@ -94,7 +97,7 @@
         "yq-go": {
             "version": "latest"
         },
-        "github:modell-aachen/modac-dev-machine-setup?dir=nixpkgs/modac-dev-machine&rev=01c54dd0df333729997b4d16d4fb454b612aa5e0": {}
+        "github:modell-aachen/modac-dev-machine-setup?dir=nixpkgs/modac-dev-machine&rev=54b70afa2ee209c8ced32c483f2aea2aed1bbbcc": {}
     },
     "env": {
         "DEVBOX_COREPACK_ENABLED": "true",

@@ -12,8 +12,9 @@ import (
 )
 
 type completion struct {
-	cmd     string
-	version string
+	cmd        string
+	version    string
+	subcommand string
 }
 
 // Run installs shell completions for various tools
@@ -26,16 +27,16 @@ func Run(out *output.Context, plat platform.Platform) error {
 
 	shells := []string{"bash", "zsh"}
 	completions := []completion{
-		{"flux", "2_5_1"},
-		{"op", "2_30_3"},
-		{"helm", "3_17_3"},
-		{"kubectl", "1_32_3"},
-		{"kubie", "0_25_4"},
+		{"flux", "2_5_1", "completion"},
+		{"op", "2_30_3", "completion"},
+		{"helm", "3_17_3", "completion"},
+		{"kubectl", "1_32_3", "completion"},
+		{"kubie", "0_25_4", "generate-completion"},
 	}
 
 	for _, shell := range shells {
 		for _, comp := range completions {
-			if err := installCompletion(out, homeDir, shell, comp.cmd, comp.version); err != nil {
+			if err := installCompletion(out, homeDir, shell, comp.cmd, comp.version, comp.subcommand); err != nil {
 				// Log error but continue with other completions
 				out.Info(fmt.Sprintf("Warning: failed to install %s completion for %s: %v", comp.cmd, shell, err))
 			}
@@ -45,7 +46,7 @@ func Run(out *output.Context, plat platform.Platform) error {
 	return nil
 }
 
-func installCompletion(out *output.Context, homeDir, shell, cmd, version string) error {
+func installCompletion(out *output.Context, homeDir, shell, cmd, version, subcommand string) error {
 	shellPath := filepath.Join(homeDir, fmt.Sprintf(".%src", shell))
 	completionsPath := filepath.Join(homeDir, fmt.Sprintf(".%s_completions", shell))
 	cmdCompletionPath := filepath.Join(completionsPath, fmt.Sprintf("%s_%s.sh", cmd, version))
@@ -76,7 +77,7 @@ func installCompletion(out *output.Context, homeDir, shell, cmd, version string)
 
 	// Generate completion
 	out.Step(fmt.Sprintf("Installing %s completion for %s", cmd, shell))
-	completionCmd := exec.Command(cmd, "completion", shell)
+	completionCmd := exec.Command(cmd, subcommand, shell)
 	completionOutput, err := completionCmd.Output()
 	if err != nil {
 		return fmt.Errorf("failed to generate completion: %w", err)
