@@ -65,6 +65,52 @@ __modac_kubie() {
 kctx() { __modac_kubie ctx "$@"; }
 kns()  { __modac_kubie ns  "$@"; }
 
+# Completion fuer kctx/kns. Quelle ist 'kubectl config get-contexts -o name'
+# bzw. 'kubectl get namespaces -o name' — bewusst kubectl-basiert statt
+# kubies _kubie aufzurufen, damit es ohne compinit-Reihenfolge-Magie und
+# in bash wie zsh identisch funktioniert.
+if [ -n "$ZSH_VERSION" ]; then
+    _modac_kctx_zsh() {
+        local -a items
+        items=(${(f)"$(kubectl config get-contexts -o name 2>/dev/null)"})
+        if (( ${#items} == 0 )); then
+            _message 'no kube contexts'
+            return 1
+        fi
+        local expl
+        _wanted contexts expl 'kube context' compadd -a items
+    }
+    _modac_kns_zsh() {
+        local -a items
+        items=(${(f)"$(kubectl get namespaces -o name 2>/dev/null | sed 's|^namespace/||')"})
+        if (( ${#items} == 0 )); then
+            _message 'no namespaces — enter a kubie context first (kctx)'
+            return 1
+        fi
+        local expl
+        _wanted namespaces expl 'kube namespace' compadd -a items
+    }
+    # compdef wird von compinit definiert (im .zshrc des Users). Falls compinit
+    # noch nicht gelaufen ist, ueberspringen wir die Registrierung still — kein
+    # eigener compinit-Aufruf, weil wir sonst Insecure-fpath-Warnungen wegwerfen
+    # wuerden, die der User sehen sollte.
+    if (( $+functions[compdef] )); then
+        compdef _modac_kctx_zsh kctx
+        compdef _modac_kns_zsh kns
+    fi
+elif [ -n "$BASH_VERSION" ]; then
+    _modac_kctx_bash() {
+        local cur="${COMP_WORDS[COMP_CWORD]}"
+        COMPREPLY=( $(compgen -W "$(kubectl config get-contexts -o name 2>/dev/null)" -- "$cur") )
+    }
+    _modac_kns_bash() {
+        local cur="${COMP_WORDS[COMP_CWORD]}"
+        COMPREPLY=( $(compgen -W "$(kubectl get namespaces -o name 2>/dev/null | sed 's|^namespace/||')" -- "$cur") )
+    }
+    complete -F _modac_kctx_bash kctx
+    complete -F _modac_kns_bash kns
+fi
+
 # kubie-only: current-context in ~/.kube/config entfernen, damit kubectl
 # ausserhalb einer kubie-Subshell keinen impliziten Context hat.
 # Nur wenn KUBECONFIG leer ist (sonst wuerden wir die temp-Config von kubie zerschiessen).
