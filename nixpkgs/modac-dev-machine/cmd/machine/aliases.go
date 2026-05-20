@@ -90,9 +90,14 @@ if [ -n "$ZSH_VERSION" ]; then
         local expl
         _wanted namespaces expl 'kube namespace' compadd -a items
     }
-    (( $+functions[compdef] )) || { autoload -Uz compinit && compinit -u 2>/dev/null; }
-    compdef _modac_kctx_zsh kctx
-    compdef _modac_kns_zsh kns
+    # compdef wird von compinit definiert (im .zshrc des Users). Falls compinit
+    # noch nicht gelaufen ist, ueberspringen wir die Registrierung still — kein
+    # eigener compinit-Aufruf, weil wir sonst Insecure-fpath-Warnungen wegwerfen
+    # wuerden, die der User sehen sollte.
+    if (( $+functions[compdef] )); then
+        compdef _modac_kctx_zsh kctx
+        compdef _modac_kns_zsh kns
+    fi
 elif [ -n "$BASH_VERSION" ]; then
     _modac_kctx_bash() {
         local cur="${COMP_WORDS[COMP_CWORD]}"
