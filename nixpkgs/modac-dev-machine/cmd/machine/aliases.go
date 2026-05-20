@@ -65,6 +65,37 @@ __modac_kubie() {
 kctx() { __modac_kubie ctx "$@"; }
 kns()  { __modac_kubie ns  "$@"; }
 
+# Completion fuer kctx/kns. Quelle ist 'kubectl config get-contexts -o name'
+# bzw. 'kubectl get namespaces -o name' — bewusst kubectl-basiert statt
+# kubies _kubie aufzurufen, damit es ohne compinit-Reihenfolge-Magie und
+# in bash wie zsh identisch funktioniert.
+if [ -n "$ZSH_VERSION" ]; then
+    _modac_kctx_zsh() {
+        local -a items
+        items=(${(f)"$(kubectl config get-contexts -o name 2>/dev/null)"})
+        _describe -t contexts 'kube context' items
+    }
+    _modac_kns_zsh() {
+        local -a items
+        items=(${(f)"$(kubectl get namespaces -o name 2>/dev/null | sed 's|^namespace/||')"})
+        _describe -t namespaces 'kube namespace' items
+    }
+    (( $+functions[compdef] )) || { autoload -Uz compinit && compinit -u 2>/dev/null; }
+    compdef _modac_kctx_zsh kctx
+    compdef _modac_kns_zsh kns
+elif [ -n "$BASH_VERSION" ]; then
+    _modac_kctx_bash() {
+        local cur="${COMP_WORDS[COMP_CWORD]}"
+        COMPREPLY=( $(compgen -W "$(kubectl config get-contexts -o name 2>/dev/null)" -- "$cur") )
+    }
+    _modac_kns_bash() {
+        local cur="${COMP_WORDS[COMP_CWORD]}"
+        COMPREPLY=( $(compgen -W "$(kubectl get namespaces -o name 2>/dev/null | sed 's|^namespace/||')" -- "$cur") )
+    }
+    complete -F _modac_kctx_bash kctx
+    complete -F _modac_kns_bash kns
+fi
+
 # kubie-only: current-context in ~/.kube/config entfernen, damit kubectl
 # ausserhalb einer kubie-Subshell keinen impliziten Context hat.
 # Nur wenn KUBECONFIG leer ist (sonst wuerden wir die temp-Config von kubie zerschiessen).
