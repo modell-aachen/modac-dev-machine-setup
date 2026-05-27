@@ -40,7 +40,7 @@
     {
       "fileMatch": ["^devbox/plugins/modac/plugin\\.json$"],
       "matchStrings": [
-        "github:dagger/nix/(?<currentDigest>[0-9a-f]+)#dagger"
+        "github:dagger/nix/(?<currentDigest>[0-9a-f]+)#packages\\.[^.]+\\.dagger"
       ],
       "currentValueTemplate": "main",
       "depNameTemplate": "dagger/nix",
