@@ -15,6 +15,7 @@
         "crane": {
             "version": "latest"
         },
+        "github:dagger/nix/28d910a5ea3ef49a2e2bfceccaacbed98a90a4a7#dagger": {},
         "direnv": {
             "version": "latest"
         },

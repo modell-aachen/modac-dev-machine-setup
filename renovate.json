@@ -36,6 +36,16 @@
       "depNameTemplate": "sadjow/claude-code-nix",
       "datasourceTemplate": "github-tags",
       "versioningTemplate": "semver"
+    },
+    {
+      "fileMatch": ["^devbox/plugins/modac/plugin\\.json$"],
+      "matchStrings": [
+        "github:dagger/nix/(?<currentDigest>[0-9a-f]+)#dagger"
+      ],
+      "currentValueTemplate": "main",
+      "depNameTemplate": "dagger/nix",
+      "packageNameTemplate": "https://github.com/dagger/nix",
+      "datasourceTemplate": "git-refs"
     }
   ]
 }
