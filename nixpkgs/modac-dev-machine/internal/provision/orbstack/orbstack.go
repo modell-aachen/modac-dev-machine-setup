@@ -23,15 +23,17 @@ func Run(out *output.Context, plat platform.Platform) error {
 }
 
 func runDarwin(out *output.Context) error {
-	// Check OrbStack status
+	// Check OrbStack status. orbctl exits non-zero when OrbStack is not
+	// running (e.g. "Stopped" returns exit status 1), so the status string
+	// is authoritative rather than the exit code.
 	statusCmd := exec.Command("orbctl", "status")
 	statusOutput, err := statusCmd.Output()
-	if err != nil {
+	status := string(bytes.TrimSpace(statusOutput))
+	if status == "" {
 		return fmt.Errorf("failed to check OrbStack status: %w", err)
 	}
 
-	status := string(bytes.TrimSpace(statusOutput))
-	if status == "Stopped" {
+	if status != "Running" {
 		// Start OrbStack
 		out.Step("Starting OrbStack")
 		if err := out.RunCommand("orbctl", "start"); err != nil {
