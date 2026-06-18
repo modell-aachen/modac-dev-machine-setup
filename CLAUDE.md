@@ -29,7 +29,6 @@ modac-dev-machine-setup/
 ### Provisioning Flow
 `machine provision` runs modules sequentially via `internal/provision/executor.go`. Each module is a Go package with a `Run(out, platform)` function. Modules can be filtered with `-f MODULE`.
 
-Module order: devbox-update → onepassword → restore-backup → packages → **setup-envs** → asdf-packages → asdf → kubectl-krew → setup-k8s-cluster → node → certificates → setup-dev → completions → claude → github-auth-login → install-modac-shell-helper → orbstack → docker-packages → docker
 
 ### Secrets Management (setup-envs)
 - `op_secrets_tpl` in devbox.json maps env var names to `op://` 1Password references
