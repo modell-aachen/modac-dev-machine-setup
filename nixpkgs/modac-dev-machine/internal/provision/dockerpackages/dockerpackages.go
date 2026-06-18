@@ -108,33 +108,33 @@ func runUbuntu(out *output.Context) error {
 	containerID := os.Getenv("CONTAINER_ID")
 	if containerID != "" {
 		// Check if docker command exists
-		_, err := exec.LookPath("docker")
-		if err != nil {
-			// Docker not found, create symlinks
+		if _, err := exec.LookPath("docker"); err != nil {
+			// Docker not found, link it to the host
 			out.Step("Running inside a distrobox, linking docker")
-
-			// Create symlink for docker
 			if err := out.RunCommand("sudo", "ln", "-s", "/usr/local/bin/distrobox-host-exec-with-env", "/usr/local/bin/docker"); err != nil {
 				return fmt.Errorf("failed to create docker symlink: %w", err)
-			}
-
-			// Link .docker directory
-			homeDir, err := os.UserHomeDir()
-			if err != nil {
-				return fmt.Errorf("failed to get home directory: %w", err)
-			}
-
-			user := os.Getenv("USER")
-			hostDockerDir := fmt.Sprintf("/run/host/home/%s/.docker", user)
-			localDockerDir := filepath.Join(homeDir, ".docker")
-
-			out.Step("Linking .docker directory")
-			if err := out.RunCommand("ln", "-s", hostDockerDir, localDockerDir); err != nil {
-				return fmt.Errorf("failed to link .docker directory: %w", err)
 			}
 		} else {
 			out.Skipped("Running inside a distrobox, docker already available")
 		}
+
+		// Point DOCKER_CONFIG at the host's .docker directory, independent of
+		// whether docker itself was just linked.
+		homeDir, err := os.UserHomeDir()
+		if err != nil {
+			return fmt.Errorf("failed to get home directory: %w", err)
+		}
+
+		user := os.Getenv("USER")
+		hostDockerDir := fmt.Sprintf("/run/host/home/%s/.docker", user)
+		bashrcPath := filepath.Join(homeDir, ".bashrc")
+		exportLine := fmt.Sprintf("export DOCKER_CONFIG=%q", hostDockerDir)
+
+		out.Step("Setting DOCKER_CONFIG in .bashrc")
+		if err := appendLineIfMissing(bashrcPath, exportLine); err != nil {
+			return fmt.Errorf("failed to update .bashrc: %w", err)
+		}
+
 		return nil
 	}
 
@@ -225,6 +225,33 @@ func runUbuntu(out *output.Context) error {
 		return fmt.Errorf("logout required - please logout and login again")
 	}
 
+	return nil
+}
+
+// appendLineIfMissing appends line to the file at path (creating it if needed),
+// unless the line is already present. A trailing newline is ensured.
+func appendLineIfMissing(path, line string) error {
+	if util.FileExists(path) {
+		content, err := os.ReadFile(path)
+		if err != nil {
+			return err
+		}
+		for _, existing := range strings.Split(string(content), "\n") {
+			if strings.TrimSpace(existing) == line {
+				return nil
+			}
+		}
+	}
+
+	f, err := os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	if _, err := fmt.Fprintf(f, "%s\n", line); err != nil {
+		return err
+	}
 	return nil
 }
 
