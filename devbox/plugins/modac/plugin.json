@@ -1,147 +1,139 @@
 {
-    "name": "MODAC",
-    "version": "0.0.5",
-    "packages": {
-        "age": {
-            "version": "latest"
-        },
-        "asdf-vm": {
-            "version": "latest"
-        },
-        "bashInteractive": {
-            "version": "latest"
-        },
-        "github:sadjow/claude-code-nix/v2.1.181#claude-code": {},
-        "crane": {
-            "version": "latest"
-        },
-        "github:dagger/nix/c93d69f685b8a58eaa767eaaf189b0ac6f4f741a#packages.x86_64-linux.dagger": {
-            "platforms": [
-                "x86_64-linux"
-            ]
-        },
-        "github:dagger/nix/c93d69f685b8a58eaa767eaaf189b0ac6f4f741a#packages.aarch64-linux.dagger": {
-            "platforms": [
-                "aarch64-linux"
-            ]
-        },
-        "github:dagger/nix/c93d69f685b8a58eaa767eaaf189b0ac6f4f741a#packages.x86_64-darwin.dagger": {
-            "platforms": [
-                "x86_64-darwin"
-            ]
-        },
-        "github:dagger/nix/c93d69f685b8a58eaa767eaaf189b0ac6f4f741a#packages.aarch64-darwin.dagger": {
-            "platforms": [
-                "aarch64-darwin"
-            ]
-        },
-        "direnv": {
-            "version": "latest"
-        },
-        "fluxcd": {
-            "version": "latest"
-        },
-        "fzf": {
-            "version": "latest"
-        },
-        "gh": {
-            "version": "latest"
-        },
-        "git": {
-            "version": "latest"
-        },
-        "go-task": {
-            "version": "latest"
-        },
-        "google-cloud-sdk": {
-            "version": "latest"
-        },
-        "htop": {
-            "version": "latest"
-        },
-        "jinja2-cli": {
-            "version": "latest"
-        },
-        "jq": {
-            "version": "latest"
-        },
-        "k3d": {
-            "version": "latest",
-            "platforms": [
-                "x86_64-linux",
-                "aarch64-linux"
-            ]
-        },
-        "krew": {
-            "version": "latest"
-        },
-        "kube-linter": {
-            "version": "latest"
-        },
-        "kubectl": {
-            "version": "latest"
-        },
-        "kubernetes-helm": {
-            "version": "latest"
-        },
-        "kubie": {
-            "version": "latest"
-        },
-        "kustomize_4": {
-            "version": "latest"
-        },
-        "mkcert": {
-            "version": "latest"
-        },
-        "nodejs": {
-            "version": "22"
-        },
-        "pyenv": {
-            "version": "latest"
-        },
-        "restic": {
-            "version": "latest"
-        },
-        "socat": {
-            "version": "latest"
-        },
-        "sops": {
-            "version": "latest"
-        },
-        "uv": {
-            "version": "latest"
-        },
-        "wget": {
-            "version": "latest"
-        },
-        "yq-go": {
-            "version": "latest"
-        },
-        "github:modell-aachen/modac-dev-machine-setup?dir=nixpkgs/modac-dev-machine&rev=17de1c884da5dd19af786e95f6d9d131de3e0f52": {}
+  "name": "MODAC",
+  "version": "0.0.5",
+  "packages": {
+    "age": {
+      "version": "latest"
     },
-    "env": {
-        "DEVBOX_COREPACK_ENABLED": "true",
-        "REPOS_DIRECTORY": "$HOME/qwiki-repos",
-        "PROVISIONER_DIRECTORY": "$HOME/modac-dev-machine-setup",
-        "MODAC_BASH_DIRECTORY": "$HOME/.modac-bash",
-        "QWIKI_API_HOST": "https://api.qluster.localhost",
-        "QWIKI_API_TOKEN": "modell-aachen",
-        "QWIKI_EVENTS_HOST": "https://events.qluster.localhost",
-        "QWIKI_DEVELOPMENT_ROOT_CA": "$HOME/.local/share/mkcert",
-        "ASDF_DATA_DIR": "$HOME/.asdf",
-        "KREW_ROOT": "$HOME/.krew",
-        "XDG_DATA_DIRS": "$HOME/.local/share/devbox/global/default/.devbox/nix/profile/default/share:$XDG_DATA_DIRS",
-        "PATH": "$HOME/.krew/bin:$HOME/.local/bin:$HOME/.asdf/shims:$HOME/.pyenv/bin:$PATH"
+    "asdf-vm": {
+      "version": "latest"
     },
-    "shell": {
-        "init_hook": [
-            "[ -n \"$HOMEBREW_PREFIX\" ] && export PATH=\"$HOMEBREW_PREFIX/bin:$HOMEBREW_PREFIX/opt/gnu-getopt/bin:$HOMEBREW_PREFIX/opt/gnu-sed/libexec/gnubin:$PATH\"",
-            "_DEVBOX_SHELL=bash; [ -n \"$ZSH_VERSION\" ] && _DEVBOX_SHELL=zsh; type complete &>/dev/null && source <(devbox completion $_DEVBOX_SHELL)",
-            "_DEVBOX_SHELL=bash; [ -n \"$ZSH_VERSION\" ] && _DEVBOX_SHELL=zsh; eval \"$(direnv hook $_DEVBOX_SHELL)\"",
-            "source <(machine aliases)",
-            "_DEVBOX_SHELL=bash; [ -n \"$ZSH_VERSION\" ] && _DEVBOX_SHELL=zsh; type complete &>/dev/null && [ -d $HOME/.${_DEVBOX_SHELL}_completions ] && for c in $(find $HOME/.${_DEVBOX_SHELL}_completions -type f); do source $c; done"
-        ],
-        "scripts": {}
+    "bashInteractive": {
+      "version": "latest"
     },
-    "include": []
+    "github:sadjow/claude-code-nix/v2.1.181#claude-code": {},
+    "crane": {
+      "version": "latest"
+    },
+    "github:dagger/nix/c93d69f685b8a58eaa767eaaf189b0ac6f4f741a#packages.x86_64-linux.dagger": {
+      "platforms": ["x86_64-linux"]
+    },
+    "github:dagger/nix/c93d69f685b8a58eaa767eaaf189b0ac6f4f741a#packages.aarch64-linux.dagger": {
+      "platforms": ["aarch64-linux"]
+    },
+    "github:dagger/nix/c93d69f685b8a58eaa767eaaf189b0ac6f4f741a#packages.x86_64-darwin.dagger": {
+      "platforms": ["x86_64-darwin"]
+    },
+    "github:dagger/nix/c93d69f685b8a58eaa767eaaf189b0ac6f4f741a#packages.aarch64-darwin.dagger": {
+      "platforms": ["aarch64-darwin"]
+    },
+    "direnv": {
+      "version": "latest"
+    },
+    "fluxcd": {
+      "version": "latest"
+    },
+    "fzf": {
+      "version": "latest"
+    },
+    "gh": {
+      "version": "latest"
+    },
+    "git": {
+      "version": "latest"
+    },
+    "go-task": {
+      "version": "latest"
+    },
+    "google-cloud-sdk": {
+      "version": "latest"
+    },
+    "htop": {
+      "version": "latest"
+    },
+    "jinja2-cli": {
+      "version": "latest"
+    },
+    "jq": {
+      "version": "latest"
+    },
+    "k3d": {
+      "version": "latest",
+      "platforms": ["x86_64-linux", "aarch64-linux"]
+    },
+    "k9s": {
+      "version": "latest"
+    },
+    "krew": {
+      "version": "latest"
+    },
+    "kube-linter": {
+      "version": "latest"
+    },
+    "kubectl": {
+      "version": "latest"
+    },
+    "kubernetes-helm": {
+      "version": "latest"
+    },
+    "kubie": {
+      "version": "latest"
+    },
+    "kustomize_4": {
+      "version": "latest"
+    },
+    "mkcert": {
+      "version": "latest"
+    },
+    "nodejs": {
+      "version": "22"
+    },
+    "pyenv": {
+      "version": "latest"
+    },
+    "restic": {
+      "version": "latest"
+    },
+    "socat": {
+      "version": "latest"
+    },
+    "sops": {
+      "version": "latest"
+    },
+    "uv": {
+      "version": "latest"
+    },
+    "wget": {
+      "version": "latest"
+    },
+    "yq-go": {
+      "version": "latest"
+    },
+    "github:modell-aachen/modac-dev-machine-setup?dir=nixpkgs/modac-dev-machine&rev=17de1c884da5dd19af786e95f6d9d131de3e0f52": {}
+  },
+  "env": {
+    "DEVBOX_COREPACK_ENABLED": "true",
+    "REPOS_DIRECTORY": "$HOME/qwiki-repos",
+    "PROVISIONER_DIRECTORY": "$HOME/modac-dev-machine-setup",
+    "MODAC_BASH_DIRECTORY": "$HOME/.modac-bash",
+    "QWIKI_API_HOST": "https://api.qluster.localhost",
+    "QWIKI_API_TOKEN": "modell-aachen",
+    "QWIKI_EVENTS_HOST": "https://events.qluster.localhost",
+    "QWIKI_DEVELOPMENT_ROOT_CA": "$HOME/.local/share/mkcert",
+    "ASDF_DATA_DIR": "$HOME/.asdf",
+    "KREW_ROOT": "$HOME/.krew",
+    "XDG_DATA_DIRS": "$HOME/.local/share/devbox/global/default/.devbox/nix/profile/default/share:$XDG_DATA_DIRS",
+    "PATH": "$HOME/.krew/bin:$HOME/.local/bin:$HOME/.asdf/shims:$HOME/.pyenv/bin:$PATH"
+  },
+  "shell": {
+    "init_hook": [
+      "[ -n \"$HOMEBREW_PREFIX\" ] && export PATH=\"$HOMEBREW_PREFIX/bin:$HOMEBREW_PREFIX/opt/gnu-getopt/bin:$HOMEBREW_PREFIX/opt/gnu-sed/libexec/gnubin:$PATH\"",
+      "_DEVBOX_SHELL=bash; [ -n \"$ZSH_VERSION\" ] && _DEVBOX_SHELL=zsh; type complete &>/dev/null && source <(devbox completion $_DEVBOX_SHELL)",
+      "_DEVBOX_SHELL=bash; [ -n \"$ZSH_VERSION\" ] && _DEVBOX_SHELL=zsh; eval \"$(direnv hook $_DEVBOX_SHELL)\"",
+      "source <(machine aliases)",
+      "_DEVBOX_SHELL=bash; [ -n \"$ZSH_VERSION\" ] && _DEVBOX_SHELL=zsh; type complete &>/dev/null && [ -d $HOME/.${_DEVBOX_SHELL}_completions ] && for c in $(find $HOME/.${_DEVBOX_SHELL}_completions -type f); do source $c; done"
+    ],
+    "scripts": {}
+  },
+  "include": []
 }
