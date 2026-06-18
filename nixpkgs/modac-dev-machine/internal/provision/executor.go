@@ -18,6 +18,7 @@ import (
 	"github.com/modell-aachen/machine/internal/provision/installmodacshellhelper"
 	"github.com/modell-aachen/machine/internal/provision/kubectlkrew"
 	"github.com/modell-aachen/machine/internal/provision/node"
+	"github.com/modell-aachen/machine/internal/provision/nssdb"
 	"github.com/modell-aachen/machine/internal/provision/onepassword"
 	"github.com/modell-aachen/machine/internal/provision/orbstack"
 	"github.com/modell-aachen/machine/internal/provision/packages"
@@ -49,6 +50,7 @@ var allModules = []ModuleEntry{
 	{"kubectl-krew", kubectlkrew.Run},
 	{"setup-k8s-cluster", setupk8scluster.Run},
 	{"node", node.Run},
+	{"nssdb", nssdb.Run},
 	{"certificates", certificates.Run},
 	{"setup-dev", setupdev.Run},
 	{"completions", completions.Run},
