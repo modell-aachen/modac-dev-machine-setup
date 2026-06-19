@@ -109,7 +109,7 @@
     "yq-go": {
       "version": "latest"
     },
-    "github:modell-aachen/modac-dev-machine-setup?dir=nixpkgs/modac-dev-machine&rev=17de1c884da5dd19af786e95f6d9d131de3e0f52": {}
+    "github:modell-aachen/modac-dev-machine-setup?dir=nixpkgs/modac-dev-machine&rev=47851ed2a51c4a9546dcfadb45c4d277d7c5a187": {}
   },
   "env": {
     "DEVBOX_COREPACK_ENABLED": "true",
