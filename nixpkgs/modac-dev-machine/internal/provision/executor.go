@@ -17,6 +17,7 @@ import (
 	"github.com/modell-aachen/machine/internal/provision/githubauthlogin"
 	"github.com/modell-aachen/machine/internal/provision/installmodacshellhelper"
 	"github.com/modell-aachen/machine/internal/provision/kubectlkrew"
+	"github.com/modell-aachen/machine/internal/provision/nixconf"
 	"github.com/modell-aachen/machine/internal/provision/node"
 	"github.com/modell-aachen/machine/internal/provision/nssdb"
 	"github.com/modell-aachen/machine/internal/provision/onepassword"
@@ -40,6 +41,7 @@ type ModuleEntry struct {
 
 // allModules defines the ordered list of all provisioning modules
 var allModules = []ModuleEntry{
+	{"nix-conf", nixconf.Run},
 	{"devbox-update", devboxupdate.Run},
 	{"onepassword", onepassword.Run},
 	{"restore-backup", restorebackup.Run},
