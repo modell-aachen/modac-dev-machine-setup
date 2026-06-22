@@ -1,9 +1,10 @@
 ---
 name: Update machine hash
 
-"on":
+on:  # yamllint disable-line rule:truthy
   push:
     branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: write
