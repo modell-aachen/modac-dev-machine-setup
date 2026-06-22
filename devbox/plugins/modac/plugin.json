@@ -45,9 +45,7 @@
     "go-task": {
       "version": "latest"
     },
-    "google-cloud-sdk": {
-      "version": "latest"
-    },
+    "github:modell-aachen/modac-dev-machine-setup?dir=nixpkgs/modac-dev-machine&rev=47851ed2a51c4a9546dcfadb45c4d277d7c5a187#google-cloud-sdk-gke": {},
     "htop": {
       "version": "latest"
     },

@@ -4,15 +4,26 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
     flake-utils.url = "github:numtide/flake-utils";
+    # Pinned to the same revision devbox resolves "google-cloud-sdk" to, so the
+    # gcloud CLI and the bundled gke-gcloud-auth-plugin stay on the same version.
+    nixpkgs-gcloud.url = "github:NixOS/nixpkgs/6368eda62c9775c38ef7f714b2555a741c20c72d";
   };
 
-  outputs = { self, nixpkgs, flake-utils }:
+  outputs = { self, nixpkgs, flake-utils, nixpkgs-gcloud }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs { inherit system; };
+        pkgsGcloud = import nixpkgs-gcloud { inherit system; };
       in
       {
         packages = {
+          # google-cloud-sdk plus the gke-gcloud-auth-plugin component, which the
+          # base package omits. Required for kubectl auth against GKE clusters
+          # using Workforce Identity Federation.
+          google-cloud-sdk-gke = pkgsGcloud.google-cloud-sdk.withExtraComponents [
+            pkgsGcloud.google-cloud-sdk.components.gke-gcloud-auth-plugin
+          ];
+
           machine = pkgs.buildGoModule {
             pname = "machine";
             version = "1.0.0";
