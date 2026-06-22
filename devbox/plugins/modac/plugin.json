@@ -11,7 +11,7 @@
     "bashInteractive": {
       "version": "latest"
     },
-    "github:sadjow/claude-code-nix/v2.1.185#claude-code": {},
+    "github:sadjow/claude-code-nix/v2.1.186#claude-code": {},
     "crane": {
       "version": "latest"
     },
