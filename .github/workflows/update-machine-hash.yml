@@ -1,0 +1,38 @@
+---
+name: Update machine hash
+
+"on":
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  update-machine-hash:
+    # Skip the bot's own bump commit (and pushes via GITHUB_TOKEN do not
+    # re-trigger workflows anyway).
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Bump machine hash
+        run: |
+          bash .claude/skills/update-machine-hash/scripts/update-machine-hash.sh
+
+      - name: Commit and push if changed
+        run: |
+          set -euo pipefail
+          if git diff --quiet; then
+            echo "Machine hash already up to date"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email \
+            "41898282+github-actions[bot]@users.noreply.github.com"
+          git add devbox/plugins/modac/plugin.json
+          short="$(git rev-parse --short HEAD)"
+          git commit -m "chore: update machine hash to ${short} [skip ci]"
+          git push
