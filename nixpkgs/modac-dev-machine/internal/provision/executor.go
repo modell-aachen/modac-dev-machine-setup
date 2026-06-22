@@ -14,6 +14,7 @@ import (
 	"github.com/modell-aachen/machine/internal/provision/devboxupdate"
 	"github.com/modell-aachen/machine/internal/provision/docker"
 	"github.com/modell-aachen/machine/internal/provision/dockerpackages"
+	"github.com/modell-aachen/machine/internal/provision/gcloudworkforcelogin"
 	"github.com/modell-aachen/machine/internal/provision/githubauthlogin"
 	"github.com/modell-aachen/machine/internal/provision/installmodacshellhelper"
 	"github.com/modell-aachen/machine/internal/provision/kubectlkrew"
@@ -58,6 +59,7 @@ var allModules = []ModuleEntry{
 	{"completions", completions.Run},
 	{"claude", claude.Run},
 	{"github-auth-login", githubauthlogin.Run},
+	{"gcloud-workforce-login", gcloudworkforcelogin.Run},
 	{"install-modac-shell-helper", installmodacshellhelper.Run},
 	{"orbstack", orbstack.Run},
 	{"docker-packages", dockerpackages.Run},
