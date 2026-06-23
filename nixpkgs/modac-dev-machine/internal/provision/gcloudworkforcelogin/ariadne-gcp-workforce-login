@@ -131,6 +131,16 @@ get_token() {
   emit_exec_credential "$at" "$exp"
 }
 
+# check_session validates the full path (Azure refresh + STS exchange), so
+# provisioning catches a broken exchange (audience, QUOTA_PROJECT,
+# serviceusage permission) instead of reporting a healthy session that only
+# fails on the first kubectl.
+check_session() {
+  local idt
+  idt=$(mint_azure_idtoken)
+  sts_exchange "$idt" >/dev/null
+}
+
 device_login() {
   local resp device_code interval idt new_rt err
   resp=$(curl -sS -X POST "${AUTHORITY}/devicecode" \
@@ -193,7 +203,8 @@ EOF
 case "${1:-get-token}" in
   get-token) get_token ;;
   --login) device_login ;;
-  --check) mint_azure_idtoken >/dev/null ;; # internal: validate the session (used by provisioning)
+  --has-session) test -s "$RT_FILE" ;; # internal: is a refresh token present?
+  --check) check_session ;;            # internal: full validation (Azure + STS)
   --force-refresh) force_refresh ;;
   --logout) logout ;;
   --help | -h) usage ;;

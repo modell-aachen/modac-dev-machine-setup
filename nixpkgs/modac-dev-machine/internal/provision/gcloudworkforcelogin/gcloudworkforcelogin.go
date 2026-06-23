@@ -1,6 +1,7 @@
 package gcloudworkforcelogin
 
 import (
+	"bytes"
 	_ "embed"
 	"fmt"
 	"os"
@@ -44,7 +45,14 @@ func Run(out *output.Context, plat platform.Platform) error {
 		return err
 	}
 
-	if sessionValid(execPath) {
+	if hasSession(execPath) {
+		// A refresh token exists; validate the full path (Azure + STS) so a
+		// broken exchange surfaces here instead of on the first kubectl, and is
+		// not mistaken for "needs login".
+		if err := checkSession(execPath); err != nil {
+			return fmt.Errorf("workforce session present but token exchange failed; "+
+				"check QUOTA_PROJECT/serviceusage and the provider audience: %w", err)
+		}
 		out.Skipped("Workforce session already valid")
 		return nil
 	}
@@ -52,6 +60,10 @@ func Run(out *output.Context, plat platform.Platform) error {
 	out.Step("Logging into Azure AD via device code (interactive, one-time)")
 	if err := deviceLogin(execPath); err != nil {
 		return fmt.Errorf("failed to obtain Azure refresh token: %w", err)
+	}
+	if err := checkSession(execPath); err != nil {
+		return fmt.Errorf("token exchange failed after login; "+
+			"check QUOTA_PROJECT/serviceusage and the provider audience: %w", err)
 	}
 
 	return nil
@@ -68,10 +80,19 @@ func installExecutable(out *output.Context, execPath string) error {
 	return nil
 }
 
-// sessionValid reports whether the helper can already mint a token from a stored
-// refresh token, i.e. no interactive login is required.
-func sessionValid(execPath string) bool {
-	return exec.Command(execPath, "--check").Run() == nil
+// hasSession reports whether a refresh token is present (no network call).
+func hasSession(execPath string) bool {
+	return exec.Command(execPath, "--has-session").Run() == nil
+}
+
+// checkSession validates the full credential path (Azure refresh + STS
+// exchange), surfacing the helper's error message on failure.
+func checkSession(execPath string) error {
+	out, err := exec.Command(execPath, "--check").CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("%w: %s", err, bytes.TrimSpace(out))
+	}
+	return nil
 }
 
 func deviceLogin(execPath string) error {

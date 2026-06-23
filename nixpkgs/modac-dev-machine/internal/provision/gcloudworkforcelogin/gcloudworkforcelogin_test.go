@@ -13,6 +13,8 @@ func TestEmbeddedExecutable(t *testing.T) {
 		"get-token",
 		"ExecCredential",
 		"--login",
+		"--has-session",
+		"--check",
 		"--force-refresh",
 		"--logout",
 		"refresh_token",
