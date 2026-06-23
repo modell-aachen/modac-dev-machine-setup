@@ -1,9 +1,7 @@
 package gcloudworkforcelogin
 
 import (
-	"bytes"
 	_ "embed"
-	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
@@ -14,33 +12,25 @@ import (
 )
 
 // ariadne-gcp-workforce-login is shipped with the binary and installed into the
-// user's PATH. It mints fresh Azure AD id_tokens from a stored refresh token so
-// GKE sees current group memberships on every token refresh.
+// user's PATH. It is a client-go exec credential plugin: it mints a fresh Azure
+// AD id_token from a stored refresh token, exchanges it at Google STS, and
+// prints an ExecCredential for kubectl. Because it talks to STS directly, gcloud
+// is not on the runtime path and no GOOGLE_EXTERNAL_ACCOUNT_ALLOW_EXECUTABLES
+// gate is needed anywhere. GKE re-evaluates the user's group memberships
+// whenever the cached token is re-minted.
+//
+// The kubeconfig that wires GKE users to this helper is managed by the team in
+// 1Password, so this module only installs the helper and performs the one-time
+// interactive device-code login. Workforce Identity Federation replaces Identity
+// Service for GKE (discontinued 2026-07-01).
 //
 //go:embed ariadne-gcp-workforce-login
 var execScript []byte
 
-// Workforce Identity Federation, federated via Azure AD, backs GKE cluster
-// authentication (Identity Service for GKE is discontinued on 2026-07-01).
-// Instead of a browser sign-in that freezes the group set until the next login,
-// we configure an executable-sourced external_account credential: gke-gcloud-
-// auth-plugin obtains a token from gcloud, gcloud re-runs the executable on
-// every STS refresh, and the executable re-mints an Azure id_token whose
-// `groups` claim reflects current (incl. JIT-activated) memberships.
-const (
-	workforcePool     = "ariadne-workforce"
-	workforceProvider = "ariadne-workforce"
-	// quotaProject attributes API quota/billing for the org-wide workforce
-	// identity's calls; the principal needs serviceusage.services.use on it.
-	quotaProject = "modac-dev"
-	execName     = "ariadne-gcp-workforce-login"
-	// allowExecutables is gcloud's security gate for executable-sourced creds.
-	allowExecutables = "GOOGLE_EXTERNAL_ACCOUNT_ALLOW_EXECUTABLES=1"
-)
+const execName = "ariadne-gcp-workforce-login"
 
-// Run installs the credential helper, writes the credential config, ensures a
-// valid Azure refresh token (one-time interactive device-code login), and
-// activates the credential so gke-gcloud-auth-plugin can obtain GKE tokens.
+// Run installs the credential helper and ensures a valid Azure refresh token,
+// signing the user in interactively (device code) if necessary.
 func Run(out *output.Context, plat platform.Platform) error {
 	_ = plat
 
@@ -49,30 +39,19 @@ func Run(out *output.Context, plat platform.Platform) error {
 		return fmt.Errorf("failed to determine home directory: %w", err)
 	}
 	execPath := filepath.Join(home, ".local", "bin", execName)
-	credConfig := filepath.Join(home, ".config", "gcloud", "ariadne-cred-config.json")
 
 	if err := installExecutable(out, execPath); err != nil {
 		return err
 	}
-	if err := writeCredConfig(out, credConfig, execPath); err != nil {
-		return err
+
+	if sessionValid(execPath) {
+		out.Skipped("Workforce session already valid")
+		return nil
 	}
 
-	if refreshTokenValid(execPath) {
-		out.Skipped("Azure refresh token already valid")
-	} else {
-		out.Step("Logging into Azure AD via device code (interactive, one-time)")
-		if err := deviceLogin(execPath); err != nil {
-			return fmt.Errorf("failed to obtain Azure refresh token: %w", err)
-		}
-	}
-
-	out.Step("Activating the Workforce Identity credential for gcloud")
-	if err := activateCredential(out, credConfig); err != nil {
-		return fmt.Errorf("failed to activate workforce credential: %w", err)
-	}
-	if err := verifyCredential(); err != nil {
-		return fmt.Errorf("workforce credential is not usable: %w", err)
+	out.Step("Logging into Azure AD via device code (interactive, one-time)")
+	if err := deviceLogin(execPath); err != nil {
+		return fmt.Errorf("failed to obtain Azure refresh token: %w", err)
 	}
 
 	return nil
@@ -89,54 +68,10 @@ func installExecutable(out *output.Context, execPath string) error {
 	return nil
 }
 
-func writeCredConfig(out *output.Context, path, execPath string) error {
-	out.Step("Writing Workforce Identity credential config")
-	data, err := buildCredConfig(execPath)
-	if err != nil {
-		return err
-	}
-	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
-		return fmt.Errorf("failed to create gcloud config directory: %w", err)
-	}
-	if err := os.WriteFile(path, data, 0o644); err != nil {
-		return fmt.Errorf("failed to write credential config: %w", err)
-	}
-	return nil
-}
-
-// buildCredConfig renders the external_account credential config that points
-// gcloud at the credential helper.
-func buildCredConfig(execPath string) ([]byte, error) {
-	cfg := map[string]any{
-		"type": "external_account",
-		"audience": fmt.Sprintf(
-			"//iam.googleapis.com/locations/global/workforcePools/%s/providers/%s",
-			workforcePool, workforceProvider),
-		"subject_token_type":          "urn:ietf:params:oauth:token-type:id_token",
-		"token_url":                   "https://sts.googleapis.com/v1/token",
-		"workforce_pool_user_project": quotaProject,
-		"credential_source": map[string]any{
-			"executable": map[string]any{
-				"command":        execPath,
-				"timeout_millis": 10000,
-			},
-		},
-	}
-	data, err := json.MarshalIndent(cfg, "", "  ")
-	if err != nil {
-		return nil, fmt.Errorf("failed to marshal credential config: %w", err)
-	}
-	return append(data, '\n'), nil
-}
-
-// refreshTokenValid reports whether the helper can already mint a token, i.e.
-// a usable refresh token is present and no interactive login is required.
-func refreshTokenValid(execPath string) bool {
-	output, err := exec.Command(execPath).Output()
-	if err != nil {
-		return false
-	}
-	return bytes.Contains(output, []byte(`"success":true`))
+// sessionValid reports whether the helper can already mint a token from a stored
+// refresh token, i.e. no interactive login is required.
+func sessionValid(execPath string) bool {
+	return exec.Command(execPath, "--check").Run() == nil
 }
 
 func deviceLogin(execPath string) error {
@@ -144,19 +79,5 @@ func deviceLogin(execPath string) error {
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-	return cmd.Run()
-}
-
-func activateCredential(out *output.Context, credConfig string) error {
-	cmd := exec.Command("gcloud", "auth", "login", "--cred-file="+credConfig, "--quiet")
-	cmd.Env = append(os.Environ(), allowExecutables)
-	cmd.Stdout = out.MultiWriter(nil)
-	cmd.Stderr = out.MultiWriter(nil)
-	return cmd.Run()
-}
-
-func verifyCredential() error {
-	cmd := exec.Command("gcloud", "auth", "print-access-token")
-	cmd.Env = append(os.Environ(), allowExecutables)
 	return cmd.Run()
 }
