@@ -1,0 +1,216 @@
+#!/usr/bin/env bash
+# ariadne-gcp-workforce-login — GKE Workforce Identity kubectl credential plugin.
+#
+# Acts as a client-go exec credential plugin: mints a fresh Azure AD id_token
+# from a stored refresh token, exchanges it at Google STS for a federated access
+# token, and prints an ExecCredential for kubectl/k9s/Lens. gcloud is NOT on the
+# runtime path, so no GOOGLE_EXTERNAL_ACCOUNT_ALLOW_EXECUTABLES gate is required.
+# GKE re-evaluates the `groups` claim whenever the cached token is re-minted.
+#
+#   ariadne-gcp-workforce-login get-token        # ExecCredential (the kubeconfig calls this)
+#   ariadne-gcp-workforce-login --login          # one-time interactive device-code login
+#   ariadne-gcp-workforce-login --force-refresh  # drop the cached access token -> re-pull groups
+#   ariadne-gcp-workforce-login --logout         # remove refresh token + cached access token
+#
+# The refresh token is a long-lived (~90 day) 0600 secret carrying the groups
+# claim (and thus GKE access). It is kept on disk (same handling as
+# gcloud/kubeconfig credentials), intentionally not in 1Password. Azure does not
+# single-use refresh tokens for this public/native client (24h single-use is
+# SPA-only), so concurrent refreshes are safe.
+#
+# Requires curl and jq. The helper prepends the devbox profile bin to PATH so it
+# resolves them even when launched by k9s/Lens/Finder with a minimal PATH.
+set -euo pipefail
+
+# Make the helper self-sufficient regardless of the caller's PATH.
+_devbox_bin="${HOME}/.local/share/devbox/global/default/.devbox/nix/profile/default/bin"
+PATH="${_devbox_bin}:${HOME}/.local/bin:${PATH}:/usr/bin:/bin"
+
+TENANT="7838a88f-3a81-4c75-a67b-bf0715776375"
+CLIENT_ID="090c1876-72d3-4d5f-8d42-85c7d7e635a4" # public client, no secret
+SCOPE="openid offline_access profile email"
+AUTHORITY="https://login.microsoftonline.com/${TENANT}/oauth2/v2.0"
+AUDIENCE="//iam.googleapis.com/locations/global/workforcePools/ariadne-workforce/providers/ariadne-workforce"
+QUOTA_PROJECT="modac-dev" # billing/quota project for the STS exchange; principal needs serviceusage.services.use
+STS_URL="https://sts.googleapis.com/v1/token"
+GCLOUD_DIR="${CLOUDSDK_CONFIG:-${HOME}/.config/gcloud}"
+RT_FILE="${GCLOUD_DIR}/ariadne-azure-refresh-token"
+TOKEN_CACHE="${GCLOUD_DIR}/ariadne-access-token.json"
+
+die() {
+  echo "ariadne-gcp-workforce-login: $*" >&2
+  exit 1
+}
+
+write_secret() { # write_secret <file> <content>
+  local tmp="$1.tmp"
+  (umask 077; printf '%s' "$2" >"$tmp")
+  mv -f "$1.tmp" "$1"
+}
+
+epoch_to_rfc3339() { # portable across GNU and BSD date
+  date -u -r "$1" +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date -u -d "@$1" +%Y-%m-%dT%H:%M:%SZ
+}
+
+# mint_azure_idtoken prints a fresh Azure AD id_token, rotating the stored
+# refresh token. Serialized with flock so concurrent callers can't clobber a
+# freshly rotated token; flock auto-releases on exit (incl. kill) so it cannot
+# deadlock, and is simply skipped where unavailable (stock macOS).
+mint_azure_idtoken() {
+  [ -f "$RT_FILE" ] || die "not signed in; run: ariadne-gcp-workforce-login --login"
+  if command -v flock >/dev/null 2>&1; then
+    exec 9>"${RT_FILE}.lock"
+    flock 9
+  fi
+  local rt resp idt new_rt
+  rt=$(cat "$RT_FILE")
+  [ -n "$rt" ] || die "refresh token file is empty; run --login"
+  resp=$(curl -sS -X POST "${AUTHORITY}/token" \
+    --data-urlencode "client_id=${CLIENT_ID}" \
+    --data-urlencode "grant_type=refresh_token" \
+    --data-urlencode "refresh_token=${rt}" \
+    --data-urlencode "scope=${SCOPE}") || die "Azure token request failed"
+  idt=$(jq -r '.id_token // empty' <<<"$resp")
+  [ -n "$idt" ] || die "Azure refresh failed: $(jq -rc '.error_description // .error // "unknown"' <<<"$resp")"
+  new_rt=$(jq -r '.refresh_token // empty' <<<"$resp")
+  if [ -n "$new_rt" ] && [ "$new_rt" != "$rt" ]; then
+    write_secret "$RT_FILE" "$new_rt"
+  fi
+  printf '%s' "$idt"
+}
+
+# sts_exchange trades an Azure id_token for a Google access token; prints
+# "<access_token> <expires_in>".
+sts_exchange() { # sts_exchange <id_token>
+  local resp at ei
+  resp=$(curl -sS -X POST "$STS_URL" \
+    --data-urlencode "audience=${AUDIENCE}" \
+    --data-urlencode "grant_type=urn:ietf:params:oauth:grant-type:token-exchange" \
+    --data-urlencode "requested_token_type=urn:ietf:params:oauth:token-type:access_token" \
+    --data-urlencode "scope=https://www.googleapis.com/auth/cloud-platform" \
+    --data-urlencode "subject_token_type=urn:ietf:params:oauth:token-type:id_token" \
+    --data-urlencode "options={\"userProject\":\"${QUOTA_PROJECT}\"}" \
+    --data-urlencode "subject_token=$1") || die "STS token exchange request failed"
+  at=$(jq -r '.access_token // empty' <<<"$resp")
+  [ -n "$at" ] || die "STS exchange failed: $(jq -rc '.error_description // .error // "unknown"' <<<"$resp")"
+  ei=$(jq -r '.expires_in // 3600' <<<"$resp")
+  printf '%s %s' "$at" "$ei"
+}
+
+emit_exec_credential() { # emit_exec_credential <access_token> <expires_at_epoch>
+  local api_version="client.authentication.k8s.io/v1"
+  if [ -n "${KUBERNETES_EXEC_INFO:-}" ]; then
+    api_version=$(printf '%s' "$KUBERNETES_EXEC_INFO" | jq -r '.apiVersion // "client.authentication.k8s.io/v1"')
+  fi
+  jq -nc --arg v "$api_version" --arg t "$1" --arg e "$(epoch_to_rfc3339 "$2")" \
+    '{apiVersion:$v,kind:"ExecCredential",status:{token:$t,expirationTimestamp:$e}}'
+}
+
+# get_token serves a cached access token until ~1min before expiry, otherwise
+# mints a fresh one (which re-evaluates group memberships) and caches it.
+get_token() {
+  local now exp at
+  now=$(date +%s)
+  if [ -f "$TOKEN_CACHE" ]; then
+    exp=$(jq -r '.expires_at // 0' <"$TOKEN_CACHE" 2>/dev/null || echo 0)
+    if [ "$exp" -gt $((now + 60)) ]; then
+      at=$(jq -r '.access_token // empty' <"$TOKEN_CACHE")
+      if [ -n "$at" ]; then
+        emit_exec_credential "$at" "$exp"
+        return 0
+      fi
+    fi
+  fi
+  local idt pair ei
+  idt=$(mint_azure_idtoken)
+  pair=$(sts_exchange "$idt")
+  at=${pair% *}
+  ei=${pair##* }
+  exp=$((now + ei))
+  write_secret "$TOKEN_CACHE" "$(jq -nc --arg t "$at" --argjson e "$exp" '{access_token:$t,expires_at:$e}')"
+  emit_exec_credential "$at" "$exp"
+}
+
+# check_session validates the full path (Azure refresh + STS exchange), so
+# provisioning catches a broken exchange (audience, QUOTA_PROJECT,
+# serviceusage permission) instead of reporting a healthy session that only
+# fails on the first kubectl.
+check_session() {
+  local idt
+  idt=$(mint_azure_idtoken)
+  sts_exchange "$idt" >/dev/null
+}
+
+device_login() {
+  local resp device_code interval idt new_rt err
+  resp=$(curl -sS -X POST "${AUTHORITY}/devicecode" \
+    --data-urlencode "client_id=${CLIENT_ID}" \
+    --data-urlencode "scope=${SCOPE}")
+  if [ -n "$(jq -r '.error // empty' <<<"$resp")" ]; then
+    die "devicecode error: $(jq -r '.error_description // .error' <<<"$resp")"
+  fi
+  device_code=$(jq -r '.device_code // empty' <<<"$resp")
+  [ -n "$device_code" ] || die "devicecode response missing device_code (malformed response?)"
+  interval=$(jq -r '.interval // 5' <<<"$resp")
+  printf '\n  %s\n\n' "$(jq -r '.message // "open https://login.microsoft.com/device"' <<<"$resp")" >&2
+  while true; do
+    sleep "$interval"
+    resp=$(curl -sS -X POST "${AUTHORITY}/token" \
+      --data-urlencode "client_id=${CLIENT_ID}" \
+      --data-urlencode "grant_type=urn:ietf:params:oauth:grant-type:device_code" \
+      --data-urlencode "device_code=${device_code}") || true
+    idt=$(jq -r '.id_token // empty' <<<"$resp")
+    if [ -n "$idt" ]; then
+      new_rt=$(jq -r '.refresh_token // empty' <<<"$resp")
+      [ -n "$new_rt" ] || die "device login succeeded but response carried no refresh_token"
+      write_secret "$RT_FILE" "$new_rt"
+      rm -f "$TOKEN_CACHE"
+      echo "seeded refresh token -> ${RT_FILE}" >&2
+      return 0
+    fi
+    err=$(jq -r '.error // "unknown"' <<<"$resp")
+    case "$err" in
+      authorization_pending) ;;
+      slow_down) interval=$((interval + 5)) ;;
+      *) die "device login failed: $(jq -r '.error_description // .error' <<<"$resp")" ;;
+    esac
+  done
+}
+
+force_refresh() {
+  rm -f "$TOKEN_CACHE"
+  echo "Cleared the cached access token. Your next kubectl call re-mints one with current group memberships." >&2
+}
+
+logout() {
+  rm -f "$TOKEN_CACHE" "$RT_FILE"
+  echo "Signed out: removed the refresh token and cached access token." >&2
+  echo "Run 'ariadne-gcp-workforce-login --login' to sign in again." >&2
+}
+
+usage() {
+  cat >&2 <<'EOF'
+ariadne-gcp-workforce-login — GKE Workforce Identity kubectl credential plugin
+
+  get-token         print an ExecCredential for kubectl (invoked by the kubeconfig)
+  --login           interactive device-code login (one-time, ~90 day session)
+  --force-refresh   drop the cached access token so the next kubectl re-pulls your groups
+  --logout          end the session (remove refresh token + cached access token)
+  --help            show this help
+EOF
+}
+
+case "${1:-get-token}" in
+  get-token) get_token ;;
+  --login) device_login ;;
+  --has-session) test -s "$RT_FILE" ;; # internal: is a refresh token present?
+  --check) check_session ;;            # internal: full validation (Azure + STS)
+  --force-refresh) force_refresh ;;
+  --logout) logout ;;
+  --help | -h) usage ;;
+  *)
+    echo "unknown argument: $1" >&2
+    usage
+    exit 2
+    ;;
+esac

@@ -1,6 +1,8 @@
 package gcloudworkforcelogin
 
 import (
+	"bytes"
+	_ "embed"
 	"fmt"
 	"os"
 	"os/exec"
@@ -10,19 +12,26 @@ import (
 	"github.com/modell-aachen/machine/internal/platform"
 )
 
-// Workforce Identity Federation pool and provider that back GKE cluster
-// authentication. Identity Service for GKE is discontinued on 2026-07-01;
-// afterwards kubectl authenticates via gke-gcloud-auth-plugin, which obtains a
-// token from the active gcloud credential. This module makes that credential a
-// Workforce Identity (federated via Azure AD) instead of a Google account.
-const (
-	workforcePool     = "ariadne-workforce"
-	workforceProvider = "ariadne-workforce"
-)
+// ariadne-gcp-workforce-login is shipped with the binary and installed into the
+// user's PATH. It is a client-go exec credential plugin: it mints a fresh Azure
+// AD id_token from a stored refresh token, exchanges it at Google STS, and
+// prints an ExecCredential for kubectl. Because it talks to STS directly, gcloud
+// is not on the runtime path and no GOOGLE_EXTERNAL_ACCOUNT_ALLOW_EXECUTABLES
+// gate is needed anywhere. GKE re-evaluates the user's group memberships
+// whenever the cached token is re-minted.
+//
+// The kubeconfig that wires GKE users to this helper is managed by the team in
+// 1Password, so this module only installs the helper and performs the one-time
+// interactive device-code login. Workforce Identity Federation replaces Identity
+// Service for GKE (discontinued 2026-07-01).
+//
+//go:embed ariadne-gcp-workforce-login
+var execScript []byte
 
-// Run configures gcloud for Workforce Identity Federation and signs the user
-// in, so that gke-gcloud-auth-plugin can obtain GKE tokens with no further
-// manual setup.
+const execName = "ariadne-gcp-workforce-login"
+
+// Run installs the credential helper and ensures a valid Azure refresh token,
+// signing the user in interactively (device code) if necessary.
 func Run(out *output.Context, plat platform.Platform) error {
 	_ = plat
 
@@ -30,49 +39,66 @@ func Run(out *output.Context, plat platform.Platform) error {
 	if err != nil {
 		return fmt.Errorf("failed to determine home directory: %w", err)
 	}
-	loginConfig := filepath.Join(home, ".config", "gcloud", "ariadne-login-config.json")
+	execPath := filepath.Join(home, ".local", "bin", execName)
 
-	// 1. Generate the (non-secret) login config describing the workforce pool
-	//    provider, unless it already exists. This must succeed without an active
-	//    credential, since it is a prerequisite for signing in.
-	if _, statErr := os.Stat(loginConfig); statErr != nil {
-		out.Step("Generating Workforce Identity login config")
-		provider := fmt.Sprintf("locations/global/workforcePools/%s/providers/%s", workforcePool, workforceProvider)
-		genCmd := exec.Command("gcloud", "iam", "workforce-pools", "create-login-config",
-			provider, "--output-file="+loginConfig)
-		genCmd.Stdout = out.MultiWriter(nil)
-		genCmd.Stderr = out.MultiWriter(nil)
-		if err := genCmd.Run(); err != nil {
-			return fmt.Errorf("failed to create workforce login config: %w", err)
+	if err := installExecutable(out, execPath); err != nil {
+		return err
+	}
+
+	if hasSession(execPath) {
+		// A refresh token exists; validate the full path (Azure + STS) so a
+		// broken exchange surfaces here instead of on the first kubectl, and is
+		// not mistaken for "needs login".
+		if err := checkSession(execPath); err != nil {
+			return fmt.Errorf("workforce session present but token exchange failed; "+
+				"check QUOTA_PROJECT/serviceusage and the provider audience: %w", err)
 		}
-	} else {
-		out.Skipped("Workforce login config already present")
-	}
-
-	// 2. Make gcloud use the workforce login config for browser sign-in, so a
-	//    plain `gcloud auth login` runs the Workforce (Azure AD) flow.
-	out.Step("Configuring gcloud to use the Workforce login config")
-	setCmd := exec.Command("gcloud", "config", "set", "auth/login_config_file", loginConfig)
-	setCmd.Stdout = out.MultiWriter(nil)
-	setCmd.Stderr = out.MultiWriter(nil)
-	if err := setCmd.Run(); err != nil {
-		return fmt.Errorf("failed to set gcloud login config: %w", err)
-	}
-
-	// 3. Sign in if there is no active credential yet (interactive browser flow).
-	if err := exec.Command("gcloud", "auth", "print-access-token").Run(); err == nil {
-		out.Skipped("gcloud already has an active credential")
+		out.Skipped("Workforce session already valid")
 		return nil
 	}
 
-	out.Step("Logging into Google Cloud via Workforce Identity (interactive)")
-	loginCmd := exec.Command("gcloud", "auth", "login")
-	loginCmd.Stdout = os.Stdout
-	loginCmd.Stderr = os.Stderr
-	loginCmd.Stdin = os.Stdin
-	if err := loginCmd.Run(); err != nil {
-		return fmt.Errorf("failed to authenticate to Google Cloud: %w", err)
+	out.Step("Logging into Azure AD via device code (interactive, one-time)")
+	if err := deviceLogin(execPath); err != nil {
+		return fmt.Errorf("failed to obtain Azure refresh token: %w", err)
+	}
+	if err := checkSession(execPath); err != nil {
+		return fmt.Errorf("token exchange failed after login; "+
+			"check QUOTA_PROJECT/serviceusage and the provider audience: %w", err)
 	}
 
 	return nil
+}
+
+func installExecutable(out *output.Context, execPath string) error {
+	out.Step("Installing " + execName)
+	if err := os.MkdirAll(filepath.Dir(execPath), 0o755); err != nil {
+		return fmt.Errorf("failed to create bin directory: %w", err)
+	}
+	if err := os.WriteFile(execPath, execScript, 0o755); err != nil {
+		return fmt.Errorf("failed to write %s: %w", execName, err)
+	}
+	return nil
+}
+
+// hasSession reports whether a refresh token is present (no network call).
+func hasSession(execPath string) bool {
+	return exec.Command(execPath, "--has-session").Run() == nil
+}
+
+// checkSession validates the full credential path (Azure refresh + STS
+// exchange), surfacing the helper's error message on failure.
+func checkSession(execPath string) error {
+	out, err := exec.Command(execPath, "--check").CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("%w: %s", err, bytes.TrimSpace(out))
+	}
+	return nil
+}
+
+func deviceLogin(execPath string) error {
+	cmd := exec.Command(execPath, "--login")
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
 }
