@@ -4,7 +4,15 @@
 # Default mode mints a fresh Azure AD OIDC id_token from a stored refresh token
 # and prints it per Google's executable-sourced credential spec. gcloud runs
 # this on every STS token refresh, so GKE re-evaluates the `groups` claim
-# without an interactive re-login (refresh token is good ~90 days).
+# without an interactive re-login.
+#
+# The refresh token is a long-lived (~90 day) secret that carries the groups
+# claim (and thus GKE access). It is stored as a 0600 file under the gcloud
+# config dir — same handling as gcloud/kubeconfig credentials — and is
+# intentionally NOT kept in 1Password, deviating from the team secrets
+# convention. Azure does not single-use refresh tokens for this public/native
+# client (24h single-use applies only to SPA redirect URIs), so concurrent
+# refreshes are safe; see the lock in refresh_and_emit.
 #
 #   ariadne-gcp-workforce-login                  # refresh + emit (gcloud calls this)
 #   ariadne-gcp-workforce-login --login          # one-time interactive device-code login
@@ -39,7 +47,7 @@ write_rt() {
 }
 
 device_login() {
-  local resp device_code interval idt err
+  local resp device_code interval idt new_rt err
   resp=$(curl -sS -X POST "${AUTHORITY}/devicecode" \
     --data-urlencode "client_id=${CLIENT_ID}" \
     --data-urlencode "scope=${SCOPE}")
@@ -47,9 +55,10 @@ device_login() {
     echo "devicecode error: $(jq -r '.error_description // .error' <<<"$resp")" >&2
     exit 1
   fi
-  device_code=$(jq -r '.device_code' <<<"$resp")
+  device_code=$(jq -r '.device_code // empty' <<<"$resp")
+  [ -n "$device_code" ] || { echo "devicecode response missing device_code (malformed response?)" >&2; exit 1; }
   interval=$(jq -r '.interval // 5' <<<"$resp")
-  printf '\n  %s\n\n' "$(jq -r '.message' <<<"$resp")" >&2
+  printf '\n  %s\n\n' "$(jq -r '.message // "open https://login.microsoft.com/device"' <<<"$resp")" >&2
   while true; do
     sleep "$interval"
     resp=$(curl -sS -X POST "${AUTHORITY}/token" \
@@ -58,7 +67,9 @@ device_login() {
       --data-urlencode "device_code=${device_code}") || true
     idt=$(jq -r '.id_token // empty' <<<"$resp")
     if [ -n "$idt" ]; then
-      write_rt "$(jq -r '.refresh_token' <<<"$resp")"
+      new_rt=$(jq -r '.refresh_token // empty' <<<"$resp")
+      [ -n "$new_rt" ] || { echo "device login succeeded but response carried no refresh_token" >&2; exit 1; }
+      write_rt "$new_rt"
       echo "seeded refresh token -> ${RT_FILE}" >&2
       return 0
     fi
@@ -77,6 +88,15 @@ device_login() {
 refresh_and_emit() {
   [ -f "$RT_FILE" ] || emit_failure "NO_REFRESH_TOKEN" \
     "refresh token missing; run: ariadne-gcp-workforce-login --login"
+  # Serialize read-rotate-write so concurrent kubectl calls can't clobber a
+  # freshly rotated refresh token. flock auto-releases on process exit (incl.
+  # kill), so it cannot deadlock; where flock is unavailable (stock macOS) we
+  # proceed without it — benign because this public/native client's refresh
+  # tokens are not single-use (see header).
+  if command -v flock >/dev/null 2>&1; then
+    exec 9>"${RT_FILE}.lock"
+    flock 9
+  fi
   local rt resp idt new_rt
   rt=$(cat "$RT_FILE")
   [ -n "$rt" ] || emit_failure "EMPTY_REFRESH_TOKEN" "refresh token file is empty; run --login"
@@ -95,9 +115,10 @@ refresh_and_emit() {
   emit_success "$idt"
 }
 
-# clear_caches drops gcloud's short-lived access-token cache and the
-# gke-gcloud-auth-plugin cache. The long-lived refresh token is untouched, so
-# the next call re-mints a fresh id_token (with current groups) via the helper.
+# clear_caches drops the short-lived access-token caches so the next call
+# re-mints a fresh id_token (with current groups). The long-lived refresh token
+# is untouched. NOTE: access_tokens.db is gcloud-wide — other gcloud accounts
+# lose their cached access tokens too, but simply re-mint on next use (harmless).
 clear_caches() {
   rm -f "${GCLOUD_DIR}/access_tokens.db" "${PLUGIN_CACHE}"
 }
