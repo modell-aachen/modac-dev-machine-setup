@@ -1,0 +1,140 @@
+#!/usr/bin/env bash
+# ariadne-gcp-workforce-login — Workforce Identity executable-sourced credential.
+#
+# Default mode mints a fresh Azure AD OIDC id_token from a stored refresh token
+# and prints it per Google's executable-sourced credential spec. gcloud runs
+# this on every STS token refresh, so GKE re-evaluates the `groups` claim
+# without an interactive re-login (refresh token is good ~90 days).
+#
+#   ariadne-gcp-workforce-login                  # refresh + emit (gcloud calls this)
+#   ariadne-gcp-workforce-login --login          # one-time interactive device-code login
+#   ariadne-gcp-workforce-login --force-refresh  # drop cached tokens so the next kubectl re-pulls groups
+#   ariadne-gcp-workforce-login --logout         # end the session (remove refresh token + caches)
+#
+# Requires curl and jq (both provided by the devbox environment).
+set -euo pipefail
+
+TENANT="7838a88f-3a81-4c75-a67b-bf0715776375"
+CLIENT_ID="090c1876-72d3-4d5f-8d42-85c7d7e635a4" # public client, no secret
+SCOPE="openid offline_access profile email"
+AUTHORITY="https://login.microsoftonline.com/${TENANT}/oauth2/v2.0"
+GCLOUD_DIR="${CLOUDSDK_CONFIG:-${HOME}/.config/gcloud}"
+RT_FILE="${GCLOUD_DIR}/ariadne-azure-refresh-token"
+PLUGIN_CACHE="${HOME}/.kube/gke_gcloud_auth_plugin_cache"
+
+emit_success() {
+  jq -nc --arg t "$1" \
+    '{version:1,success:true,token_type:"urn:ietf:params:oauth:token-type:id_token",id_token:$t}'
+}
+
+emit_failure() {
+  jq -nc --arg c "$1" --arg m "$2" '{version:1,success:false,code:$c,message:$m}'
+  exit 1
+}
+
+write_rt() {
+  local tmp="${RT_FILE}.tmp"
+  (umask 077; printf '%s' "$1" >"$tmp")
+  mv -f "$tmp" "$RT_FILE"
+}
+
+device_login() {
+  local resp device_code interval idt err
+  resp=$(curl -sS -X POST "${AUTHORITY}/devicecode" \
+    --data-urlencode "client_id=${CLIENT_ID}" \
+    --data-urlencode "scope=${SCOPE}")
+  if [ -n "$(jq -r '.error // empty' <<<"$resp")" ]; then
+    echo "devicecode error: $(jq -r '.error_description // .error' <<<"$resp")" >&2
+    exit 1
+  fi
+  device_code=$(jq -r '.device_code' <<<"$resp")
+  interval=$(jq -r '.interval // 5' <<<"$resp")
+  printf '\n  %s\n\n' "$(jq -r '.message' <<<"$resp")" >&2
+  while true; do
+    sleep "$interval"
+    resp=$(curl -sS -X POST "${AUTHORITY}/token" \
+      --data-urlencode "client_id=${CLIENT_ID}" \
+      --data-urlencode "grant_type=urn:ietf:params:oauth:grant-type:device_code" \
+      --data-urlencode "device_code=${device_code}") || true
+    idt=$(jq -r '.id_token // empty' <<<"$resp")
+    if [ -n "$idt" ]; then
+      write_rt "$(jq -r '.refresh_token' <<<"$resp")"
+      echo "seeded refresh token -> ${RT_FILE}" >&2
+      return 0
+    fi
+    err=$(jq -r '.error // "unknown"' <<<"$resp")
+    case "$err" in
+      authorization_pending) ;;
+      slow_down) interval=$((interval + 5)) ;;
+      *)
+        echo "device login failed: $(jq -r '.error_description // .error' <<<"$resp")" >&2
+        exit 1
+        ;;
+    esac
+  done
+}
+
+refresh_and_emit() {
+  [ -f "$RT_FILE" ] || emit_failure "NO_REFRESH_TOKEN" \
+    "refresh token missing; run: ariadne-gcp-workforce-login --login"
+  local rt resp idt new_rt
+  rt=$(cat "$RT_FILE")
+  [ -n "$rt" ] || emit_failure "EMPTY_REFRESH_TOKEN" "refresh token file is empty; run --login"
+  resp=$(curl -sS -X POST "${AUTHORITY}/token" \
+    --data-urlencode "client_id=${CLIENT_ID}" \
+    --data-urlencode "grant_type=refresh_token" \
+    --data-urlencode "refresh_token=${rt}" \
+    --data-urlencode "scope=${SCOPE}") || emit_failure "NETWORK_ERROR" "Azure token request failed"
+  idt=$(jq -r '.id_token // empty' <<<"$resp")
+  [ -n "$idt" ] || emit_failure "AZURE_TOKEN_ERROR" \
+    "no id_token: $(jq -rc '.error_description // .error // "unknown"' <<<"$resp")"
+  new_rt=$(jq -r '.refresh_token // empty' <<<"$resp")
+  if [ -n "$new_rt" ] && [ "$new_rt" != "$rt" ]; then
+    write_rt "$new_rt"
+  fi
+  emit_success "$idt"
+}
+
+# clear_caches drops gcloud's short-lived access-token cache and the
+# gke-gcloud-auth-plugin cache. The long-lived refresh token is untouched, so
+# the next call re-mints a fresh id_token (with current groups) via the helper.
+clear_caches() {
+  rm -f "${GCLOUD_DIR}/access_tokens.db" "${PLUGIN_CACHE}"
+}
+
+force_refresh() {
+  clear_caches
+  echo "Cleared cached tokens. Your next kubectl call mints a fresh token with current group memberships." >&2
+}
+
+logout() {
+  clear_caches
+  rm -f "$RT_FILE"
+  echo "Signed out: removed the Azure refresh token and cached tokens." >&2
+  echo "Run 'ariadne-gcp-workforce-login --login' to sign in again." >&2
+}
+
+usage() {
+  cat >&2 <<'EOF'
+ariadne-gcp-workforce-login — GKE Workforce Identity credential helper
+
+  (no args)         mint a fresh id_token for gcloud (invoked automatically)
+  --login           interactive device-code login (one-time, ~90 day session)
+  --force-refresh   drop cached tokens so the next kubectl re-pulls your groups
+  --logout          end the session (remove refresh token + cached tokens)
+  --help            show this help
+EOF
+}
+
+case "${1:-}" in
+  --login) device_login ;;
+  --force-refresh) force_refresh ;;
+  --logout) logout ;;
+  --help | -h) usage ;;
+  "") refresh_and_emit ;;
+  *)
+    echo "unknown argument: $1" >&2
+    usage
+    exit 2
+    ;;
+esac

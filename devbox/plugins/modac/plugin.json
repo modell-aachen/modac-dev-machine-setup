@@ -1,6 +1,6 @@
 {
   "name": "MODAC",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "packages": {
     "age": {
       "version": "latest"
@@ -119,6 +119,7 @@
     "QWIKI_EVENTS_HOST": "https://events.qluster.localhost",
     "QWIKI_DEVELOPMENT_ROOT_CA": "$HOME/.local/share/mkcert",
     "ASDF_DATA_DIR": "$HOME/.asdf",
+    "GOOGLE_EXTERNAL_ACCOUNT_ALLOW_EXECUTABLES": "1",
     "KREW_ROOT": "$HOME/.krew",
     "XDG_DATA_DIRS": "$HOME/.local/share/devbox/global/default/.devbox/nix/profile/default/share:$XDG_DATA_DIRS",
     "PATH": "$HOME/.krew/bin:$HOME/.local/bin:$HOME/.asdf/shims:$HOME/.pyenv/bin:$PATH"
