@@ -44,6 +44,7 @@ die() {
 
 write_secret() { # write_secret <file> <content>
   local tmp="$1.tmp"
+  mkdir -p "$(dirname "$1")" # the gcloud config dir may not exist yet on a fresh machine
   (umask 077; printf '%s' "$2" >"$tmp")
   mv -f "$1.tmp" "$1"
 }
