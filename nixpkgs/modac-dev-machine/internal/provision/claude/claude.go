@@ -35,6 +35,10 @@ func Run(out *output.Context, plat platform.Platform) error {
 		return err
 	}
 
+	if err := setupPlugins(out, claudeDir); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -136,6 +140,84 @@ func setupMcpConfig(out *output.Context, claudeDir string) error {
 	return nil
 }
 
+func setupPlugins(out *output.Context, claudeDir string) error {
+	templatesDir, err := util.GetTemplatesDir()
+	if err != nil {
+		return fmt.Errorf("failed to find templates directory: %w", err)
+	}
+
+	templatePath := filepath.Join(templatesDir, "claude-plugins.json")
+	templateData, err := os.ReadFile(templatePath)
+	if err != nil {
+		return fmt.Errorf("failed to read plugins template: %w", err)
+	}
+
+	var template map[string]any
+	if err := json.Unmarshal(templateData, &template); err != nil {
+		return fmt.Errorf("failed to parse plugins template: %w", err)
+	}
+
+	settingsPath := filepath.Join(claudeDir, "settings.json")
+
+	var settings map[string]any
+	if util.FileExists(settingsPath) {
+		data, err := os.ReadFile(settingsPath)
+		if err != nil {
+			return fmt.Errorf("failed to read claude settings: %w", err)
+		}
+		if err := json.Unmarshal(data, &settings); err != nil {
+			return fmt.Errorf("failed to parse claude settings: %w", err)
+		}
+	} else {
+		settings = map[string]any{}
+	}
+
+	added := mergePluginSettings(settings, template)
+	if added == 0 {
+		out.Skipped("Plugin marketplace and plugins already configured")
+		return nil
+	}
+
+	data, err := json.MarshalIndent(settings, "", "  ")
+	if err != nil {
+		return fmt.Errorf("failed to marshal claude settings: %w", err)
+	}
+
+	out.Step(fmt.Sprintf("Adding %d plugin setting(s) to ~/.claude/settings.json", added))
+	if err := os.WriteFile(settingsPath, append(data, '\n'), 0644); err != nil {
+		return fmt.Errorf("failed to write claude settings: %w", err)
+	}
+
+	return nil
+}
+
+// mergePluginSettings adds the marketplace and plugin entries from template into
+// settings without overwriting existing keys, so a user's own overrides survive
+// re-provisioning. It returns the number of entries added.
+func mergePluginSettings(settings, template map[string]any) int {
+	added := 0
+	for _, key := range []string{"extraKnownMarketplaces", "enabledPlugins"} {
+		templateEntries, ok := template[key].(map[string]any)
+		if !ok {
+			continue
+		}
+
+		existing, ok := settings[key].(map[string]any)
+		if !ok {
+			existing = map[string]any{}
+		}
+
+		for name, value := range templateEntries {
+			if _, exists := existing[name]; !exists {
+				existing[name] = value
+				added++
+			}
+		}
+
+		settings[key] = existing
+	}
+	return added
+}
 
 func copyFile(src, dst string) error {
 	sourceFile, err := os.Open(src)
