@@ -2,7 +2,11 @@ package provision
 
 import (
 	"fmt"
+	"os"
+	"os/exec"
+	"path/filepath"
 	"strings"
+	"syscall"
 
 	"github.com/modell-aachen/machine/internal/output"
 	"github.com/modell-aachen/machine/internal/platform"
@@ -34,16 +38,16 @@ type Options struct {
 	Filter string
 }
 
-// ModuleEntry represents a provisioning module with its name and runner function
 type ModuleEntry struct {
 	Name   string
 	Runner func(*output.Context, platform.Platform) error
 }
 
-// allModules defines the ordered list of all provisioning modules
+const devboxUpdateModuleName = "devbox-update"
+
 var allModules = []ModuleEntry{
 	{"nix-conf", nixconf.Run},
-	{"devbox-update", devboxupdate.Run},
+	{devboxUpdateModuleName, devboxupdate.Run},
 	{"onepassword", onepassword.Run},
 	{"restore-backup", restorebackup.Run},
 	{"packages", packages.Run},
@@ -66,7 +70,6 @@ var allModules = []ModuleEntry{
 	{"docker", docker.Run},
 }
 
-// GetAllModuleNames returns the names of all available modules
 func GetAllModuleNames() []string {
 	names := make([]string, len(allModules))
 	for i, module := range allModules {
@@ -75,7 +78,6 @@ func GetAllModuleNames() []string {
 	return names
 }
 
-// FilterModules returns a filtered list of modules based on the filter string
 func FilterModules(filter string) []ModuleEntry {
 	if filter == "" {
 		return allModules
@@ -97,7 +99,6 @@ func FilterModules(filter string) []ModuleEntry {
 }
 
 func Execute(opts *Options) error {
-	// Create output context for nice formatting and logging
 	out, err := output.New()
 	if err != nil {
 		return fmt.Errorf("failed to initialize output: %w", err)
@@ -114,14 +115,65 @@ func Execute(opts *Options) error {
 
 	modules := FilterModules(opts.Filter)
 
-	// Run all modules
+	self := currentBinary()
+
 	for _, module := range modules {
 		if err := runModule(out, module, plat); err != nil {
 			return fmt.Errorf("module %s failed: %w", module.Name, err)
 		}
+		if module.Name == devboxUpdateModuleName {
+			if err := reexecAfterUpdate(out, self); err != nil {
+				out.PrintError(err)
+				return err
+			}
+		}
 	}
 
 	out.PrintSummary()
+	return nil
+}
+
+func currentBinary() string {
+	exe, err := os.Executable()
+	if err != nil {
+		return ""
+	}
+	if resolved, err := filepath.EvalSymlinks(exe); err == nil {
+		return resolved
+	}
+	return exe
+}
+
+func binaryChanged(self, resolved string) bool {
+	return resolved != "" && resolved != self
+}
+
+func reexecAfterUpdate(out *output.Context, self string) error {
+	if devboxupdate.AlreadyUpdated() {
+		return nil
+	}
+
+	bin, err := exec.LookPath("machine")
+	if err != nil {
+		out.Skipped("machine not found on PATH after update; continuing on the current binary")
+		return nil
+	}
+
+	resolved, err := filepath.EvalSymlinks(bin)
+	if err != nil {
+		resolved = bin
+	}
+
+	if !binaryChanged(self, resolved) {
+		out.Skipped("machine binary unchanged; no restart needed")
+		return nil
+	}
+
+	out.Step("Restarting machine with the updated binary")
+	env := append(os.Environ(), devboxupdate.RestartGuardEnv+"=1")
+	if err := syscall.Exec(bin, os.Args, env); err != nil {
+		return fmt.Errorf("failed to restart machine after update: %w", err)
+	}
 	return nil
 }
 
