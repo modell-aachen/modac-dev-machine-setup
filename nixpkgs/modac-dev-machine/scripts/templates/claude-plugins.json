@@ -1,0 +1,14 @@
+{
+  "extraKnownMarketplaces": {
+    "claude-skills": {
+      "source": {
+        "source": "github",
+        "repo": "modell-aachen/claude-skills"
+      },
+      "autoUpdate": true
+    }
+  },
+  "enabledPlugins": {
+    "dev-workflow@claude-skills": true
+  }
+}
