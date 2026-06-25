@@ -39,7 +39,6 @@ source ~/."$(basename $SHELL)"rc
 
 **GitHub token (Claude Code plugins)**
 1) create a classic PAT at https://github.com/settings/tokens (*Generate new token (classic)*) with scopes `repo` and `read:org`
-1) click *Configure SSO* next to the token and authorize it for the `modell-aachen` org
 1) in 1Password (`Employee` vault): New Item → Password, title `Github Token`, paste the PAT in the `password` field
 
 check that you can login to 1password:
