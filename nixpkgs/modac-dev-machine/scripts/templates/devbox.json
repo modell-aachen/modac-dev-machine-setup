@@ -18,7 +18,7 @@
         "TOLGEE_PROJECT_ID": "op://Entwicklung/Tolgee/text",
         "TOLGEE_API_KEY": "op://Entwicklung/Tolgee/credential",
         "MIXPANEL_CLAUDE_EVENTS_TOKEN": "op://Entwicklung/Mixpanel Claude Events/credential",
-        "GITHUB_TOKEN": "op://Employee/GitHub Plugin Marketplace Token/credential"
+        "GITHUB_TOKEN": "op://Employee/Github Token/password"
     },
     "env": {},
     "env_from": "{env_path}"

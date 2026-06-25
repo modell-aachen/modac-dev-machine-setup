@@ -50,8 +50,8 @@ clone goes stale and new plugins/skills silently never appear.
 1) create a **classic** Personal Access Token (https://github.com/settings/tokens)
    on your own GitHub account with scopes `repo` and `read:org`
 1) in 1Password (your personal `Employee` vault): New Item → Password
-1) title it `GitHub Plugin Marketplace Token`
-1) put the PAT in the `credential` field
+1) title it `Github Token`
+1) put the PAT in the `password` field
 
 > Note: because `GITHUB_TOKEN` is exported into your shell, `gh` CLI commands use it
 > in place of your keyring login — so it must be **your own** PAT, not a shared/bot
