@@ -2,7 +2,11 @@ package provision
 
 import (
 	"fmt"
+	"os"
+	"os/exec"
+	"path/filepath"
 	"strings"
+	"syscall"
 
 	"github.com/modell-aachen/machine/internal/output"
 	"github.com/modell-aachen/machine/internal/platform"
@@ -40,10 +44,18 @@ type ModuleEntry struct {
 	Runner func(*output.Context, platform.Platform) error
 }
 
-// allModules defines the ordered list of all provisioning modules
+// devboxUpdateModuleName is the module after which the executor may re-exec into
+// a newly installed machine binary (see reexecAfterUpdate).
+const devboxUpdateModuleName = "devbox-update"
+
+// allModules defines the ordered list of all provisioning modules.
+//
+// Every module listed before devboxUpdateModuleName must be idempotent: when an
+// update installs a newer binary, the executor re-execs and the provision runs
+// from the top again on the new binary, so those modules run twice.
 var allModules = []ModuleEntry{
 	{"nix-conf", nixconf.Run},
-	{"devbox-update", devboxupdate.Run},
+	{devboxUpdateModuleName, devboxupdate.Run},
 	{"onepassword", onepassword.Run},
 	{"restore-backup", restorebackup.Run},
 	{"packages", packages.Run},
@@ -114,16 +126,84 @@ func Execute(opts *Options) error {
 
 	modules := FilterModules(opts.Filter)
 
+	// Resolved path of the binary we're running. After devbox-update we compare
+	// it against the machine now on PATH and re-exec if it changed, so the rest
+	// of the modules run on the updated binary.
+	self := currentBinary()
+
 	// Run all modules
 	for _, module := range modules {
 		if err := runModule(out, module, plat); err != nil {
 			out.PrintError(fmt.Errorf("module %s failed: %w", module.Name, err))
 			return fmt.Errorf("module %s failed: %w", module.Name, err)
 		}
+		if module.Name == devboxUpdateModuleName {
+			if err := reexecAfterUpdate(out, self); err != nil {
+				out.PrintError(err)
+				return err
+			}
+		}
 	}
 
 	out.PrintSummary()
 	return nil
+}
+
+// currentBinary returns the resolved path of the running machine binary, or ""
+// if it can't be determined. An empty result makes reexecAfterUpdate treat the
+// post-update binary as changed — better to reload than to silently keep running
+// a possibly stale binary.
+func currentBinary() string {
+	exe, err := os.Executable()
+	if err != nil {
+		return ""
+	}
+	if resolved, err := filepath.EvalSymlinks(exe); err == nil {
+		return resolved
+	}
+	return exe
+}
+
+// binaryChanged reports whether resolved is a different machine binary than the
+// one currently running (self). An unresolvable resolved ("") counts as no
+// change so the caller keeps running rather than re-exec into nothing.
+func binaryChanged(self, resolved string) bool {
+	return resolved != "" && resolved != self
+}
+
+// reexecAfterUpdate restarts the provision under the machine binary now on PATH
+// when devbox-update installed a different one, so the remaining modules run on
+// it. devbox.GlobalUpdate already refreshed PATH into this process's env, which
+// os.Environ() carries to the new image. The RestartGuardEnv guard makes the
+// post-re-exec pass a no-op here, so this cannot loop. On success it never
+// returns — syscall.Exec replaces the process image.
+func reexecAfterUpdate(out *output.Context, self string) error {
+	if devboxupdate.AlreadyUpdated() {
+		return nil
+	}
+
+	bin, err := exec.LookPath("machine")
+	if err != nil {
+		out.Skipped("machine not found on PATH after update; continuing on the current binary")
+		return nil
+	}
+
+	resolved, err := filepath.EvalSymlinks(bin)
+	if err != nil {
+		resolved = bin
+	}
+
+	if !binaryChanged(self, resolved) {
+		out.Skipped("machine binary unchanged; no restart needed")
+		return nil
+	}
+
+	out.Step("Restarting machine with the updated binary")
+	env := append(os.Environ(), devboxupdate.RestartGuardEnv+"=1")
+	if err := syscall.Exec(bin, os.Args, env); err != nil {
+		return fmt.Errorf("failed to restart machine after update: %w", err)
+	}
+	return nil // unreachable on success: syscall.Exec replaces the process image
 }
 
 func ListModules() error {

@@ -1,54 +1,34 @@
 package devboxupdate
 
 import (
-	"fmt"
 	"os"
-	"os/exec"
-	"syscall"
 
 	"github.com/modell-aachen/machine/internal/devbox"
 	"github.com/modell-aachen/machine/internal/output"
 	"github.com/modell-aachen/machine/internal/platform"
 )
 
-// selfUpdatedEnv guards against an infinite re-exec loop: it is set on the
-// process we exec into after updating, so the second pass skips the update.
-const selfUpdatedEnv = "MACHINE_SELF_UPDATED"
+// RestartGuardEnv guards against an infinite re-exec loop: the executor sets it
+// on the process it re-execs into after an update, so the second pass skips the
+// update instead of triggering another restart.
+const RestartGuardEnv = "MACHINE_SELF_UPDATED"
 
-// alreadyUpdated reports whether this process is the post-re-exec pass.
-func alreadyUpdated() bool {
-	return os.Getenv(selfUpdatedEnv) == "1"
+// AlreadyUpdated reports whether this process is the post-re-exec pass.
+func AlreadyUpdated() bool {
+	return os.Getenv(RestartGuardEnv) == "1"
 }
 
-// Run updates the devbox global environment and then, on the first pass, re-execs
-// the (possibly newer) machine binary so that modules added or changed by the
-// update run in the same `machine provision` invocation. The whole provision
-// restarts from the top under the new binary; modules are idempotent, so the few
-// that run before this one simply run again.
+// Run updates the devbox global environment. Restarting into a newer machine
+// binary (so modules added or changed by the update run in the same provision)
+// is the executor's job — see provision.Execute. On the post-re-exec pass this
+// skips, so a single `machine provision` never updates twice.
 func Run(out *output.Context, plat platform.Platform) error {
 	_ = plat
 
-	if alreadyUpdated() {
+	if AlreadyUpdated() {
 		out.Skipped("devbox already updated earlier this run")
 		return nil
 	}
 
-	if err := devbox.GlobalUpdate(out); err != nil {
-		return err
-	}
-
-	// Restart into whatever machine is now on PATH so the rest of provisioning
-	// uses the updated binary. devbox.GlobalUpdate already refreshed PATH into
-	// this process's env, which os.Environ() carries to the new image.
-	bin, err := exec.LookPath("machine")
-	if err != nil {
-		// machine not resolvable on PATH; continue with the current binary.
-		return nil
-	}
-
-	out.Step("Restarting machine with the updated environment")
-	if err := syscall.Exec(bin, os.Args, append(os.Environ(), selfUpdatedEnv+"=1")); err != nil {
-		return fmt.Errorf("failed to restart machine after update: %w", err)
-	}
-	return nil // unreachable on success: syscall.Exec replaces the process image
+	return devbox.GlobalUpdate(out)
 }
