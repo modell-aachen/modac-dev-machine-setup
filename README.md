@@ -27,7 +27,9 @@ source ~/."$(basename $SHELL)"rc
 
 * The 1Password app is provisioned. You should be able to login
 
-### Provide needed secrets to 1Password for Harbor
+### Provide needed secrets to 1Password
+
+**Harbor**
 1) in 1Password: New Item
 1) Add Login
 1) Change `Login` title to `Harbor`
@@ -35,45 +37,15 @@ source ~/."$(basename $SHELL)"rc
 1) set password (https://harbor.modac.cloud -> Login -> user profile [top right corner] -> User Profile -> CLI secret)
 1) enable cli integration (1Password app > ... > Settings > Developer > Command-Line Interface)
 
+**GitHub token (Claude Code plugins)**
+1) create a classic PAT at https://github.com/settings/tokens (*Generate new token (classic)*) with scopes `repo` and `read:org`
+1) click *Configure SSO* next to the token and authorize it for the `modell-aachen` org
+1) in 1Password (`Employee` vault): New Item → Password, title `Github Token`, paste the PAT in the `password` field
+
 check that you can login to 1password:
 ```BASH
 op vault list
 ```
-
-### Provide a GitHub token to 1Password for Claude Code plugins
-
-Claude Code refreshes private plugin marketplaces (e.g. `modell-aachen/claude-skills`)
-at startup via a background `git pull`. That pull cannot use your interactive
-`gh` login, so it needs `GITHUB_TOKEN` in the environment — otherwise the marketplace
-clone goes stale and new plugins/skills silently never appear.
-
-Create a **classic** Personal Access Token on your own GitHub account:
-
-1) go to https://github.com/settings/tokens → *Tokens (classic)* →
-   *Generate new token (classic)*
-1) note: `Github Token`; pick an expiration
-1) select scopes `repo` and `read:org`
-1) *Generate token* and copy it (shown only once)
-1) click *Configure SSO* next to the token and authorize it for the
-   `modell-aachen` org — without this the token cannot read the private
-   marketplace repo
-
-Store it in 1Password:
-
-1) in your personal `Employee` vault: New Item → Password
-1) title it `Github Token`
-1) put the PAT in the `password` field
-
-Then re-run provisioning to pick it up:
-
-```BASH
-eval "$(op signin)"
-machine provision -f setup-envs
-```
-
-> Note: because `GITHUB_TOKEN` is exported into your shell, `gh` CLI commands use it
-> in place of your keyring login — so it must be **your own** PAT, not a shared/bot
-> token. Git push/clone are unaffected (they use SSH).
 
 ### [OPTIONAL] restore devbox.json
 
