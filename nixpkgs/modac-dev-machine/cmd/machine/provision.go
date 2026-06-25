@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/spf13/cobra"
 
@@ -35,6 +36,35 @@ var listModulesCmd = &cobra.Command{
 }
 
 func init() {
-	provisionCmd.Flags().StringP("filter", "f", "", "Comma-separated list of modules to run")
+	provisionCmd.Flags().StringP("filter", "f", "", "Comma-separated list of modules to run (tab-completable)")
 	provisionCmd.AddCommand(listModulesCmd)
+
+	provisionCmd.Long += "\n\nUse --filter to run only specific modules (comma-separated). Available modules:\n  " +
+		strings.Join(provision.GetAllModuleNames(), "\n  ")
+
+	_ = provisionCmd.RegisterFlagCompletionFunc("filter", completeFilter)
+}
+
+func completeFilter(_ *cobra.Command, _ []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	segments := strings.Split(toComplete, ",")
+	chosen := make(map[string]bool)
+	for _, s := range segments[:len(segments)-1] {
+		chosen[s] = true
+	}
+
+	prefix := strings.Join(segments[:len(segments)-1], ",")
+	if prefix != "" {
+		prefix += ","
+	}
+
+	var comps []string
+	for _, name := range provision.GetAllModuleNames() {
+		if chosen[name] {
+			continue
+		}
+		if candidate := prefix + name; strings.HasPrefix(candidate, toComplete) {
+			comps = append(comps, candidate)
+		}
+	}
+	return comps, cobra.ShellCompDirectiveNoSpace | cobra.ShellCompDirectiveNoFileComp
 }

@@ -27,6 +27,7 @@ func Run(out *output.Context, plat platform.Platform) error {
 
 	shells := []string{"bash", "zsh"}
 	completions := []completion{
+		{"machine", "1_0_0", "completion"},
 		{"flux", "2_5_1", "completion"},
 		{"op", "2_30_3", "completion"},
 		{"helm", "3_17_3", "completion"},
