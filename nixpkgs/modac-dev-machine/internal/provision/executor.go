@@ -117,7 +117,6 @@ func Execute(opts *Options) error {
 	// Run all modules
 	for _, module := range modules {
 		if err := runModule(out, module, plat); err != nil {
-			out.PrintError(fmt.Errorf("module %s failed: %w", module.Name, err))
 			return fmt.Errorf("module %s failed: %w", module.Name, err)
 		}
 	}
@@ -137,7 +136,7 @@ func ListModules() error {
 func runModule(out *output.Context, module ModuleEntry, plat platform.Platform) error {
 	out.StartModule(module.Name)
 	if err := module.Runner(out, plat); err != nil {
-		out.Failure(fmt.Sprintf("Module failed: %v", err))
+		out.Failure("Module failed")
 		return err
 	}
 	out.Success("Module completed")

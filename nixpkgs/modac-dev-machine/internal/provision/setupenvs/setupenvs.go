@@ -122,9 +122,6 @@ func Run(out *output.Context, plat platform.Platform) error {
 		return fmt.Errorf("failed to generate env template: %w", err)
 	}
 
-	// Validate every op:// reference resolves before injecting, so a missing
-	// 1Password item yields a clear, actionable message instead of a cryptic
-	// `op inject` failure.
 	out.Step("Validating 1Password secret references")
 	if err := validateOpSecrets(config.OpSecretsTpl); err != nil {
 		return err
@@ -140,10 +137,6 @@ func Run(out *output.Context, plat platform.Platform) error {
 	return nil
 }
 
-// validateOpSecrets checks that the 1Password CLI is signed in and that every
-// op:// reference resolves to an existing item/field. It returns a descriptive
-// error naming each unresolved reference and its reason, so the user knows
-// exactly which 1Password items to create or fix.
 func validateOpSecrets(secrets map[string]string) error {
 	if out, err := exec.Command("op", "whoami").CombinedOutput(); err != nil {
 		return fmt.Errorf(
@@ -151,7 +144,6 @@ func validateOpSecrets(secrets map[string]string) error {
 			lastNonEmptyLine(string(out)))
 	}
 
-	// Sort keys so the reported list is stable and easy to scan.
 	names := make([]string, 0, len(secrets))
 	for name := range secrets {
 		names = append(names, name)
@@ -178,8 +170,6 @@ func validateOpSecrets(secrets map[string]string) error {
 	return nil
 }
 
-// lastNonEmptyLine returns the last non-blank line of s, used to surface the
-// most relevant line of `op` output (its error message) in our own errors.
 func lastNonEmptyLine(s string) string {
 	lines := strings.Split(strings.TrimSpace(s), "\n")
 	for i := len(lines) - 1; i >= 0; i-- {

@@ -17,7 +17,9 @@ var rootCmd = &cobra.Command{
 	Short: "Modac development machine provisioner",
 	Long: `Machine is a CLI tool for provisioning and managing
 development environments for Modac projects.`,
-	Version: version,
+	Version:       version,
+	SilenceErrors: true,
+	SilenceUsage:  true,
 }
 
 func init() {

@@ -49,7 +49,7 @@ clone goes stale and new plugins/skills silently never appear.
 
 1) create a **classic** Personal Access Token (https://github.com/settings/tokens)
    on your own GitHub account with scopes `repo` and `read:org`
-1) in 1Password (vault `Entwicklung`): New Item → Password
+1) in 1Password (your personal `Employee` vault): New Item → Password
 1) title it `GitHub Plugin Marketplace Token`
 1) put the PAT in the `credential` field
 
