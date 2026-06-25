@@ -47,11 +47,29 @@ at startup via a background `git pull`. That pull cannot use your interactive
 `gh` login, so it needs `GITHUB_TOKEN` in the environment — otherwise the marketplace
 clone goes stale and new plugins/skills silently never appear.
 
-1) create a **classic** Personal Access Token (https://github.com/settings/tokens)
-   on your own GitHub account with scopes `repo` and `read:org`
-1) in 1Password (your personal `Employee` vault): New Item → Password
+Create a **classic** Personal Access Token on your own GitHub account:
+
+1) go to https://github.com/settings/tokens → *Tokens (classic)* →
+   *Generate new token (classic)*
+1) note: `Github Token`; pick an expiration
+1) select scopes `repo` and `read:org`
+1) *Generate token* and copy it (shown only once)
+1) click *Configure SSO* next to the token and authorize it for the
+   `modell-aachen` org — without this the token cannot read the private
+   marketplace repo
+
+Store it in 1Password:
+
+1) in your personal `Employee` vault: New Item → Password
 1) title it `Github Token`
 1) put the PAT in the `password` field
+
+Then re-run provisioning to pick it up:
+
+```BASH
+eval "$(op signin)"
+machine provision -f setup-envs
+```
 
 > Note: because `GITHUB_TOKEN` is exported into your shell, `gh` CLI commands use it
 > in place of your keyring login — so it must be **your own** PAT, not a shared/bot
