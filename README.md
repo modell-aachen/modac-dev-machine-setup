@@ -40,6 +40,23 @@ check that you can login to 1password:
 op vault list
 ```
 
+### Provide a GitHub token to 1Password for Claude Code plugins
+
+Claude Code refreshes private plugin marketplaces (e.g. `modell-aachen/claude-skills`)
+at startup via a background `git pull`. That pull cannot use your interactive
+`gh` login, so it needs `GITHUB_TOKEN` in the environment — otherwise the marketplace
+clone goes stale and new plugins/skills silently never appear.
+
+1) create a **classic** Personal Access Token (https://github.com/settings/tokens)
+   on your own GitHub account with scopes `repo` and `read:org`
+1) in 1Password (vault `Entwicklung`): New Item → Password
+1) title it `GitHub Plugin Marketplace Token`
+1) put the PAT in the `credential` field
+
+> Note: because `GITHUB_TOKEN` is exported into your shell, `gh` CLI commands use it
+> in place of your keyring login — so it must be **your own** PAT, not a shared/bot
+> token. Git push/clone are unaffected (they use SSH).
+
 ### [OPTIONAL] restore devbox.json
 
 If you want to restore other files than `devbox.json` you have to call the `backup restore` twice.

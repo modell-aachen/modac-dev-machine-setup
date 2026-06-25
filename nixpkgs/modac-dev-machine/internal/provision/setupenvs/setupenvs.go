@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"sort"
 	"strings"
 
 	"github.com/modell-aachen/machine/internal/output"
@@ -121,6 +122,14 @@ func Run(out *output.Context, plat platform.Platform) error {
 		return fmt.Errorf("failed to generate env template: %w", err)
 	}
 
+	// Validate every op:// reference resolves before injecting, so a missing
+	// 1Password item yields a clear, actionable message instead of a cryptic
+	// `op inject` failure.
+	out.Step("Validating 1Password secret references")
+	if err := validateOpSecrets(config.OpSecretsTpl); err != nil {
+		return err
+	}
+
 	// Inject secrets using 1Password CLI
 	out.Step("Injecting secrets from 1Password")
 	envPath := filepath.Join(secretsDir, ".env")
@@ -129,6 +138,56 @@ func Run(out *output.Context, plat platform.Platform) error {
 	}
 
 	return nil
+}
+
+// validateOpSecrets checks that the 1Password CLI is signed in and that every
+// op:// reference resolves to an existing item/field. It returns a descriptive
+// error naming each unresolved reference and its reason, so the user knows
+// exactly which 1Password items to create or fix.
+func validateOpSecrets(secrets map[string]string) error {
+	if out, err := exec.Command("op", "whoami").CombinedOutput(); err != nil {
+		return fmt.Errorf(
+			"1Password CLI is not signed in (%s).\nRun `eval \"$(op signin)\"`, then re-run provisioning",
+			lastNonEmptyLine(string(out)))
+	}
+
+	// Sort keys so the reported list is stable and easy to scan.
+	names := make([]string, 0, len(secrets))
+	for name := range secrets {
+		names = append(names, name)
+	}
+	sort.Strings(names)
+
+	var missing []string
+	for _, name := range names {
+		ref := secrets[name]
+		if out, err := exec.Command("op", "read", ref).CombinedOutput(); err != nil {
+			missing = append(missing, fmt.Sprintf(
+				"  - %s\n      reference: %s\n      reason:    %s",
+				name, ref, lastNonEmptyLine(string(out))))
+		}
+	}
+
+	if len(missing) > 0 {
+		return fmt.Errorf(
+			"%d 1Password secret reference(s) could not be resolved:\n\n%s\n\n"+
+				"Create or fix the item(s) in 1Password (see the README), then re-run provisioning",
+			len(missing), strings.Join(missing, "\n"))
+	}
+
+	return nil
+}
+
+// lastNonEmptyLine returns the last non-blank line of s, used to surface the
+// most relevant line of `op` output (its error message) in our own errors.
+func lastNonEmptyLine(s string) string {
+	lines := strings.Split(strings.TrimSpace(s), "\n")
+	for i := len(lines) - 1; i >= 0; i-- {
+		if line := strings.TrimSpace(lines[i]); line != "" {
+			return line
+		}
+	}
+	return "unknown error"
 }
 
 func getDevboxGlobalPath() (string, error) {
