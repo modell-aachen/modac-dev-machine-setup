@@ -38,7 +38,6 @@ type Options struct {
 	Filter string
 }
 
-// ModuleEntry represents a provisioning module with its name and runner function
 type ModuleEntry struct {
 	Name   string
 	Runner func(*output.Context, platform.Platform) error
@@ -71,7 +70,6 @@ var allModules = []ModuleEntry{
 	{"docker", docker.Run},
 }
 
-// GetAllModuleNames returns the names of all available modules
 func GetAllModuleNames() []string {
 	names := make([]string, len(allModules))
 	for i, module := range allModules {
@@ -80,7 +78,6 @@ func GetAllModuleNames() []string {
 	return names
 }
 
-// FilterModules returns a filtered list of modules based on the filter string
 func FilterModules(filter string) []ModuleEntry {
 	if filter == "" {
 		return allModules
@@ -102,7 +99,6 @@ func FilterModules(filter string) []ModuleEntry {
 }
 
 func Execute(opts *Options) error {
-	// Create output context for nice formatting and logging
 	out, err := output.New()
 	if err != nil {
 		return fmt.Errorf("failed to initialize output: %w", err)
