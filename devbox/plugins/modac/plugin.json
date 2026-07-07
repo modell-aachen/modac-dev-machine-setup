@@ -45,7 +45,7 @@
     "go-task": {
       "version": "latest"
     },
-    "github:modell-aachen/modac-dev-machine-setup?dir=nixpkgs/modac-dev-machine&rev=a1ae13d972b675ad9eef34db7c38d179c5cefeac#google-cloud-sdk-gke": {},
+    "github:modell-aachen/modac-dev-machine-setup?dir=nixpkgs/modac-dev-machine&rev=cdb264001633fad5def73ec14c74a352f04f6a2d#google-cloud-sdk-gke": {},
     "htop": {
       "version": "latest"
     },
@@ -107,7 +107,7 @@
     "yq-go": {
       "version": "latest"
     },
-    "github:modell-aachen/modac-dev-machine-setup?dir=nixpkgs/modac-dev-machine&rev=a1ae13d972b675ad9eef34db7c38d179c5cefeac": {}
+    "github:modell-aachen/modac-dev-machine-setup?dir=nixpkgs/modac-dev-machine&rev=cdb264001633fad5def73ec14c74a352f04f6a2d": {}
   },
   "env": {
     "DEVBOX_COREPACK_ENABLED": "true",
