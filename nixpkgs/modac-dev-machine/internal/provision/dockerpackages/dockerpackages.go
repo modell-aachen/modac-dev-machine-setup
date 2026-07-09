@@ -118,17 +118,19 @@ func runUbuntu(out *output.Context) error {
 			out.Skipped("Running inside a distrobox, docker already available")
 		}
 
-		// Point DOCKER_CONFIG at the host's .docker directory, independent of
-		// whether docker itself was just linked.
 		homeDir, err := os.UserHomeDir()
 		if err != nil {
 			return fmt.Errorf("failed to get home directory: %w", err)
 		}
 
-		user := os.Getenv("USER")
-		hostDockerDir := fmt.Sprintf("/run/host/home/%s/.docker", user)
+		hostHome, err := hostHomeDir()
+		if err != nil {
+			return fmt.Errorf("failed to determine host home directory: %w", err)
+		}
+
+		dockerConfigDir := filepath.Join(hostHome, ".docker")
 		bashrcPath := filepath.Join(homeDir, ".bashrc")
-		exportLine := fmt.Sprintf("export DOCKER_CONFIG=%q", hostDockerDir)
+		exportLine := fmt.Sprintf("export DOCKER_CONFIG=%q", dockerConfigDir)
 
 		out.Step("Setting DOCKER_CONFIG in .bashrc")
 		if err := appendLineIfMissing(bashrcPath, exportLine); err != nil {
@@ -253,6 +255,19 @@ func appendLineIfMissing(path, line string) error {
 		return err
 	}
 	return nil
+}
+
+func hostHomeDir() (string, error) {
+	out, err := exec.Command("distrobox-host-exec", "printenv", "HOME").Output()
+	if err != nil {
+		return "", fmt.Errorf("failed to query host HOME: %w", err)
+	}
+
+	home := strings.TrimSpace(string(out))
+	if home == "" {
+		return "", fmt.Errorf("host HOME is empty")
+	}
+	return home, nil
 }
 
 func canAccessDockerWithoutSudo() bool {
