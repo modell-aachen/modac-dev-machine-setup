@@ -29,14 +29,12 @@ func runDarwin(out *output.Context) error {
 	brewPackages := []string{
 		"bash",
 		"gettext",
-		"gnu-getopt",
 		"gpg",
 		"openssh",
 		"libfido2",
 		"openvpn",
 		"nmap",
 		"fswatch",
-		"gnu-sed",
 	}
 
 	brewCasks := []string{

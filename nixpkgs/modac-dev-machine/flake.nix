@@ -33,6 +33,8 @@
             # Go module vendoring hash
             vendorHash = "sha256-7K17JaXFsjf163g5PXCb5ng2gYdotnZ2IDKk8KFjNj0=";
 
+            nativeBuildInputs = [ pkgs.makeWrapper ];
+
             # Install templates alongside binary (scripts are now in Go)
             postInstall = ''
               mkdir -p $out/share/machine
@@ -43,6 +45,14 @@
 
               cp -r scripts/bash/* $out/bin
               cp -r scripts/completions/* $out/share/bash-completion/completions
+
+              # qypress and qinfo rely on util-linux's getopt (the enhanced
+              # getopt(1) supporting long options) and qypress also uses GNU
+              # sed, neither of which macOS's built-in BSD tools provide.
+              wrapProgram $out/bin/qypress \
+                --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.util-linux pkgs.gnused ]}
+              wrapProgram $out/bin/qinfo \
+                --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.util-linux ]}
             '';
 
             ldflags = [

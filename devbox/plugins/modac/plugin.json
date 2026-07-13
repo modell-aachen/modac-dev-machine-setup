@@ -125,7 +125,7 @@
   },
   "shell": {
     "init_hook": [
-      "[ -n \"$HOMEBREW_PREFIX\" ] && export PATH=\"$HOMEBREW_PREFIX/bin:$HOMEBREW_PREFIX/opt/gnu-getopt/bin:$HOMEBREW_PREFIX/opt/gnu-sed/libexec/gnubin:$PATH\"",
+      "[ -n \"$HOMEBREW_PREFIX\" ] && export PATH=\"$HOMEBREW_PREFIX/bin:$PATH\"",
       "_DEVBOX_SHELL=bash; [ -n \"$ZSH_VERSION\" ] && _DEVBOX_SHELL=zsh; type complete &>/dev/null && source <(devbox completion $_DEVBOX_SHELL)",
       "_DEVBOX_SHELL=bash; [ -n \"$ZSH_VERSION\" ] && _DEVBOX_SHELL=zsh; eval \"$(direnv hook $_DEVBOX_SHELL)\"",
       "source <(machine aliases)",
