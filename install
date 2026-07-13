@@ -18,6 +18,14 @@ IS_MACOS=false
 [[ "$OS" == Linux* ]] && IS_LINUX=true
 [[ "$OS" == "Darwin" ]] && IS_MACOS=true
 
+# Machine profile selection (dev = full developer machine, service = minimal
+# Kubernetes access machine). Persisted so 'machine provision' picks it up.
+MACHINE_PROFILE="${MACHINE_PROFILE:-dev}"
+if [[ "$MACHINE_PROFILE" != "dev" && "$MACHINE_PROFILE" != "service" ]]; then
+    echo "Invalid MACHINE_PROFILE '$MACHINE_PROFILE' (valid: dev, service)" >&2
+    exit 1
+fi
+
 logfile="$HOME/.cache/modac-dev-provisioner/install.log"
 mkdir -p "$(dirname "$logfile")"
 echo "Installation started at $(date)" > "$logfile"
@@ -25,6 +33,10 @@ echo "Installation started at $(date)" > "$logfile"
 # Helper functions
 function is_distrobox() {
     [ -n "$CONTAINER_ID" ]
+}
+
+function is_wsl() {
+    [ -n "$WSL_DISTRO_NAME" ] || grep -qi microsoft /proc/sys/kernel/osrelease 2>/dev/null
 }
 
 # Output formatting functions
@@ -67,6 +79,18 @@ function execute() {
 function check_prerequisites() {
     section "Checking Prerequisites"
 
+    # The multi-user Nix installer used by devbox requires systemd
+    if is_wsl && [ ! -d /run/systemd/system ]; then
+        error "systemd is not running in this WSL distribution"
+        echo "Enable systemd by adding the following to /etc/wsl.conf:"
+        echo ""
+        echo "  [boot]"
+        echo "  systemd=true"
+        echo ""
+        echo "Then run 'wsl --shutdown' from Windows and start WSL again."
+        exit 1
+    fi
+
     # Check if running inside a distrobox container
     if is_distrobox; then
         info "Detected running inside a container"
@@ -105,17 +129,22 @@ function check_prerequisites() {
     fi
 }
 
-# Minimal devbox configuration - just includes the modac plugin
-devbox_template=$(cat << 'EOF'
+# Minimal devbox configuration - just includes the plugin for the profile
+plugin_dir="devbox/plugins/modac"
+if [[ "$MACHINE_PROFILE" == "service" ]]; then
+    plugin_dir="devbox/plugins/modac-service"
+fi
+
+devbox_template=$(cat << EOF
 {
-    "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.13.6/.schema/devbox.schema.json",
+    "\$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.13.6/.schema/devbox.schema.json",
     "packages": [],
     "shell": {
         "init_hook": [],
         "scripts": {}
     },
     "include": [
-        "github:modell-aachen/modac-dev-machine-setup?dir=devbox/plugins/modac"
+        "github:modell-aachen/modac-dev-machine-setup?dir=$plugin_dir"
     ]
 }
 EOF
@@ -276,9 +305,17 @@ if [ ! -d "$default_devbox_dir" ]; then
 fi
 
 if [ ! -f "$global_devbox" ]; then
-    info "Creating devbox global configuration"
+    info "Creating devbox global configuration ($MACHINE_PROFILE profile)"
     echo "$devbox_template" > "$global_devbox"
     success "Created $global_devbox"
+fi
+
+# Persist the machine profile so 'machine provision' picks it up automatically
+if [[ "$MACHINE_PROFILE" == "service" ]]; then
+    info "Persisting machine profile '$MACHINE_PROFILE'"
+    mkdir -p "$HOME/.machine"
+    echo "$MACHINE_PROFILE" > "$HOME/.machine/profile"
+    success "Created $HOME/.machine/profile"
 fi
 
 execute "Installing machine CLI via devbox ${BOLD}(this might take a while)${RESET}" devbox global update

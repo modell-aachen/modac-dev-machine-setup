@@ -1,0 +1,47 @@
+{
+  "name": "MODAC Service",
+  "version": "0.0.1",
+  "packages": {
+    "gh": {
+      "version": "latest"
+    },
+    "git": {
+      "version": "latest"
+    },
+    "github:modell-aachen/modac-dev-machine-setup?dir=nixpkgs/modac-dev-machine&rev=5b42f581ff9f44ee8ef3e7a07703a39c3985588f#google-cloud-sdk-gke": {},
+    "jq": {
+      "version": "latest"
+    },
+    "k9s": {
+      "version": "latest"
+    },
+    "krew": {
+      "version": "latest"
+    },
+    "kubectl": {
+      "version": "latest"
+    },
+    "kubernetes-helm": {
+      "version": "latest"
+    },
+    "kubie": {
+      "version": "latest"
+    },
+    "uv": {
+      "version": "latest"
+    },
+    "github:modell-aachen/modac-dev-machine-setup?dir=nixpkgs/modac-dev-machine&rev=5b42f581ff9f44ee8ef3e7a07703a39c3985588f": {}
+  },
+  "env": {
+    "KREW_ROOT": "$HOME/.krew",
+    "PATH": "$HOME/.krew/bin:$HOME/.local/bin:$PATH"
+  },
+  "shell": {
+    "init_hook": [
+      "_DEVBOX_SHELL=bash; [ -n \"$ZSH_VERSION\" ] && _DEVBOX_SHELL=zsh; type complete &>/dev/null && source <(devbox completion $_DEVBOX_SHELL)",
+      "source <(machine aliases)"
+    ],
+    "scripts": {}
+  },
+  "include": []
+}

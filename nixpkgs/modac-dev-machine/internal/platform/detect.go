@@ -29,6 +29,17 @@ func Detect() (Platform, error) {
 	}
 }
 
+// IsWSL reports whether we are running inside Windows Subsystem for Linux.
+// WSL machines are treated as Ubuntu; modules use this to skip desktop-only steps.
+func IsWSL() bool {
+	kernelRelease, _ := os.ReadFile("/proc/sys/kernel/osrelease")
+	return isWSL(os.Getenv("WSL_DISTRO_NAME"), string(kernelRelease))
+}
+
+func isWSL(distroName, kernelRelease string) bool {
+	return distroName != "" || strings.Contains(strings.ToLower(kernelRelease), "microsoft")
+}
+
 func detectLinuxDistro() (Platform, error) {
 	// Check /etc/os-release for distribution info
 	data, err := os.ReadFile("/etc/os-release")
