@@ -131,6 +131,17 @@ func isDebPackageInstalled(name string) bool {
 }
 
 func ensureAptRepo(out *output.Context) error {
+	// Minimal Ubuntu images (e.g. fresh WSL) ship without gnupg
+	if _, err := exec.LookPath("gpg"); err != nil {
+		out.Step("Installing gnupg")
+		if err := out.RunCommand("sudo", "apt", "update"); err != nil {
+			return fmt.Errorf("failed to update apt: %w", err)
+		}
+		if err := out.RunCommand("sudo", "apt", "install", "-y", "gnupg"); err != nil {
+			return fmt.Errorf("failed to install gnupg: %w", err)
+		}
+	}
+
 	opKeyring := "/usr/share/keyrings/1password-archive-keyring.gpg"
 	if _, err := os.Stat(opKeyring); os.IsNotExist(err) {
 		out.Step("Adding 1Password GPG keyring")
