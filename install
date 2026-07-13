@@ -264,11 +264,11 @@ check_prerequisites
 # ============================================================================
 section "Devbox Setup"
 
-# Install system prerequisites
+# Install system prerequisites (minimal Ubuntu images lack some of these)
 if $IS_LINUX; then
-    if ! command -v curl >/dev/null 2>&1; then
+    if ! command -v curl >/dev/null 2>&1 || ! command -v gpg >/dev/null 2>&1; then
         execute "Updating apt package list" sudo apt update
-        execute "Installing curl" sudo apt install -y curl
+        execute "Installing base packages" sudo apt install -y curl gnupg ca-certificates
     fi
 fi
 
