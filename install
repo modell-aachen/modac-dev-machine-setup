@@ -225,12 +225,17 @@ function show_next_steps() {
 
 echo -e "${BOLD}${CYAN}"
 echo "╔════════════════════════════════════════╗"
-echo "║   MODAC Development Bootstrap          ║"
+banner_title="MODAC Development Bootstrap"
+if [[ "$MACHINE_PROFILE" == "service" ]]; then
+    banner_title="MODAC Service Bootstrap"
+fi
+printf "║   %-37s║\n" "$banner_title"
 echo "╚════════════════════════════════════════╝"
 echo -e "${RESET}"
 echo -e "${DIM}This installer bootstraps the minimum required to run 'machine provision':"
 echo -e "  • Devbox - Development environment manager"
-echo -e "  • Machine CLI - Provisioning tool${RESET}\n"
+echo -e "  • Machine CLI - Provisioning tool"
+echo -e "  • Profile: $MACHINE_PROFILE${RESET}\n"
 
 # Confirmation prompt (allow NONINTERACTIVE=1 to skip)
 if [[ "${NONINTERACTIVE}" == "1" ]]; then
