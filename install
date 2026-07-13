@@ -286,7 +286,8 @@ if ! command -v devbox >/dev/null 2>&1; then
     if is_distrobox && command -v nix >/dev/null 2>&1; then
         execute "Installing devbox via nix-env" nix-env -iA nixpkgs.devbox
     else
-        execute "Installing Devbox" bash -c "curl -fsSL https://get.jetify.com/devbox | bash"
+        # -f skips the installer's hidden /dev/tty confirmation prompt
+        execute "Installing Devbox" bash -c "curl -fsSL https://get.jetify.com/devbox | bash -s -- -f"
     fi
 fi
 
