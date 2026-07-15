@@ -67,6 +67,46 @@ machine provision
 
 Back to QwikiContrib: [QwikiContrib](https://github.com/modell-aachen/QwikiContrib/)
 
+## Service machine (Windows/WSL)
+
+Service machines get a minimal setup for Kubernetes access instead of the full
+developer environment: a reduced devbox package set (kubectl, helm, krew, k9s,
+gcloud with GKE auth plugin) and only the service-flagged provisioning modules
+(`machine provision list-modules` marks them with `*`). 1Password is installed
+CLI-only, without the desktop app.
+
+### Windows preparation
+
+1) Open an admin PowerShell and run `wsl --install -d Ubuntu`
+1) Reboot and create your UNIX user when Ubuntu starts
+1) Make sure systemd is enabled in `/etc/wsl.conf` (default on current Ubuntu images):
+   ```
+   [boot]
+   systemd=true
+   ```
+   After changing it, run `wsl --shutdown` from Windows and start WSL again.
+
+### Installation
+
+Inside WSL (or on a plain Ubuntu machine — the service profile is not tied to WSL):
+```BASH
+wget -qO- https://raw.githubusercontent.com/modell-aachen/modac-dev-machine-setup/refs/heads/main/install | MACHINE_PROFILE=service bash; source ~/.bashrc
+```
+
+The profile is persisted in `~/.machine/profile`, so later runs of
+`machine provision` select the service module set automatically. To switch an
+existing machine, run `machine provision --profile service` (or `--profile dev`).
+
+### Provision
+
+```BASH
+machine provision
+```
+
+During provisioning you will be asked to add your 1Password account
+(sign-in address, email, secret key, master password) and to complete the
+device-code login for Kubernetes access.
+
 ## Updates
 Update your `$(devbox global path)/devbox.json`:
 ```BASH

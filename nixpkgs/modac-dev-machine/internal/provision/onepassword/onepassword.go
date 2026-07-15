@@ -2,12 +2,16 @@ package onepassword
 
 import (
 	"bufio"
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
+	"regexp"
+	"strings"
 	"time"
 
+	"github.com/modell-aachen/machine/internal/config"
 	"github.com/modell-aachen/machine/internal/output"
 	"github.com/modell-aachen/machine/internal/platform"
 )
@@ -41,33 +45,128 @@ func runDarwin(out *output.Context) error {
 }
 
 func runUbuntu(out *output.Context) error {
+	cliOnly, err := useCLIOnly()
+	if err != nil {
+		return err
+	}
+	if cliOnly {
+		return runUbuntuCLIOnly(out)
+	}
+
 	// Check if 1password is already installed
-	cmd := exec.Command("dpkg", "-l", "1password")
-	output, _ := cmd.CombinedOutput()
-	if cmd.ProcessState.ExitCode() == 0 && len(output) > 0 {
-		// Check if package is actually installed (starts with 'ii')
-		if len(output) > 2 && output[0] == 'i' && output[1] == 'i' {
-			out.Skipped("1Password already installed")
-			if err := exportToDistroboxIfNeeded(out); err != nil {
-				return err
-			}
-			return postInstallSetup(out, platform.Ubuntu)
+	if isDebPackageInstalled("1password") {
+		out.Skipped("1Password already installed")
+		if err := exportToDistroboxIfNeeded(out); err != nil {
+			return err
+		}
+		return postInstallSetup(out, platform.Ubuntu)
+	}
+
+	if err := ensureAptRepo(out); err != nil {
+		return err
+	}
+
+	out.Step("Installing 1Password and CLI")
+	if err := out.RunCommand("sudo", "apt", "install", "-y", "1password", "1password-cli"); err != nil {
+		return fmt.Errorf("failed to install 1Password: %w", err)
+	}
+
+	if isDistrobox() {
+		out.Step("Installing audio libraries for Distrobox")
+		if err := out.RunCommand("sudo", "apt", "install", "-y", "libasound2t64"); err != nil {
+			return fmt.Errorf("failed to install audio libraries: %w", err)
 		}
 	}
 
-	opKeyring := "/usr/share/keyrings/1password-archive-keyring.gpg"
-	if _, err := os.Stat(opKeyring); os.IsNotExist(err) {
+	if err := exportToDistroboxIfNeeded(out); err != nil {
+		return err
+	}
+
+	return postInstallSetup(out, platform.Ubuntu)
+}
+
+// useCLIOnly decides whether to skip the desktop app entirely: service
+// machines never need it, and under WSL there is no desktop to run it on.
+func useCLIOnly() (bool, error) {
+	if platform.IsWSL() {
+		return true, nil
+	}
+	profile, err := config.LoadProfile()
+	if err != nil {
+		return false, err
+	}
+	return profile == config.ProfileService, nil
+}
+
+func runUbuntuCLIOnly(out *output.Context) error {
+	if isDebPackageInstalled("1password-cli") {
+		out.Skipped("1Password CLI already installed")
+		return postInstallSetupCLIOnly(out)
+	}
+
+	if err := ensureAptRepo(out); err != nil {
+		return err
+	}
+
+	out.Step("Updating apt package list")
+	if err := out.RunCommand("sudo", "apt", "update"); err != nil {
+		return fmt.Errorf("failed to update apt: %w", err)
+	}
+
+	out.Step("Installing 1Password CLI")
+	if err := out.RunCommand("sudo", "apt", "install", "-y", "1password-cli"); err != nil {
+		return fmt.Errorf("failed to install 1Password CLI: %w", err)
+	}
+
+	return postInstallSetupCLIOnly(out)
+}
+
+func isDebPackageInstalled(name string) bool {
+	cmd := exec.Command("dpkg", "-l", name)
+	output, _ := cmd.CombinedOutput()
+	if cmd.ProcessState.ExitCode() != 0 {
+		return false
+	}
+	// Package is actually installed when the status line starts with 'ii'
+	return len(output) > 2 && output[0] == 'i' && output[1] == 'i'
+}
+
+func ensureAptRepo(out *output.Context) error {
+	// Minimal Ubuntu images (e.g. fresh WSL) ship without gnupg
+	if _, err := exec.LookPath("gpg"); err != nil {
+		out.Step("Installing gnupg")
+		if err := out.RunCommand("sudo", "apt", "update"); err != nil {
+			return fmt.Errorf("failed to update apt: %w", err)
+		}
+		if err := out.RunCommand("sudo", "apt", "install", "-y", "gnupg"); err != nil {
+			return fmt.Errorf("failed to install gnupg: %w", err)
+		}
+	}
+
+	if _, err := os.Stat(opKeyringPath); os.IsNotExist(err) {
 		out.Step("Adding 1Password GPG keyring")
-		if err := out.RunCommand("bash", "-c", "curl -sS https://downloads.1password.com/linux/keys/1password.asc | sudo gpg --dearmor --output "+opKeyring); err != nil {
+		if err := out.RunCommand("bash", "-c", "curl -sS https://downloads.1password.com/linux/keys/1password.asc | sudo gpg --dearmor --output "+opKeyringPath); err != nil {
 			return fmt.Errorf("failed to add 1Password keyring: %w", err)
 		}
 	}
 
+	arch, err := debArchitecture()
+	if err != nil {
+		return err
+	}
+
+	// Rewrite when the content differs so a wrong architecture heals itself
 	opSourceList := "/etc/apt/sources.list.d/1password.list"
-	if _, err := os.Stat(opSourceList); os.IsNotExist(err) {
+	sourceLine := aptSourceLine(arch)
+	current, _ := os.ReadFile(opSourceList)
+	if strings.TrimSpace(string(current)) != sourceLine {
 		out.Step("Adding 1Password apt repository")
-		if err := out.RunCommand("bash", "-c", fmt.Sprintf("echo 'deb [arch=amd64 signed-by=%s] https://downloads.1password.com/linux/debian/amd64 stable main' | sudo tee %s", opKeyring, opSourceList)); err != nil {
+		if err := out.RunCommand("bash", "-c", fmt.Sprintf("echo '%s' | sudo tee %s", sourceLine, opSourceList)); err != nil {
 			return fmt.Errorf("failed to add 1Password repository: %w", err)
+		}
+		out.Step("Updating apt package list")
+		if err := out.RunCommand("sudo", "apt", "update"); err != nil {
+			return fmt.Errorf("failed to update apt: %w", err)
 		}
 	}
 
@@ -99,23 +198,21 @@ func runUbuntu(out *output.Context) error {
 		}
 	}
 
-	out.Step("Installing 1Password and CLI")
-	if err := out.RunCommand("sudo", "apt", "install", "-y", "1password", "1password-cli"); err != nil {
-		return fmt.Errorf("failed to install 1Password: %w", err)
-	}
+	return nil
+}
 
-	if isDistrobox() {
-		out.Step("Installing audio libraries for Distrobox")
-		if err := out.RunCommand("sudo", "apt", "install", "-y", "libasound2t64"); err != nil {
-			return fmt.Errorf("failed to install audio libraries: %w", err)
-		}
-	}
+const opKeyringPath = "/usr/share/keyrings/1password-archive-keyring.gpg"
 
-	if err := exportToDistroboxIfNeeded(out); err != nil {
-		return err
-	}
+func aptSourceLine(arch string) string {
+	return fmt.Sprintf("deb [arch=%s signed-by=%s] https://downloads.1password.com/linux/debian/%s stable main", arch, opKeyringPath, arch)
+}
 
-	return postInstallSetup(out, platform.Ubuntu)
+func debArchitecture() (string, error) {
+	output, err := exec.Command("dpkg", "--print-architecture").Output()
+	if err != nil {
+		return "", fmt.Errorf("failed to determine dpkg architecture: %w", err)
+	}
+	return strings.TrimSpace(string(output)), nil
 }
 
 func isDistrobox() bool {
@@ -226,6 +323,61 @@ func ensureCLIIntegration(out *output.Context) error {
 			return fmt.Errorf("failed to read user input: %w", err)
 		}
 	}
+}
+
+// postInstallSetupCLIOnly signs in without the desktop app. The session token
+// is exported into this process so later modules (setup-k8s-cluster) can use
+// op within the same provision run. A 1Password service account via
+// OP_SERVICE_ACCOUNT_TOKEN would be the non-interactive alternative.
+func postInstallSetupCLIOnly(out *output.Context) error {
+	if !hasConfiguredAccount() {
+		out.Step("Adding 1Password account")
+		cmd := exec.Command("op", "account", "add")
+		cmd.Stdin = os.Stdin
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		if err := cmd.Run(); err != nil {
+			return fmt.Errorf("failed to add 1Password account: %w", err)
+		}
+	}
+
+	out.Step("Signing in to 1Password CLI")
+	var stdout bytes.Buffer
+	cmd := exec.Command("op", "signin")
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = &stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("failed to sign in to 1Password CLI: %w", err)
+	}
+
+	for name, token := range parseSessionExports(stdout.String()) {
+		if err := os.Setenv(name, token); err != nil {
+			return fmt.Errorf("failed to export 1Password session: %w", err)
+		}
+	}
+
+	out.Success("Signed in to 1Password CLI")
+	return nil
+}
+
+func hasConfiguredAccount() bool {
+	output, err := exec.Command("op", "--format", "json", "account", "list").Output()
+	if err != nil {
+		return false
+	}
+	var accounts []interface{}
+	return json.Unmarshal(output, &accounts) == nil && len(accounts) > 0
+}
+
+var sessionExportPattern = regexp.MustCompile(`(?m)^export (OP_SESSION_[A-Za-z0-9_]+)="([^"]+)"$`)
+
+func parseSessionExports(signinOutput string) map[string]string {
+	sessions := map[string]string{}
+	for _, match := range sessionExportPattern.FindAllStringSubmatch(signinOutput, -1) {
+		sessions[match[1]] = match[2]
+	}
+	return sessions
 }
 
 func signInUser(out *output.Context) error {

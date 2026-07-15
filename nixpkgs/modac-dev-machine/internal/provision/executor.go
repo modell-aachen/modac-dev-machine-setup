@@ -8,6 +8,7 @@ import (
 	"strings"
 	"syscall"
 
+	"github.com/modell-aachen/machine/internal/config"
 	"github.com/modell-aachen/machine/internal/output"
 	"github.com/modell-aachen/machine/internal/platform"
 	"github.com/modell-aachen/machine/internal/provision/asdf"
@@ -35,39 +36,41 @@ import (
 )
 
 type Options struct {
-	Filter string
+	Filter  string
+	Profile config.Profile
 }
 
 type ModuleEntry struct {
-	Name   string
-	Runner func(*output.Context, platform.Platform) error
+	Name    string
+	Runner  func(*output.Context, platform.Platform) error
+	Service bool // part of the minimal service machine profile
 }
 
 const devboxUpdateModuleName = "devbox-update"
 
 var allModules = []ModuleEntry{
-	{"nix-conf", nixconf.Run},
-	{devboxUpdateModuleName, devboxupdate.Run},
-	{"onepassword", onepassword.Run},
-	{"restore-backup", restorebackup.Run},
-	{"packages", packages.Run},
-	{"setup-envs", setupenvs.Run},
-	{"asdf-packages", asdfpackages.Run},
-	{"asdf", asdf.Run},
-	{"kubectl-krew", kubectlkrew.Run},
-	{"setup-k8s-cluster", setupk8scluster.Run},
-	{"node", node.Run},
-	{"nssdb", nssdb.Run},
-	{"certificates", certificates.Run},
-	{"setup-dev", setupdev.Run},
-	{"completions", completions.Run},
-	{"claude", claude.Run},
-	{"github-auth-login", githubauthlogin.Run},
-	{"gcloud-workforce-login", gcloudworkforcelogin.Run},
-	{"install-modac-shell-helper", installmodacshellhelper.Run},
-	{"orbstack", orbstack.Run},
-	{"docker-packages", dockerpackages.Run},
-	{"docker", docker.Run},
+	{Name: "nix-conf", Runner: nixconf.Run, Service: true},
+	{Name: devboxUpdateModuleName, Runner: devboxupdate.Run, Service: true},
+	{Name: "onepassword", Runner: onepassword.Run, Service: true},
+	{Name: "restore-backup", Runner: restorebackup.Run},
+	{Name: "packages", Runner: packages.Run},
+	{Name: "setup-envs", Runner: setupenvs.Run},
+	{Name: "asdf-packages", Runner: asdfpackages.Run},
+	{Name: "asdf", Runner: asdf.Run},
+	{Name: "kubectl-krew", Runner: kubectlkrew.Run, Service: true},
+	{Name: "setup-k8s-cluster", Runner: setupk8scluster.Run, Service: true},
+	{Name: "node", Runner: node.Run},
+	{Name: "nssdb", Runner: nssdb.Run},
+	{Name: "certificates", Runner: certificates.Run},
+	{Name: "setup-dev", Runner: setupdev.Run},
+	{Name: "completions", Runner: completions.Run},
+	{Name: "claude", Runner: claude.Run},
+	{Name: "github-auth-login", Runner: githubauthlogin.Run, Service: true},
+	{Name: "gcloud-workforce-login", Runner: gcloudworkforcelogin.Run, Service: true},
+	{Name: "install-modac-shell-helper", Runner: installmodacshellhelper.Run, Service: true},
+	{Name: "orbstack", Runner: orbstack.Run},
+	{Name: "docker-packages", Runner: dockerpackages.Run},
+	{Name: "docker", Runner: docker.Run},
 }
 
 func GetAllModuleNames() []string {
@@ -78,24 +81,27 @@ func GetAllModuleNames() []string {
 	return names
 }
 
-func FilterModules(filter string) []ModuleEntry {
-	if filter == "" {
-		return allModules
-	}
-
+// ModulesFor returns the modules for a profile, optionally narrowed by a
+// comma-separated filter. Definition order is always preserved; filter names
+// outside the profile are dropped silently.
+func ModulesFor(profile config.Profile, filter string) []ModuleEntry {
 	filterMap := make(map[string]bool)
 	for _, name := range splitCSV(filter) {
 		filterMap[name] = true
 	}
 
-	filtered := []ModuleEntry{}
+	modules := []ModuleEntry{}
 	for _, module := range allModules {
-		if filterMap[module.Name] {
-			filtered = append(filtered, module)
+		if profile == config.ProfileService && !module.Service {
+			continue
 		}
+		if filter != "" && !filterMap[module.Name] {
+			continue
+		}
+		modules = append(modules, module)
 	}
 
-	return filtered
+	return modules
 }
 
 func Execute(opts *Options) error {
@@ -105,7 +111,7 @@ func Execute(opts *Options) error {
 	}
 	defer out.Close()
 
-	fmt.Printf("Machine Provisioning\n")
+	fmt.Printf("Machine Provisioning (%s profile)\n", opts.Profile)
 	fmt.Printf("Log file: %s\n\n", out.LogPath())
 
 	plat, err := platform.Detect()
@@ -113,7 +119,7 @@ func Execute(opts *Options) error {
 		return fmt.Errorf("platform detection failed: %w", err)
 	}
 
-	modules := FilterModules(opts.Filter)
+	modules := ModulesFor(opts.Profile, opts.Filter)
 
 	self := currentBinary()
 
@@ -178,9 +184,13 @@ func reexecAfterUpdate(out *output.Context, self string) error {
 }
 
 func ListModules() error {
-	fmt.Println("Available modules:")
-	for _, module := range GetAllModuleNames() {
-		fmt.Printf("  - %s\n", module)
+	fmt.Println("Available modules (* = included in service profile):")
+	for _, module := range allModules {
+		marker := ""
+		if module.Service {
+			marker = " *"
+		}
+		fmt.Printf("  - %s%s\n", module.Name, marker)
 	}
 	return nil
 }
