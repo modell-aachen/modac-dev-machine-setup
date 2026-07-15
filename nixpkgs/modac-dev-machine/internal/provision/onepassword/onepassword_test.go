@@ -5,6 +5,33 @@ import (
 	"testing"
 )
 
+func TestAptSourceLine(t *testing.T) {
+	tests := []struct {
+		name string
+		arch string
+		want string
+	}{
+		{
+			name: "amd64",
+			arch: "amd64",
+			want: "deb [arch=amd64 signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] https://downloads.1password.com/linux/debian/amd64 stable main",
+		},
+		{
+			name: "arm64",
+			arch: "arm64",
+			want: "deb [arch=arm64 signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] https://downloads.1password.com/linux/debian/arm64 stable main",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := aptSourceLine(tt.arch); got != tt.want {
+				t.Errorf("aptSourceLine(%q) = %q, want %q", tt.arch, got, tt.want)
+			}
+		})
+	}
+}
+
 func TestParseSessionExports(t *testing.T) {
 	tests := []struct {
 		name   string

@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/modell-aachen/machine/internal/config"
@@ -142,19 +143,30 @@ func ensureAptRepo(out *output.Context) error {
 		}
 	}
 
-	opKeyring := "/usr/share/keyrings/1password-archive-keyring.gpg"
-	if _, err := os.Stat(opKeyring); os.IsNotExist(err) {
+	if _, err := os.Stat(opKeyringPath); os.IsNotExist(err) {
 		out.Step("Adding 1Password GPG keyring")
-		if err := out.RunCommand("bash", "-c", "curl -sS https://downloads.1password.com/linux/keys/1password.asc | sudo gpg --dearmor --output "+opKeyring); err != nil {
+		if err := out.RunCommand("bash", "-c", "curl -sS https://downloads.1password.com/linux/keys/1password.asc | sudo gpg --dearmor --output "+opKeyringPath); err != nil {
 			return fmt.Errorf("failed to add 1Password keyring: %w", err)
 		}
 	}
 
+	arch, err := debArchitecture()
+	if err != nil {
+		return err
+	}
+
+	// Rewrite when the content differs so a wrong architecture heals itself
 	opSourceList := "/etc/apt/sources.list.d/1password.list"
-	if _, err := os.Stat(opSourceList); os.IsNotExist(err) {
+	sourceLine := aptSourceLine(arch)
+	current, _ := os.ReadFile(opSourceList)
+	if strings.TrimSpace(string(current)) != sourceLine {
 		out.Step("Adding 1Password apt repository")
-		if err := out.RunCommand("bash", "-c", fmt.Sprintf("echo 'deb [arch=amd64 signed-by=%s] https://downloads.1password.com/linux/debian/amd64 stable main' | sudo tee %s", opKeyring, opSourceList)); err != nil {
+		if err := out.RunCommand("bash", "-c", fmt.Sprintf("echo '%s' | sudo tee %s", sourceLine, opSourceList)); err != nil {
 			return fmt.Errorf("failed to add 1Password repository: %w", err)
+		}
+		out.Step("Updating apt package list")
+		if err := out.RunCommand("sudo", "apt", "update"); err != nil {
+			return fmt.Errorf("failed to update apt: %w", err)
 		}
 	}
 
@@ -187,6 +199,20 @@ func ensureAptRepo(out *output.Context) error {
 	}
 
 	return nil
+}
+
+const opKeyringPath = "/usr/share/keyrings/1password-archive-keyring.gpg"
+
+func aptSourceLine(arch string) string {
+	return fmt.Sprintf("deb [arch=%s signed-by=%s] https://downloads.1password.com/linux/debian/%s stable main", arch, opKeyringPath, arch)
+}
+
+func debArchitecture() (string, error) {
+	output, err := exec.Command("dpkg", "--print-architecture").Output()
+	if err != nil {
+		return "", fmt.Errorf("failed to determine dpkg architecture: %w", err)
+	}
+	return strings.TrimSpace(string(output)), nil
 }
 
 func isDistrobox() bool {
