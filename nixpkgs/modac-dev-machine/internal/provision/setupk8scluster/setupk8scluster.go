@@ -6,7 +6,6 @@ import (
 	"io"
 	"net/http"
 	"os/exec"
-	"strings"
 
 	"github.com/modell-aachen/machine/internal/output"
 	"github.com/modell-aachen/machine/internal/platform"
@@ -53,18 +52,10 @@ func Run(out *output.Context, plat platform.Platform) error {
 }
 
 func checkOpSignIn() error {
-	cmd := exec.Command("op", "signin")
-	output, err := cmd.CombinedOutput()
-
-	// If the output contains "[ERROR]", user is not signed in
-	if strings.Contains(string(output), "[ERROR]") {
-		return fmt.Errorf("you are not logged in to 1Password CLI. Please log into 1Password CLI and try again")
+	// whoami works with both the desktop app integration and an exported
+	// OP_SESSION token; op signin would prompt for a password without stdin
+	if err := exec.Command("op", "whoami").Run(); err != nil {
+		return fmt.Errorf("you are not logged in to 1Password CLI. Please log in (eval $(op signin)) and try again")
 	}
-
-	// If there's an error and it's not about being signed in, return it
-	if err != nil && !strings.Contains(string(output), "signed in") {
-		return fmt.Errorf("failed to check 1Password CLI sign-in status: %w", err)
-	}
-
 	return nil
 }
