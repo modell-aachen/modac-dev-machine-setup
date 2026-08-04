@@ -48,6 +48,10 @@ _qlone-completion()
     COMPREPLY=( $(compgen -W "$repos" -- ${cur}) )
 }
 
+if [ -n "$ZSH_VERSION" ] && (( $+functions[compdef] )); then
+    autoload -Uz bashcompinit && bashcompinit
+fi
+
 complete -F _qlone-completion qlone
 
 alias k='kubectl'
