@@ -48,6 +48,14 @@ _qlone-completion()
     COMPREPLY=( $(compgen -W "$repos" -- ${cur}) )
 }
 
+# Initialisiert die Unterstuetzung fuer die Befehle 'complete' und 'compdef' in zsh.
+if [ -n "$ZSH_VERSION" ]; then
+    if ! (( $+functions[compdef] )); then
+        autoload -Uz compinit && compinit
+    fi
+    autoload -Uz bashcompinit && bashcompinit
+fi
+
 complete -F _qlone-completion qlone
 
 alias k='kubectl'
@@ -90,14 +98,8 @@ if [ -n "$ZSH_VERSION" ]; then
         local expl
         _wanted namespaces expl 'kube namespace' compadd -a items
     }
-    # compdef wird von compinit definiert (im .zshrc des Users). Falls compinit
-    # noch nicht gelaufen ist, ueberspringen wir die Registrierung still — kein
-    # eigener compinit-Aufruf, weil wir sonst Insecure-fpath-Warnungen wegwerfen
-    # wuerden, die der User sehen sollte.
-    if (( $+functions[compdef] )); then
-        compdef _modac_kctx_zsh kctx
-        compdef _modac_kns_zsh kns
-    fi
+    compdef _modac_kctx_zsh kctx
+    compdef _modac_kns_zsh kns
 elif [ -n "$BASH_VERSION" ]; then
     _modac_kctx_bash() {
         local cur="${COMP_WORDS[COMP_CWORD]}"
