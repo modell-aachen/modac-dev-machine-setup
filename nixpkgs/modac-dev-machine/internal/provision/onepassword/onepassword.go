@@ -14,6 +14,7 @@ import (
 	"github.com/modell-aachen/machine/internal/config"
 	"github.com/modell-aachen/machine/internal/output"
 	"github.com/modell-aachen/machine/internal/platform"
+	"github.com/modell-aachen/machine/internal/util"
 )
 
 // Run installs 1Password and 1Password CLI based on the platform
@@ -56,26 +57,26 @@ func runUbuntu(out *output.Context) error {
 	// Check if 1password is already installed
 	if isDebPackageInstalled("1password") {
 		out.Skipped("1Password already installed")
-		if err := exportToDistroboxIfNeeded(out); err != nil {
+	} else {
+		if err := ensureAptRepo(out); err != nil {
 			return err
 		}
-		return postInstallSetup(out, platform.Ubuntu)
-	}
 
-	if err := ensureAptRepo(out); err != nil {
-		return err
-	}
-
-	out.Step("Installing 1Password and CLI")
-	if err := out.RunCommand("sudo", "apt", "install", "-y", "1password", "1password-cli"); err != nil {
-		return fmt.Errorf("failed to install 1Password: %w", err)
-	}
-
-	if isDistrobox() {
-		out.Step("Installing audio libraries for Distrobox")
-		if err := out.RunCommand("sudo", "apt", "install", "-y", "libasound2t64"); err != nil {
-			return fmt.Errorf("failed to install audio libraries: %w", err)
+		out.Step("Installing 1Password and CLI")
+		if err := out.RunCommand("sudo", "apt", "install", "-y", "1password", "1password-cli"); err != nil {
+			return fmt.Errorf("failed to install 1Password: %w", err)
 		}
+
+		if isDistrobox() {
+			out.Step("Installing audio libraries for Distrobox")
+			if err := out.RunCommand("sudo", "apt", "install", "-y", "libasound2t64"); err != nil {
+				return fmt.Errorf("failed to install audio libraries: %w", err)
+			}
+		}
+	}
+
+	if err := removeBootstrapRepo(out); err != nil {
+		return err
 	}
 
 	if err := exportToDistroboxIfNeeded(out); err != nil {
@@ -101,21 +102,24 @@ func useCLIOnly() (bool, error) {
 func runUbuntuCLIOnly(out *output.Context) error {
 	if isDebPackageInstalled("1password-cli") {
 		out.Skipped("1Password CLI already installed")
-		return postInstallSetupCLIOnly(out)
+	} else {
+		if err := ensureAptRepo(out); err != nil {
+			return err
+		}
+
+		out.Step("Updating apt package list")
+		if err := out.RunCommand("sudo", "apt", "update"); err != nil {
+			return fmt.Errorf("failed to update apt: %w", err)
+		}
+
+		out.Step("Installing 1Password CLI")
+		if err := out.RunCommand("sudo", "apt", "install", "-y", "1password-cli"); err != nil {
+			return fmt.Errorf("failed to install 1Password CLI: %w", err)
+		}
 	}
 
-	if err := ensureAptRepo(out); err != nil {
+	if err := removeBootstrapRepo(out); err != nil {
 		return err
-	}
-
-	out.Step("Updating apt package list")
-	if err := out.RunCommand("sudo", "apt", "update"); err != nil {
-		return fmt.Errorf("failed to update apt: %w", err)
-	}
-
-	out.Step("Installing 1Password CLI")
-	if err := out.RunCommand("sudo", "apt", "install", "-y", "1password-cli"); err != nil {
-		return fmt.Errorf("failed to install 1Password CLI: %w", err)
 	}
 
 	return postInstallSetupCLIOnly(out)
@@ -155,18 +159,21 @@ func ensureAptRepo(out *output.Context) error {
 		return err
 	}
 
-	// Rewrite when the content differs so a wrong architecture heals itself
-	opSourceList := "/etc/apt/sources.list.d/1password.list"
-	sourceLine := aptSourceLine(arch)
-	current, _ := os.ReadFile(opSourceList)
-	if strings.TrimSpace(string(current)) != sourceLine {
-		out.Step("Adding 1Password apt repository")
-		if err := out.RunCommand("bash", "-c", fmt.Sprintf("echo '%s' | sudo tee %s", sourceLine, opSourceList)); err != nil {
-			return fmt.Errorf("failed to add 1Password repository: %w", err)
-		}
-		out.Step("Updating apt package list")
-		if err := out.RunCommand("sudo", "apt", "update"); err != nil {
-			return fmt.Errorf("failed to update apt: %w", err)
+	if util.FileExists(packageRepoFile) {
+		out.Skipped("1Password apt repository provided by the package")
+	} else {
+		// Rewrite when the content differs so a wrong architecture heals itself
+		sourceLine := aptSourceLine(arch)
+		current, _ := os.ReadFile(bootstrapRepoFile)
+		if strings.TrimSpace(string(current)) != sourceLine {
+			out.Step("Adding 1Password apt repository")
+			if err := out.RunCommand("bash", "-c", fmt.Sprintf("echo '%s' | sudo tee %s", sourceLine, bootstrapRepoFile)); err != nil {
+				return fmt.Errorf("failed to add 1Password repository: %w", err)
+			}
+			out.Step("Updating apt package list")
+			if err := out.RunCommand("sudo", "apt", "update"); err != nil {
+				return fmt.Errorf("failed to update apt: %w", err)
+			}
 		}
 	}
 
@@ -202,6 +209,33 @@ func ensureAptRepo(out *output.Context) error {
 }
 
 const opKeyringPath = "/usr/share/keyrings/1password-archive-keyring.gpg"
+
+const (
+	// bootstrapRepoFile carries the repository just long enough to install the
+	// package; the package then ships its own deb822 file at packageRepoFile.
+	bootstrapRepoFile = "/etc/apt/sources.list.d/1password.list"
+	packageRepoFile   = "/etc/apt/sources.list.d/1password.sources"
+)
+
+// removeBootstrapRepo drops the bootstrap repository file once the package has
+// installed its own. Both files describe the same repository, so apt fetches every
+// target twice and warns about it on each update.
+func removeBootstrapRepo(out *output.Context) error {
+	if !bootstrapRepoIsDuplicate(util.FileExists) {
+		return nil
+	}
+
+	out.Step("Removing duplicate 1Password apt repository")
+	if err := out.RunCommand("sudo", "rm", "-f", bootstrapRepoFile); err != nil {
+		return fmt.Errorf("failed to remove duplicate 1Password repository: %w", err)
+	}
+
+	return nil
+}
+
+func bootstrapRepoIsDuplicate(exists func(string) bool) bool {
+	return exists(bootstrapRepoFile) && exists(packageRepoFile)
+}
 
 func aptSourceLine(arch string) string {
 	return fmt.Sprintf("deb [arch=%s signed-by=%s] https://downloads.1password.com/linux/debian/%s stable main", arch, opKeyringPath, arch)
