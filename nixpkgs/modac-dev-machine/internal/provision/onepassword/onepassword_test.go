@@ -75,3 +75,33 @@ func TestParseSessionExports(t *testing.T) {
 		})
 	}
 }
+
+func TestBootstrapRepoIsDuplicate(t *testing.T) {
+	tests := []struct {
+		name    string
+		present []string
+		want    bool
+	}{
+		{"both repository files present", []string{bootstrapRepoFile, packageRepoFile}, true},
+		{"only the bootstrap file present", []string{bootstrapRepoFile}, false},
+		{"only the package file present", []string{packageRepoFile}, false},
+		{"no repository file present", nil, false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			exists := func(path string) bool {
+				for _, p := range tt.present {
+					if p == path {
+						return true
+					}
+				}
+				return false
+			}
+
+			if got := bootstrapRepoIsDuplicate(exists); got != tt.want {
+				t.Errorf("bootstrapRepoIsDuplicate() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

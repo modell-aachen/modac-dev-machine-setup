@@ -13,6 +13,8 @@ import (
 	"github.com/modell-aachen/machine/internal/util"
 )
 
+const dockerRepoFile = "/etc/apt/sources.list.d/docker.list"
+
 // Run installs Docker packages
 func Run(out *output.Context, plat platform.Platform) error {
 	switch plat {
@@ -23,6 +25,48 @@ func Run(out *output.Context, plat platform.Platform) error {
 	default:
 		return fmt.Errorf("unsupported platform: %s", plat)
 	}
+}
+
+func writeDockerRepo(out *output.Context) error {
+	archCmd := exec.Command("dpkg", "--print-architecture")
+	arch, err := archCmd.Output()
+	if err != nil {
+		return fmt.Errorf("failed to get dpkg architecture: %w", err)
+	}
+
+	codenameCmd := exec.Command("lsb_release", "-cs")
+	codename, err := codenameCmd.Output()
+	if err != nil {
+		return fmt.Errorf("failed to get Ubuntu codename: %w", err)
+	}
+
+	repoLine := dockerRepoLine(strings.TrimSpace(string(arch)), strings.TrimSpace(string(codename)))
+
+	teeCmd := exec.Command("sudo", "tee", dockerRepoFile)
+	teeCmd.Stdin = strings.NewReader(repoLine + "\n")
+	teeCmd.Stdout = os.Stdout
+	if err := teeCmd.Run(); err != nil {
+		return fmt.Errorf("failed to add docker repository: %w", err)
+	}
+
+	out.Step("Updating apt")
+	if err := out.RunCommand("sudo", "apt", "update"); err != nil {
+		return fmt.Errorf("failed to update apt: %w", err)
+	}
+
+	return nil
+}
+
+func dockerRepoLine(arch, codename string) string {
+	return fmt.Sprintf("deb [arch=%s signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu %s stable",
+		arch, codename)
+}
+
+// needsArchPin reports whether a repository entry lets apt query every enabled
+// architecture. Docker only publishes some of them, so an unpinned entry makes apt
+// report a missing index for the others on each update.
+func needsArchPin(repo string) bool {
+	return !strings.Contains(repo, "arch=")
 }
 
 func runDarwin(out *output.Context) error {
@@ -118,19 +162,17 @@ func runUbuntu(out *output.Context) error {
 			out.Skipped("Running inside a distrobox, docker already available")
 		}
 
+		// Point DOCKER_CONFIG at the host's .docker directory, independent of
+		// whether docker itself was just linked.
 		homeDir, err := os.UserHomeDir()
 		if err != nil {
 			return fmt.Errorf("failed to get home directory: %w", err)
 		}
 
-		hostHome, err := hostHomeDir()
-		if err != nil {
-			return fmt.Errorf("failed to determine host home directory: %w", err)
-		}
-
-		dockerConfigDir := filepath.Join(hostHome, ".docker")
+		user := os.Getenv("USER")
+		hostDockerDir := fmt.Sprintf("/run/host/home/%s/.docker", user)
 		bashrcPath := filepath.Join(homeDir, ".bashrc")
-		exportLine := fmt.Sprintf("export DOCKER_CONFIG=%q", dockerConfigDir)
+		exportLine := fmt.Sprintf("export DOCKER_CONFIG=%q", hostDockerDir)
 
 		out.Step("Setting DOCKER_CONFIG in .bashrc")
 		if err := appendLineIfMissing(bashrcPath, exportLine); err != nil {
@@ -168,31 +210,21 @@ func runUbuntu(out *output.Context) error {
 	}
 
 	// Check and add docker repository
-	if !util.FileExists("/etc/apt/sources.list.d/docker.list") {
+	existingRepo, err := os.ReadFile(dockerRepoFile)
+	switch {
+	case os.IsNotExist(err):
 		out.Step("Adding docker repository")
-
-		// Get Ubuntu codename
-		lsbCmd := exec.Command("lsb_release", "-cs")
-		codename, err := lsbCmd.Output()
-		if err != nil {
-			return fmt.Errorf("failed to get Ubuntu codename: %w", err)
+		if err := writeDockerRepo(out); err != nil {
+			return err
 		}
-
-		repoLine := fmt.Sprintf("deb [signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu %s stable",
-			strings.TrimSpace(string(codename)))
-
-		teeCmd := exec.Command("sudo", "tee", "/etc/apt/sources.list.d/docker.list")
-		teeCmd.Stdin = strings.NewReader(repoLine + "\n")
-		teeCmd.Stdout = os.Stdout
-		if err := teeCmd.Run(); err != nil {
-			return fmt.Errorf("failed to add docker repository: %w", err)
+	case err != nil:
+		return fmt.Errorf("failed to read docker repository: %w", err)
+	case needsArchPin(string(existingRepo)):
+		out.Step("Pinning docker repository to the host architecture")
+		if err := writeDockerRepo(out); err != nil {
+			return err
 		}
-
-		out.Step("Updating apt")
-		if err := out.RunCommand("sudo", "apt", "update"); err != nil {
-			return fmt.Errorf("failed to update apt: %w", err)
-		}
-	} else {
+	default:
 		out.Skipped("Docker repository already added")
 	}
 
@@ -255,19 +287,6 @@ func appendLineIfMissing(path, line string) error {
 		return err
 	}
 	return nil
-}
-
-func hostHomeDir() (string, error) {
-	out, err := exec.Command("distrobox-host-exec", "printenv", "HOME").Output()
-	if err != nil {
-		return "", fmt.Errorf("failed to query host HOME: %w", err)
-	}
-
-	home := strings.TrimSpace(string(out))
-	if home == "" {
-		return "", fmt.Errorf("host HOME is empty")
-	}
-	return home, nil
 }
 
 func canAccessDockerWithoutSudo() bool {
