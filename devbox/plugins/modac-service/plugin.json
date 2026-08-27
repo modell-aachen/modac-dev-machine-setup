@@ -8,7 +8,7 @@
     "git": {
       "version": "latest"
     },
-    "github:modell-aachen/modac-dev-machine-setup?dir=nixpkgs/modac-dev-machine&rev=c1e5625faf9f2cc1ad035e5e0882272161e5325a#google-cloud-sdk-gke": {},
+    "github:modell-aachen/modac-dev-machine-setup?dir=nixpkgs/modac-dev-machine&rev=a5af1b2f39e23895d4ddcb84d46be3b9e669d552#google-cloud-sdk-gke": {},
     "jq": {
       "version": "latest"
     },
@@ -30,7 +30,7 @@
     "uv": {
       "version": "latest"
     },
-    "github:modell-aachen/modac-dev-machine-setup?dir=nixpkgs/modac-dev-machine&rev=c1e5625faf9f2cc1ad035e5e0882272161e5325a": {}
+    "github:modell-aachen/modac-dev-machine-setup?dir=nixpkgs/modac-dev-machine&rev=a5af1b2f39e23895d4ddcb84d46be3b9e669d552": {}
   },
   "env": {
     "KREW_ROOT": "$HOME/.krew",
