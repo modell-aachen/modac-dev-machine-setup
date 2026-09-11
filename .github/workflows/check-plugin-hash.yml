@@ -1,0 +1,33 @@
+name: Check plugin.json machine hash
+
+on:
+  pull_request:
+    paths:
+      - "nixpkgs/modac-dev-machine/**"
+
+jobs:
+  check-hash:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify plugin.json rev matches HEAD
+        run: |
+          PLUGIN_JSON="devbox/plugins/modac/plugin.json"
+          CURRENT_HASH=$(grep -oP '(?<=&rev=)[a-f0-9]+' "$PLUGIN_JSON")
+          HEAD_HASH=$(git rev-parse HEAD)
+
+          if [ "$CURRENT_HASH" != "$HEAD_HASH" ]; then
+            echo "::error::plugin.json rev hash ($CURRENT_HASH) does not match HEAD ($HEAD_HASH)."
+            echo ""
+            echo "When changing files under nixpkgs/modac-dev-machine/, you must also"
+            echo "update the rev hash in plugin.json. Run:"
+            echo ""
+            echo "  /update-machine-hash   (in Claude Code)"
+            echo "  # or manually update the rev= in devbox/plugins/modac/plugin.json"
+            exit 1
+          fi
+
+          echo "plugin.json rev hash is up to date ($CURRENT_HASH)"
