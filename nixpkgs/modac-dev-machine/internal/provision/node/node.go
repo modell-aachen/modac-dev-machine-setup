@@ -2,9 +2,7 @@ package node
 
 import (
 	"fmt"
-	"os/exec"
 	"path/filepath"
-	"strings"
 
 	"github.com/modell-aachen/machine/internal/output"
 	"github.com/modell-aachen/machine/internal/platform"
@@ -15,7 +13,7 @@ import (
 func Run(out *output.Context, plat platform.Platform) error {
 	_ = plat
 	// Get devbox global path
-	devboxPath, err := getDevboxGlobalPath()
+	devboxPath, err := util.GetDevboxGlobalPath()
 	if err != nil {
 		return fmt.Errorf("failed to get devbox global path: %w", err)
 	}
@@ -34,13 +32,4 @@ func Run(out *output.Context, plat platform.Platform) error {
 	}
 
 	return nil
-}
-
-func getDevboxGlobalPath() (string, error) {
-	cmd := exec.Command("devbox", "global", "path")
-	output, err := cmd.Output()
-	if err != nil {
-		return "", err
-	}
-	return strings.TrimSpace(string(output)), nil
 }

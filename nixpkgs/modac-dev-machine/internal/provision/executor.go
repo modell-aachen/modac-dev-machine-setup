@@ -29,6 +29,7 @@ import (
 	"github.com/modell-aachen/machine/internal/provision/onepassword"
 	"github.com/modell-aachen/machine/internal/provision/orbstack"
 	"github.com/modell-aachen/machine/internal/provision/packages"
+	"github.com/modell-aachen/machine/internal/provision/pnpm"
 	"github.com/modell-aachen/machine/internal/provision/restorebackup"
 	"github.com/modell-aachen/machine/internal/provision/setupdev"
 	"github.com/modell-aachen/machine/internal/provision/setupenvs"
@@ -60,6 +61,7 @@ var allModules = []ModuleEntry{
 	{Name: "kubectl-krew", Runner: kubectlkrew.Run, Service: true},
 	{Name: "setup-k8s-cluster", Runner: setupk8scluster.Run, Service: true},
 	{Name: "node", Runner: node.Run},
+	{Name: "pnpm", Runner: pnpm.Run},
 	{Name: "nssdb", Runner: nssdb.Run},
 	{Name: "certificates", Runner: certificates.Run},
 	{Name: "setup-dev", Runner: setupdev.Run},
