@@ -37,8 +37,9 @@ import (
 )
 
 type Options struct {
-	Filter  string
-	Profile config.Profile
+	Filter            string
+	Profile           config.Profile
+	SkipRestartBinary bool
 }
 
 type ModuleEntry struct {
@@ -130,7 +131,7 @@ func Execute(opts *Options) error {
 			return fmt.Errorf("module %s failed: %w", module.Name, err)
 		}
 		if module.Name == devboxUpdateModuleName {
-			if err := reexecAfterUpdate(out, self); err != nil {
+			if err := reexecAfterUpdate(out, self, opts.SkipRestartBinary); err != nil {
 				out.PrintError(err)
 				return err
 			}
@@ -156,7 +157,7 @@ func binaryChanged(self, resolved string) bool {
 	return resolved != "" && resolved != self
 }
 
-func reexecAfterUpdate(out *output.Context, self string) error {
+func reexecAfterUpdate(out *output.Context, self string, skipRestartBinary bool) error {
 	if devboxupdate.AlreadyUpdated() {
 		return nil
 	}
@@ -174,6 +175,11 @@ func reexecAfterUpdate(out *output.Context, self string) error {
 
 	if !binaryChanged(self, resolved) {
 		out.Skipped("machine binary unchanged; no restart needed")
+		return nil
+	}
+
+	if skipRestartBinary {
+		out.Skipped("--skip-restart-binary is set; skipping restart of machine binary")
 		return nil
 	}
 
