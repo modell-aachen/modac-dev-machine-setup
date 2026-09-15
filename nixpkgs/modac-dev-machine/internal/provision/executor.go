@@ -24,12 +24,10 @@ import (
 	"github.com/modell-aachen/machine/internal/provision/installmodacshellhelper"
 	"github.com/modell-aachen/machine/internal/provision/kubectlkrew"
 	"github.com/modell-aachen/machine/internal/provision/nixconf"
-	"github.com/modell-aachen/machine/internal/provision/node"
 	"github.com/modell-aachen/machine/internal/provision/nssdb"
 	"github.com/modell-aachen/machine/internal/provision/onepassword"
 	"github.com/modell-aachen/machine/internal/provision/orbstack"
 	"github.com/modell-aachen/machine/internal/provision/packages"
-	"github.com/modell-aachen/machine/internal/provision/pnpm"
 	"github.com/modell-aachen/machine/internal/provision/restorebackup"
 	"github.com/modell-aachen/machine/internal/provision/setupdev"
 	"github.com/modell-aachen/machine/internal/provision/setupenvs"
@@ -61,8 +59,6 @@ var allModules = []ModuleEntry{
 	{Name: "asdf", Runner: asdf.Run},
 	{Name: "kubectl-krew", Runner: kubectlkrew.Run, Service: true},
 	{Name: "setup-k8s-cluster", Runner: setupk8scluster.Run, Service: true},
-	{Name: "node", Runner: node.Run},
-	{Name: "pnpm", Runner: pnpm.Run},
 	{Name: "nssdb", Runner: nssdb.Run},
 	{Name: "certificates", Runner: certificates.Run},
 	{Name: "setup-dev", Runner: setupdev.Run},
