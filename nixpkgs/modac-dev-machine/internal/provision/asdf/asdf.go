@@ -10,6 +10,7 @@ import (
 
 	"github.com/modell-aachen/machine/internal/output"
 	"github.com/modell-aachen/machine/internal/platform"
+    "github.com/modell-aachen/machine/internal/util"
 )
 
 type DevboxConfig struct {
@@ -36,7 +37,7 @@ func Run(out *output.Context, plat platform.Platform) error {
 	}
 
 	// Get devbox config path
-	devboxPath, err := getDevboxGlobalPath()
+	devboxPath, err := util.GetDevboxGlobalPath()
 	if err != nil {
 		return fmt.Errorf("failed to get devbox global path: %w", err)
 	}
@@ -100,15 +101,6 @@ func getAsdfDir() (string, error) {
 	}
 
 	return "", fmt.Errorf("ASDF_DATA_DIR not found in asdf info output")
-}
-
-func getDevboxGlobalPath() (string, error) {
-	cmd := exec.Command("devbox", "global", "path")
-	output, err := cmd.Output()
-	if err != nil {
-		return "", err
-	}
-	return strings.TrimSpace(string(output)), nil
 }
 
 func readDevboxConfig(path string) (*DevboxConfig, error) {

@@ -30,9 +30,15 @@ var provisionCmd = &cobra.Command{
 			return err
 		}
 
+		skipRestartBinary, err := cmd.Flags().GetBool("skip-restart-binary")
+		if err != nil {
+			return fmt.Errorf("failed to get skip-restart-binary flag: %w", err)
+		}
+
 		opts := &provision.Options{
-			Filter:  filter,
-			Profile: profile,
+			Filter:            filter,
+			Profile:           profile,
+			SkipRestartBinary: skipRestartBinary,
 		}
 
 		return provision.Execute(opts)
@@ -67,6 +73,7 @@ var listModulesCmd = &cobra.Command{
 func init() {
 	provisionCmd.Flags().StringP("filter", "f", "", "Comma-separated list of modules to run (tab-completable)")
 	provisionCmd.Flags().String("profile", "", "Machine profile: dev or service (persisted for future runs)")
+	provisionCmd.Flags().Bool("skip-restart-binary", false, "Skip restarting the machine binary after devbox update")
 	provisionCmd.AddCommand(listModulesCmd)
 
 	provisionCmd.Long += "\n\nUse --profile to select the machine profile (dev or service). The choice is" +

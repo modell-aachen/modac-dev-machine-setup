@@ -3,7 +3,9 @@ package util
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"strings"
 )
 
 // FileExists checks if a file or directory exists at the given path.
@@ -34,4 +36,15 @@ func GetTemplatesDir() (string, error) {
 	}
 
 	return "", fmt.Errorf("templates directory not found")
+}
+
+// GetDevboxGlobalPath returns the global path of devbox by executing
+// the command `devbox global path`.
+func GetDevboxGlobalPath() (string, error) {
+	cmd := exec.Command("devbox", "global", "path")
+	output, err := cmd.Output()
+	if err != nil {
+		return "", err
+	}
+	return strings.TrimSpace(string(output)), nil
 }

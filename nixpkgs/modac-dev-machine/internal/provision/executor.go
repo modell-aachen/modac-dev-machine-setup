@@ -24,7 +24,6 @@ import (
 	"github.com/modell-aachen/machine/internal/provision/installmodacshellhelper"
 	"github.com/modell-aachen/machine/internal/provision/kubectlkrew"
 	"github.com/modell-aachen/machine/internal/provision/nixconf"
-	"github.com/modell-aachen/machine/internal/provision/node"
 	"github.com/modell-aachen/machine/internal/provision/nssdb"
 	"github.com/modell-aachen/machine/internal/provision/onepassword"
 	"github.com/modell-aachen/machine/internal/provision/orbstack"
@@ -36,8 +35,9 @@ import (
 )
 
 type Options struct {
-	Filter  string
-	Profile config.Profile
+	Filter            string
+	Profile           config.Profile
+	SkipRestartBinary bool
 }
 
 type ModuleEntry struct {
@@ -59,7 +59,6 @@ var allModules = []ModuleEntry{
 	{Name: "asdf", Runner: asdf.Run},
 	{Name: "kubectl-krew", Runner: kubectlkrew.Run, Service: true},
 	{Name: "setup-k8s-cluster", Runner: setupk8scluster.Run, Service: true},
-	{Name: "node", Runner: node.Run},
 	{Name: "nssdb", Runner: nssdb.Run},
 	{Name: "certificates", Runner: certificates.Run},
 	{Name: "setup-dev", Runner: setupdev.Run},
@@ -128,7 +127,7 @@ func Execute(opts *Options) error {
 			return fmt.Errorf("module %s failed: %w", module.Name, err)
 		}
 		if module.Name == devboxUpdateModuleName {
-			if err := reexecAfterUpdate(out, self); err != nil {
+			if err := reexecAfterUpdate(out, self, opts.SkipRestartBinary); err != nil {
 				out.PrintError(err)
 				return err
 			}
@@ -154,7 +153,7 @@ func binaryChanged(self, resolved string) bool {
 	return resolved != "" && resolved != self
 }
 
-func reexecAfterUpdate(out *output.Context, self string) error {
+func reexecAfterUpdate(out *output.Context, self string, skipRestartBinary bool) error {
 	if devboxupdate.AlreadyUpdated() {
 		return nil
 	}
@@ -172,6 +171,11 @@ func reexecAfterUpdate(out *output.Context, self string) error {
 
 	if !binaryChanged(self, resolved) {
 		out.Skipped("machine binary unchanged; no restart needed")
+		return nil
+	}
+
+	if skipRestartBinary {
+		out.Skipped("--skip-restart-binary is set; skipping restart of machine binary")
 		return nil
 	}
 
