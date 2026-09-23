@@ -12,6 +12,9 @@ Options:
     -r, --remote        runs E2E Tests against cypress dashboard reports to locally checked out branch.
                         only works for RMS testsystems (Mailpit).
 
+The package manager (pnpm or yarn) is detected from the lockfile in the
+e2e-tests repository.
+
 Example
     qypress -r "https://e2ehotfix.testing.modac.eu" run     runs all E2E on rms testsystem e2ehotfix and reports on the branch you have checked out locally
 USAGE
@@ -55,6 +58,17 @@ pushd "$REPOS_DIRECTORY/QwikiContrib/e2e-tests"
 
 remainingArgs=$@
 
+if [[ -f "pnpm-lock.yaml" ]]; then
+    installCommand=(pnpm install)
+    cypressCommand=(pnpm exec cypress)
+elif [[ -f "yarn.lock" ]]; then
+    installCommand=(yarn install)
+    cypressCommand=(yarn cypress)
+else
+    echo "Neither pnpm-lock.yaml nor yarn.lock found in $PWD" >&2
+    exit 1
+fi
+
 mailPitUrl="$host:8025"
 if [[ "$host" == *qluster.localhost ]]; then
     mailPitUrl="https://mailpit.qluster.localhost"
@@ -62,7 +76,7 @@ if [[ "$host" == *qluster.localhost ]]; then
     oidcMockTokenUrl="http://qwiki-local-oidc.default.svc.cluster.local/connect/token"
 fi
 
-yarn
+"${installCommand[@]}"
 if [[ "$remote" == "true" ]];
 then
     if [ -z "$CYPRESS_RECORD_KEY" ]; then
@@ -84,7 +98,7 @@ then
     CYPRESS_integrationFolder=$integrationFolder \
     CYPRESS_organizationalUnit=$organizationalUnit \
     CYPRESS_PROJECT_ID=$CYPRESS_PROJECT_ID \
-        yarn cypress $@ --record --key $CYPRESS_RECORD_KEY
+        "${cypressCommand[@]}" $@ --record --key $CYPRESS_RECORD_KEY
 
 else
 
@@ -95,8 +109,7 @@ else
     CYPRESS_oidcMockTokenUrl=$oidcMockTokenUrl \
     CYPRESS_integrationFolder=$integrationFolder \
     CYPRESS_organizationalUnit=$organizationalUnit \
-        yarn cypress $@
+        "${cypressCommand[@]}" $@
 fi
 
 popd
-}
