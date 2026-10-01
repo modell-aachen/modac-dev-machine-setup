@@ -15,16 +15,16 @@
     "crane": {
       "version": "latest"
     },
-    "github:dagger/nix/4a39fb35b724a8f85c254fa1513fa0ffc17162e7#packages.x86_64-linux.dagger": {
+    "github:dagger/nix/21ee7262e0ccfffba6bd43c9044fb4c5c8db2d91#packages.x86_64-linux.dagger": {
       "platforms": ["x86_64-linux"]
     },
-    "github:dagger/nix/4a39fb35b724a8f85c254fa1513fa0ffc17162e7#packages.aarch64-linux.dagger": {
+    "github:dagger/nix/21ee7262e0ccfffba6bd43c9044fb4c5c8db2d91#packages.aarch64-linux.dagger": {
       "platforms": ["aarch64-linux"]
     },
-    "github:dagger/nix/4a39fb35b724a8f85c254fa1513fa0ffc17162e7#packages.x86_64-darwin.dagger": {
+    "github:dagger/nix/21ee7262e0ccfffba6bd43c9044fb4c5c8db2d91#packages.x86_64-darwin.dagger": {
       "platforms": ["x86_64-darwin"]
     },
-    "github:dagger/nix/4a39fb35b724a8f85c254fa1513fa0ffc17162e7#packages.aarch64-darwin.dagger": {
+    "github:dagger/nix/21ee7262e0ccfffba6bd43c9044fb4c5c8db2d91#packages.aarch64-darwin.dagger": {
       "platforms": ["aarch64-darwin"]
     },
     "direnv": {
