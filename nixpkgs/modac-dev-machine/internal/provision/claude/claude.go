@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"slices"
 
 	"github.com/modell-aachen/machine/internal/output"
 	"github.com/modell-aachen/machine/internal/platform"
@@ -112,15 +113,10 @@ func setupMcpConfig(out *output.Context, claudeDir string) error {
 		existingServers = map[string]any{}
 	}
 
-	added := 0
-	for name, config := range templateServers {
-		if _, exists := existingServers[name]; !exists {
-			existingServers[name] = config
-			added++
-		}
-	}
+	fixed := removeObsoleteMcpArgs(existingServers)
+	added := mergeMcpServers(existingServers, templateServers)
 
-	if added == 0 {
+	if added == 0 && fixed == 0 {
 		out.Skipped("MCP servers already configured")
 		return nil
 	}
@@ -132,12 +128,61 @@ func setupMcpConfig(out *output.Context, claudeDir string) error {
 		return fmt.Errorf("failed to marshal claude settings: %w", err)
 	}
 
-	out.Step(fmt.Sprintf("Adding %d MCP server(s) to ~/.claude.json", added))
+	if fixed > 0 {
+		out.Step(fmt.Sprintf("Removing obsolete arguments from %d MCP server(s) in ~/.claude.json", fixed))
+	}
+	if added > 0 {
+		out.Step(fmt.Sprintf("Adding %d MCP server(s) to ~/.claude.json", added))
+	}
 	if err := os.WriteFile(settingsPath, append(data, '\n'), 0644); err != nil {
 		return fmt.Errorf("failed to write claude settings: %w", err)
 	}
 
 	return nil
+}
+
+// Existing entries are never overwritten, so an argument the server no longer
+// accepts has to be stripped from them explicitly: mcp-grafana v2 exits on the
+// unknown --disable-sift flag, which Claude Code reports as "Connection closed".
+var obsoleteMcpArgs = map[string][]string{
+	"grafana": {"--disable-sift"},
+}
+
+func removeObsoleteMcpArgs(servers map[string]any) int {
+	fixed := 0
+	for name, obsolete := range obsoleteMcpArgs {
+		server, ok := servers[name].(map[string]any)
+		if !ok {
+			continue
+		}
+		args, ok := server["args"].([]any)
+		if !ok {
+			continue
+		}
+		kept := make([]any, 0, len(args))
+		for _, arg := range args {
+			if s, isString := arg.(string); isString && slices.Contains(obsolete, s) {
+				continue
+			}
+			kept = append(kept, arg)
+		}
+		if len(kept) != len(args) {
+			server["args"] = kept
+			fixed++
+		}
+	}
+	return fixed
+}
+
+func mergeMcpServers(servers, templateServers map[string]any) int {
+	added := 0
+	for name, config := range templateServers {
+		if _, exists := servers[name]; !exists {
+			servers[name] = config
+			added++
+		}
+	}
+	return added
 }
 
 func setupPlugins(out *output.Context, claudeDir string) error {
