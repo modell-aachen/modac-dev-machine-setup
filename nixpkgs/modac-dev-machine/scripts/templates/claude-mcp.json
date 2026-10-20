@@ -9,7 +9,6 @@
         "--disable-alerting",
         "--disable-oncall",
         "--disable-asserts",
-        "--disable-sift",
         "--disable-admin",
         "--disable-pyroscope",
         "--disable-rendering"
