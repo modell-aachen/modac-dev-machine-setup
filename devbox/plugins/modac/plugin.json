@@ -89,6 +89,9 @@
     "pyenv": {
       "version": "latest"
     },
+    "regctl": {
+      "version": "latest"
+    },
     "restic": {
       "version": "latest"
     },
