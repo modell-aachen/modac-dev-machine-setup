@@ -18,6 +18,18 @@ IS_MACOS=false
 [[ "$OS" == Linux* ]] && IS_LINUX=true
 [[ "$OS" == "Darwin" ]] && IS_MACOS=true
 
+# Only bash and zsh are supported: the devbox init hook written below and the
+# init_hooks of the devbox plugins are bash/zsh code.
+case "$(basename "$SHELL")" in
+    bash|zsh)
+        ;;
+    *)
+        echo "Unsupported shell '$SHELL' (supported: bash, zsh)." >&2
+        echo "Please switch your login shell to bash or zsh (e.g. 'chsh -s /bin/zsh') and run the installer again." >&2
+        exit 1
+        ;;
+esac
+
 # Machine profile selection (dev = full developer machine, service = minimal
 # Kubernetes access machine). Persisted so 'machine provision' picks it up.
 MACHINE_PROFILE="${MACHINE_PROFILE:-dev}"
@@ -58,6 +70,17 @@ function error() {
 
 function skip() {
     echo -e "${DIM}  ⊘ $1${RESET}"
+}
+
+function warn() {
+    echo -e "${YELLOW}  !${RESET} $1"
+}
+
+function wait_for_enter() {
+    if ! read -r _ < /dev/tty; then
+        error "No input, aborting installation"
+        exit 1
+    fi
 }
 
 function execute() {
@@ -134,6 +157,7 @@ plugin_dir="devbox/plugins/modac"
 if [[ "$MACHINE_PROFILE" == "service" ]]; then
     plugin_dir="devbox/plugins/modac-service"
 fi
+plugin_include="github:modell-aachen/modac-dev-machine-setup?dir=$plugin_dir"
 
 devbox_template=$(cat << EOF
 {
@@ -144,11 +168,47 @@ devbox_template=$(cat << EOF
         "scripts": {}
     },
     "include": [
-        "github:modell-aachen/modac-dev-machine-setup?dir=$plugin_dir"
+        "$plugin_include"
     ]
 }
 EOF
 )
+
+# Creates the global devbox.json from the template. An existing file is left
+# untouched; if it lacks the plugin include, the user has to add it manually.
+# The installer waits for that, or exits in non-interactive mode.
+function setup_global_devbox() {
+    local global_devbox=$1
+
+    if [ ! -f "$global_devbox" ]; then
+        info "Creating devbox global configuration ($MACHINE_PROFILE profile)"
+        echo "$devbox_template" > "$global_devbox"
+        success "Created $global_devbox"
+        return 0
+    fi
+
+    if grep -qF "\"$plugin_include\"" "$global_devbox"; then
+        skip "Devbox global configuration already includes the $MACHINE_PROFILE plugin"
+        return 0
+    fi
+
+    warn "$global_devbox does not include the plugin for the '$MACHINE_PROFILE' profile."
+    echo "    Please add this entry to its \"include\" list manually:"
+    echo "      \"$plugin_include\""
+
+    if [[ "${NONINTERACTIVE}" == "1" ]]; then
+        error "Cannot wait for the entry in non-interactive mode. Add it and run the installer again."
+        exit 1
+    fi
+
+    echo -e "    ${BOLD}Press Enter once the entry is added${RESET} ${DIM}(Ctrl+C to abort)${RESET}"
+    wait_for_enter
+    while ! grep -qF "\"$plugin_include\"" "$global_devbox"; do
+        warn "Entry still missing in $global_devbox. Press Enter to check again (Ctrl+C to abort)."
+        wait_for_enter
+    done
+    success "Found the plugin include in $global_devbox"
+}
 
 function install_nix_for_distrobox() {
     if ! is_distrobox; then
@@ -198,22 +258,8 @@ function add_init_hook() {
 }
 
 function show_next_steps() {
-    # Detect shell RC file
-    local shell_rc
-    case "$(basename "$SHELL")" in
-        bash)
-            shell_rc="~/.bashrc"
-            ;;
-        zsh)
-            shell_rc="~/.zshrc"
-            ;;
-        fish)
-            shell_rc="~/.config/fish/config.fish"
-            ;;
-        *)
-            shell_rc="~/.$(basename "$SHELL")rc"
-            ;;
-    esac
+    # $SHELL is bash or zsh here: the shell check at the top exits otherwise.
+    local shell_rc="~/.$(basename "$SHELL")rc"
 
     echo ""
     echo -e "${BOLD}${CYAN}Next Steps:${RESET}"
@@ -310,11 +356,7 @@ if [ ! -d "$default_devbox_dir" ]; then
     mkdir -p "$default_devbox_dir"
 fi
 
-if [ ! -f "$global_devbox" ]; then
-    info "Creating devbox global configuration ($MACHINE_PROFILE profile)"
-    echo "$devbox_template" > "$global_devbox"
-    success "Created $global_devbox"
-fi
+setup_global_devbox "$global_devbox"
 
 # Persist the machine profile so 'machine provision' picks it up automatically
 if [[ "$MACHINE_PROFILE" == "service" ]]; then

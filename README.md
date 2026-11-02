@@ -19,7 +19,7 @@ wget -qO- https://raw.githubusercontent.com/modell-aachen/modac-dev-machine-setu
 
 MacOs
 ```BASH
-curl -fsSL https://raw.githubusercontent.com/modell-aachen/modac-dev-machine-setup/refs/heads/main/install | "$SHELL"
+curl -fsSL https://raw.githubusercontent.com/modell-aachen/modac-dev-machine-setup/refs/heads/main/install | bash
 source ~/."$(basename $SHELL)"rc
 ```
 
