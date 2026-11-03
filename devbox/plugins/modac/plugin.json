@@ -128,11 +128,12 @@
   },
   "shell": {
     "init_hook": [
+      "test -z \"$BASH_VERSION$ZSH_VERSION\" && echo 'modac-dev-machine-setup: this shell is not supported, please use bash or zsh (MODAC shell hooks skipped).' >&2",
       "[ -n \"$HOMEBREW_PREFIX\" ] && export PATH=\"$HOMEBREW_PREFIX/bin:$PATH\"",
-      "_DEVBOX_SHELL=bash; [ -n \"$ZSH_VERSION\" ] && _DEVBOX_SHELL=zsh; type complete &>/dev/null && source <(devbox completion $_DEVBOX_SHELL)",
-      "_DEVBOX_SHELL=bash; [ -n \"$ZSH_VERSION\" ] && _DEVBOX_SHELL=zsh; eval \"$(direnv hook $_DEVBOX_SHELL)\"",
-      "source <(machine aliases)",
-      "_DEVBOX_SHELL=bash; [ -n \"$ZSH_VERSION\" ] && _DEVBOX_SHELL=zsh; type complete &>/dev/null && [ -d $HOME/.${_DEVBOX_SHELL}_completions ] && for c in $(find $HOME/.${_DEVBOX_SHELL}_completions -type f -name '*.sh'); do source $c; done"
+      "test -n \"$BASH_VERSION$ZSH_VERSION\" && eval '_DEVBOX_SHELL=bash; [ -n \"$ZSH_VERSION\" ] && _DEVBOX_SHELL=zsh; type complete &>/dev/null && source <(devbox completion $_DEVBOX_SHELL)'",
+      "test -n \"$BASH_VERSION$ZSH_VERSION\" && eval '_DEVBOX_SHELL=bash; [ -n \"$ZSH_VERSION\" ] && _DEVBOX_SHELL=zsh; eval \"$(direnv hook $_DEVBOX_SHELL)\"'",
+      "test -n \"$BASH_VERSION$ZSH_VERSION\" && eval 'source <(machine aliases)'",
+      "test -n \"$BASH_VERSION$ZSH_VERSION\" && eval '_DEVBOX_SHELL=bash; [ -n \"$ZSH_VERSION\" ] && _DEVBOX_SHELL=zsh; type complete &>/dev/null && [ -d $HOME/.${_DEVBOX_SHELL}_completions ] && for c in $(find $HOME/.${_DEVBOX_SHELL}_completions -type f -name \"*.sh\"); do source $c; done'"
     ],
     "scripts": {}
   },
