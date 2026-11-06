@@ -1,6 +1,8 @@
 package claude
 
 import (
+	"os"
+	"path/filepath"
 	"reflect"
 	"testing"
 )
@@ -140,4 +142,67 @@ func deepCopy(m map[string]any) map[string]any {
 		out[k] = v
 	}
 	return out
+}
+
+func TestSyncClaudeMd(t *testing.T) {
+	const templateContent = "# Team guidelines\n@personal-CLAUDE.md\n"
+
+	tests := []struct {
+		name        string
+		existing    *string
+		wantWritten bool
+	}{
+		{name: "creates missing CLAUDE.md", existing: nil, wantWritten: true},
+		{name: "overwrites outdated CLAUDE.md", existing: ptr("# Old guidelines\n"), wantWritten: true},
+		{name: "leaves up-to-date CLAUDE.md alone", existing: ptr(templateContent), wantWritten: false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			dir := t.TempDir()
+			templatePath := writeFile(t, dir, "team-claude.md", templateContent)
+			claudeMdPath := filepath.Join(dir, "CLAUDE.md")
+			if tt.existing != nil {
+				writeFile(t, dir, "CLAUDE.md", *tt.existing)
+			}
+
+			written, err := syncClaudeMd(templatePath, claudeMdPath)
+			if err != nil {
+				t.Fatalf("syncClaudeMd() error = %v", err)
+			}
+			if written != tt.wantWritten {
+				t.Errorf("written = %v, want %v", written, tt.wantWritten)
+			}
+
+			got, err := os.ReadFile(claudeMdPath)
+			if err != nil {
+				t.Fatalf("failed to read CLAUDE.md: %v", err)
+			}
+			if string(got) != templateContent {
+				t.Errorf("CLAUDE.md = %q, want %q", got, templateContent)
+			}
+		})
+	}
+}
+
+func TestSyncClaudeMdFailsForMissingTemplate(t *testing.T) {
+	dir := t.TempDir()
+
+	_, err := syncClaudeMd(filepath.Join(dir, "missing.md"), filepath.Join(dir, "CLAUDE.md"))
+	if err == nil {
+		t.Fatal("syncClaudeMd() error = nil, want error for missing template")
+	}
+}
+
+func ptr(s string) *string {
+	return &s
+}
+
+func writeFile(t *testing.T, dir, name, content string) string {
+	t.Helper()
+	path := filepath.Join(dir, name)
+	if err := os.WriteFile(path, []byte(content), 0644); err != nil {
+		t.Fatalf("failed to write %s: %v", name, err)
+	}
+	return path
 }
