@@ -1,9 +1,11 @@
 package claude
 
 import (
+	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
-	"io"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"slices"
@@ -44,29 +46,49 @@ func Run(out *output.Context, plat platform.Platform) error {
 }
 
 func setupClaudeMd(out *output.Context, claudeDir string) error {
-	claudeMdPath := filepath.Join(claudeDir, "CLAUDE.md")
-
-	if util.FileExists(claudeMdPath) {
-		out.Skipped("CLAUDE.md already exists")
-		return nil
-	}
-
 	templatesDir, err := util.GetTemplatesDir()
 	if err != nil {
 		return fmt.Errorf("failed to find templates directory: %w", err)
 	}
 
-	out.Step("Creating CLAUDE.md from template")
 	templatePath := filepath.Join(templatesDir, "team-claude.md")
-	if err := copyFile(templatePath, claudeMdPath); err != nil {
-		return fmt.Errorf("failed to copy template: %w", err)
+	written, err := syncClaudeMd(templatePath, filepath.Join(claudeDir, "CLAUDE.md"))
+	if err != nil {
+		return err
 	}
 
-	if err := os.Chmod(claudeMdPath, 0664); err != nil {
-		return fmt.Errorf("failed to set permissions: %w", err)
+	if written {
+		out.Step("Updated CLAUDE.md from team template")
+	} else {
+		out.Skipped("CLAUDE.md is up to date")
 	}
-
 	return nil
+}
+
+// syncClaudeMd overwrites CLAUDE.md with the team template so template updates
+// reach everyone. Personal customizations belong in personal-CLAUDE.md, which
+// the template includes. It returns whether the file was written.
+func syncClaudeMd(templatePath, claudeMdPath string) (bool, error) {
+	template, err := os.ReadFile(templatePath)
+	if err != nil {
+		return false, fmt.Errorf("failed to read CLAUDE.md template: %w", err)
+	}
+
+	current, err := os.ReadFile(claudeMdPath)
+	if err == nil && bytes.Equal(current, template) {
+		return false, nil
+	}
+	if err != nil && !errors.Is(err, fs.ErrNotExist) {
+		return false, fmt.Errorf("failed to read CLAUDE.md: %w", err)
+	}
+
+	if err := os.WriteFile(claudeMdPath, template, 0664); err != nil {
+		return false, fmt.Errorf("failed to write CLAUDE.md: %w", err)
+	}
+	if err := os.Chmod(claudeMdPath, 0664); err != nil {
+		return false, fmt.Errorf("failed to set permissions: %w", err)
+	}
+	return true, nil
 }
 
 func setupMcpConfig(out *output.Context, claudeDir string) error {
@@ -262,21 +284,4 @@ func mergePluginSettings(settings, template map[string]any) int {
 		settings[key] = existing
 	}
 	return added
-}
-
-func copyFile(src, dst string) error {
-	sourceFile, err := os.Open(src)
-	if err != nil {
-		return err
-	}
-	defer sourceFile.Close()
-
-	destFile, err := os.Create(dst)
-	if err != nil {
-		return err
-	}
-	defer destFile.Close()
-
-	_, err = io.Copy(destFile, sourceFile)
-	return err
 }

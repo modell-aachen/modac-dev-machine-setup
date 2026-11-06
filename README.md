@@ -167,3 +167,4 @@ asdf install erlang 28.2
 
 The team's CLAUDE.md contains what we all can agree on. But everyone works differently. So feel free to enter your personal preferences to ~/.claude/personal-CLAUDE.md.
 It will be included automatically and take precedence over the team defaults if conflicting.
+Don't edit ~/.claude/CLAUDE.md directly: `machine provision` overwrites it with the team version on every run.
