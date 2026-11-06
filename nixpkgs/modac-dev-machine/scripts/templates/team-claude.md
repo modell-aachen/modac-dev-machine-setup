@@ -76,7 +76,7 @@ This document contains our team's core principles for writing maintainable, high
 - **Never create files unless absolutely necessary** - Always prefer editing existing files
 - **Don't proactively create documentation** - Only create documentation when explicitly requested
 - **Focus on the task at hand** - Do what has been asked; nothing more, nothing less
-- **Maintain professional standards** - Never mention tools used for code generation or similar aspects
+- **Maintain professional standards** - Never mention tools used for code generation or similar aspects. Code attributions in commit messages are the exception and are kept.
 
 ## Implementation Guidelines
 
