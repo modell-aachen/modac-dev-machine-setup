@@ -75,6 +75,8 @@ gcloud with GKE auth plugin) and only the service-flagged provisioning modules
 (`machine provision list-modules` marks them with `*`). 1Password is installed
 CLI-only, without the desktop app.
 
+The `acloud` module (both profiles) installs or updates the `acloud` CLI from Nexus into `~/.local/bin`, verifies its SHA-256 checksum and sets up its shell completion; `machine provision` is its only update path.
+
 ### Windows preparation
 
 1) Open an admin PowerShell and run `wsl --install -d Ubuntu`

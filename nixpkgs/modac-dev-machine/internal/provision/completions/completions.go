@@ -37,7 +37,7 @@ func Run(out *output.Context, plat platform.Platform) error {
 
 	for _, shell := range shells {
 		for _, comp := range completions {
-			if err := installCompletion(out, homeDir, shell, comp.cmd, comp.version, comp.subcommand); err != nil {
+			if err := Install(out, homeDir, shell, comp.cmd, comp.version, comp.subcommand); err != nil {
 				// Log error but continue with other completions
 				out.Info(fmt.Sprintf("Warning: failed to install %s completion for %s: %v", comp.cmd, shell, err))
 			}
@@ -47,7 +47,7 @@ func Run(out *output.Context, plat platform.Platform) error {
 	return nil
 }
 
-func installCompletion(out *output.Context, homeDir, shell, cmd, version, subcommand string) error {
+func Install(out *output.Context, homeDir, shell, cmd, version, subcommand string) error {
 	shellPath := filepath.Join(homeDir, fmt.Sprintf(".%src", shell))
 	completionsPath := filepath.Join(homeDir, fmt.Sprintf(".%s_completions", shell))
 	cmdCompletionPath := filepath.Join(completionsPath, fmt.Sprintf("%s_%s.sh", cmd, version))
