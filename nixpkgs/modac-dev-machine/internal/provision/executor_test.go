@@ -53,6 +53,7 @@ func TestModulesFor(t *testing.T) {
 				"github-auth-login",
 				"gcloud-workforce-login",
 				"install-modac-shell-helper",
+				"acloud",
 			},
 		},
 		{

@@ -11,6 +11,7 @@ import (
 	"github.com/modell-aachen/machine/internal/config"
 	"github.com/modell-aachen/machine/internal/output"
 	"github.com/modell-aachen/machine/internal/platform"
+	"github.com/modell-aachen/machine/internal/provision/acloud"
 	"github.com/modell-aachen/machine/internal/provision/asdf"
 	"github.com/modell-aachen/machine/internal/provision/asdfpackages"
 	"github.com/modell-aachen/machine/internal/provision/certificates"
@@ -67,6 +68,7 @@ var allModules = []ModuleEntry{
 	{Name: "github-auth-login", Runner: githubauthlogin.Run, Service: true},
 	{Name: "gcloud-workforce-login", Runner: gcloudworkforcelogin.Run, Service: true},
 	{Name: "install-modac-shell-helper", Runner: installmodacshellhelper.Run, Service: true},
+	{Name: "acloud", Runner: acloud.Run, Service: true},
 	{Name: "orbstack", Runner: orbstack.Run},
 	{Name: "docker-packages", Runner: dockerpackages.Run},
 	{Name: "docker", Runner: docker.Run},
