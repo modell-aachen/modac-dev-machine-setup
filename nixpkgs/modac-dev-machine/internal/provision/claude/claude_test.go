@@ -206,3 +206,63 @@ func writeFile(t *testing.T, dir, name, content string) string {
 	}
 	return path
 }
+
+func TestPluginUpdateCommands(t *testing.T) {
+	disabledPlugin := template()
+	disabledPlugin["enabledPlugins"] = map[string]any{
+		"dev-workflow@claude-skills": false,
+		"other@claude-skills":        true,
+	}
+
+	twoMarketplaces := template()
+	twoMarketplaces["extraKnownMarketplaces"] = map[string]any{
+		"zeta-market":  map[string]any{},
+		"alpha-market": map[string]any{},
+	}
+
+	tests := []struct {
+		name     string
+		template map[string]any
+		want     [][]string
+	}{
+		{
+			name:     "default template updates marketplace then plugin",
+			template: template(),
+			want: [][]string{
+				{"plugin", "marketplace", "update", "claude-skills"},
+				{"plugin", "update", "dev-workflow@claude-skills"},
+			},
+		},
+		{
+			name:     "empty template has no commands",
+			template: map[string]any{},
+			want:     nil,
+		},
+		{
+			name:     "disabled plugin is not updated",
+			template: disabledPlugin,
+			want: [][]string{
+				{"plugin", "marketplace", "update", "claude-skills"},
+				{"plugin", "update", "other@claude-skills"},
+			},
+		},
+		{
+			name:     "marketplaces are updated in sorted order",
+			template: twoMarketplaces,
+			want: [][]string{
+				{"plugin", "marketplace", "update", "alpha-market"},
+				{"plugin", "marketplace", "update", "zeta-market"},
+				{"plugin", "update", "dev-workflow@claude-skills"},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := pluginUpdateCommands(tt.template)
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("pluginUpdateCommands() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
