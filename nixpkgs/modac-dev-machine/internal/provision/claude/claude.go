@@ -7,8 +7,11 @@ import (
 	"fmt"
 	"io/fs"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"slices"
+	"sort"
+	"strings"
 
 	"github.com/modell-aachen/machine/internal/output"
 	"github.com/modell-aachen/machine/internal/platform"
@@ -38,9 +41,16 @@ func Run(out *output.Context, plat platform.Platform) error {
 		return err
 	}
 
-	if err := setupPlugins(out, claudeDir); err != nil {
+	pluginsTemplate, err := loadPluginsTemplate()
+	if err != nil {
 		return err
 	}
+
+	if err := setupPlugins(out, claudeDir, pluginsTemplate); err != nil {
+		return err
+	}
+
+	updatePlugins(out, pluginsTemplate)
 
 	return nil
 }
@@ -207,23 +217,25 @@ func mergeMcpServers(servers, templateServers map[string]any) int {
 	return added
 }
 
-func setupPlugins(out *output.Context, claudeDir string) error {
+func loadPluginsTemplate() (map[string]any, error) {
 	templatesDir, err := util.GetTemplatesDir()
 	if err != nil {
-		return fmt.Errorf("failed to find templates directory: %w", err)
+		return nil, fmt.Errorf("failed to find templates directory: %w", err)
 	}
 
-	templatePath := filepath.Join(templatesDir, "claude-plugins.json")
-	templateData, err := os.ReadFile(templatePath)
+	templateData, err := os.ReadFile(filepath.Join(templatesDir, "claude-plugins.json"))
 	if err != nil {
-		return fmt.Errorf("failed to read plugins template: %w", err)
+		return nil, fmt.Errorf("failed to read plugins template: %w", err)
 	}
 
 	var template map[string]any
 	if err := json.Unmarshal(templateData, &template); err != nil {
-		return fmt.Errorf("failed to parse plugins template: %w", err)
+		return nil, fmt.Errorf("failed to parse plugins template: %w", err)
 	}
+	return template, nil
+}
 
+func setupPlugins(out *output.Context, claudeDir string, template map[string]any) error {
 	settingsPath := filepath.Join(claudeDir, "settings.json")
 
 	var settings map[string]any
@@ -284,4 +296,47 @@ func mergePluginSettings(settings, template map[string]any) int {
 		settings[key] = existing
 	}
 	return added
+}
+
+const claudeBinary = "claude"
+
+func updatePlugins(out *output.Context, template map[string]any) {
+	if _, err := exec.LookPath(claudeBinary); err != nil {
+		out.Skipped("claude not installed, plugin update skipped")
+		return
+	}
+
+	for _, args := range pluginUpdateCommands(template) {
+		command := claudeBinary + " " + strings.Join(args, " ")
+		out.Step(fmt.Sprintf("Running %s", command))
+		if err := out.RunCommand(claudeBinary, args...); err != nil {
+			out.Failure(fmt.Sprintf("%s failed: %v", command, err))
+		}
+	}
+}
+
+func pluginUpdateCommands(template map[string]any) [][]string {
+	var commands [][]string
+
+	marketplaces, _ := template["extraKnownMarketplaces"].(map[string]any)
+	for _, name := range sortedKeys(marketplaces) {
+		commands = append(commands, []string{"plugin", "marketplace", "update", name})
+	}
+
+	plugins, _ := template["enabledPlugins"].(map[string]any)
+	for _, plugin := range sortedKeys(plugins) {
+		if enabled, _ := plugins[plugin].(bool); enabled {
+			commands = append(commands, []string{"plugin", "update", plugin})
+		}
+	}
+	return commands
+}
+
+func sortedKeys(m map[string]any) []string {
+	keys := make([]string, 0, len(m))
+	for key := range m {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+	return keys
 }
