@@ -1,6 +1,7 @@
 package devbox
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -11,10 +12,16 @@ import (
 
 // GlobalUpdate runs `devbox global update` and refreshes the current process's
 // devbox env so subsequent commands see any packages added by the update.
+//
+// The refresh also runs when the update fails: devbox removes outdated packages
+// from the global profile before installing their replacements, so a failed
+// install leaves binaries like machine and claude missing. The shellenv call
+// in refreshGlobalEnv reinstalls them.
 func GlobalUpdate(out *output.Context) error {
 	out.Step("Updating devbox global environment")
 	if err := out.RunCommand("devbox", "global", "update"); err != nil {
-		return fmt.Errorf("failed to update devbox: %w", err)
+		updateErr := fmt.Errorf("failed to update devbox: %w", err)
+		return errors.Join(updateErr, refreshGlobalEnv(out))
 	}
 	return refreshGlobalEnv(out)
 }
@@ -26,7 +33,9 @@ func GlobalUpdate(out *output.Context) error {
 func refreshGlobalEnv(out *output.Context) error {
 	out.Step("Refreshing devbox global environment")
 
-	cmd := exec.Command("bash", "-c", `eval "$(devbox global shellenv --preserve-path-stack -r)" && env`)
+	// The assignment keeps devbox's exit code, which `eval "$(...)"` would swallow.
+	cmd := exec.Command("bash", "-c", `shellenv="$(devbox global shellenv --preserve-path-stack -r)" && eval "$shellenv" && env`)
+	cmd.Stderr = out.MultiWriter(nil)
 	stdout, err := cmd.Output()
 	if err != nil {
 		return fmt.Errorf("failed to load devbox shellenv: %w", err)
