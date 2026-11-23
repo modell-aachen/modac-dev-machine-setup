@@ -1,6 +1,7 @@
 package output
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -27,6 +28,7 @@ const (
 // Context manages logging and output formatting for the provisioning process
 type Context struct {
 	logFile *os.File
+	log     *redactingWriter
 	logPath string
 }
 
@@ -52,6 +54,7 @@ func New() (*Context, error) {
 
 	ctx := &Context{
 		logFile: logFile,
+		log:     &redactingWriter{dst: logFile},
 		logPath: logPath,
 	}
 
@@ -66,7 +69,7 @@ func (c *Context) Close() error {
 	if c.logFile != nil {
 		c.writeLog("\n=== Provisioning Complete ===\n")
 		c.writeLog("Finished at: %s\n", time.Now().Format(time.RFC3339))
-		return c.logFile.Close()
+		return errors.Join(c.log.Flush(), c.logFile.Close())
 	}
 	return nil
 }
@@ -78,8 +81,8 @@ func (c *Context) LogPath() string {
 
 // writeLog writes a message to the log file only
 func (c *Context) writeLog(format string, args ...interface{}) {
-	if c.logFile != nil {
-		fmt.Fprintf(c.logFile, format, args...)
+	if c.log != nil {
+		fmt.Fprintf(c.log, format, args...)
 	}
 }
 
@@ -129,11 +132,9 @@ func (c *Context) RunCommand(name string, arg ...string) error {
 
 // RunCmd executes a pre-built command, preserving its Dir and Env settings
 func (c *Context) RunCmd(cmd *exec.Cmd) error {
-	// Create a multi-writer that writes to both log file and captures output
-	logWriter := &logWriter{ctx: c, prefix: ""}
-
-	cmd.Stdout = logWriter
-	cmd.Stderr = logWriter
+	log := c.MultiWriter(nil)
+	cmd.Stdout = log
+	cmd.Stderr = log
 
 	c.writeLog("\n$ %s %s\n", cmd.Path, strings.Join(cmd.Args[1:], " "))
 
@@ -178,26 +179,17 @@ func (c *Context) CheckAndRun(markerPath string, skipMessage string, fn func() e
 	return nil
 }
 
-// logWriter implements io.Writer to write command output to the log file
-type logWriter struct {
-	ctx    *Context
-	prefix string
-}
-
-func (w *logWriter) Write(p []byte) (n int, err error) {
-	if w.ctx.logFile != nil {
-		return w.ctx.logFile.Write(p)
-	}
-	return len(p), nil
-}
-
 // MultiWriter creates an io.Writer that writes to both the log and another writer
 // If w is nil, returns a writer that only writes to the log file
 func (c *Context) MultiWriter(w io.Writer) io.Writer {
-	if w == nil {
-		return c.logFile
+	var log io.Writer = io.Discard
+	if c.log != nil {
+		log = c.log
 	}
-	return io.MultiWriter(c.logFile, w)
+	if w == nil {
+		return log
+	}
+	return io.MultiWriter(log, w)
 }
 
 // PrintSummary prints a final summary with the log file location
